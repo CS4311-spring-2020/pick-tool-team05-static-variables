@@ -4,6 +4,7 @@ Introduction to our project here
 
 ---
 Important: Please make sure that you're pushing to your branch, not to master!
+If you finalized your GUI windows, please push to master and delete your branch.
 
 Links:
 
