@@ -1,6 +1,5 @@
-from PyQt5.QtWidgets import (QWidget,QDialog,QDialogButtonBox, QPushButton, QDesktopWidget, QLabel, QLineEdit, QTextEdit,
-                             QGridLayout, QFrame,
-                             QHBoxLayout, QSplitter, QGroupBox, QFormLayout, QVBoxLayout)
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QLabel, QLineEdit, QTextEdit,QHBoxLayout, QGroupBox,
+                             QFormLayout, QVBoxLayout)
 from PyQt5.QtGui import QIcon
 
 
