@@ -16,37 +16,63 @@ class editNode(QWidget):
         adjW = QDesktopWidget().availableGeometry().center()
         window.moveCenter(adjW)
 
+        # hard coded need to combine with others code
         nodeID = "1-004"
         self.idLabel = QLabel(self)
         self.idLabel.setText("ID " + nodeID)
         self.idLabel.move(30, 30)
 
+        # hard coded need to combine with others code
         artifactID = "none"
         self.artifactLabel = QLabel(self)
         self.artifactLabel.setText("Artifact:  " + artifactID)
         self.artifactLabel.move(30, 60)
 
+        # hard coded need to combine with others code
         logID = "none"
         self.logLabel = QLabel(self)
-        self.logLabel.setText("Artifact:  " + logID)
+        self.logLabel.setText("Log Entry:  " + logID)
         self.logLabel.move(30, 90)
 
-        artifactID = "none"
-        self.artifactLabel = QLabel(self)
-        self.artifactLabel.setText("Artifact:  " + artifactID)
-        self.artifactLabel.move(30, 60)
+        # hard coded need to combine w/ others code
+        nameID = "Detection"
+        self.nameLabel = QLabel(self)
+        self.nameLabel.setText("Name:  " + nameID)
+        self.nameLabel.move(30, 120)
 
+        # hardcoded need to combine w/ pthers code
+        timeID = "1/1/20   05:23"
+        self.timeLabel = QLabel(self)
+        self.timeLabel.setText("Time of Occurrence:  " + timeID)
+        self.timeLabel.move(30, 150)
+
+        # hard coded need to combine with others code
+        eventID = "Blue"
+        self.eventLabel = QLabel(self)
+        self.eventLabel.setText("Event Type:  " + eventID)
+        self.eventLabel.move(30, 180)
+
+        # hard coded need to combine with others code
+        creatorID = "White"
+        self.creatorLabel = QLabel(self)
+        self.creatorLabel.setText("Creator:  " + creatorID)
+        self.creatorLabel.move(30, 210)
+
+        # hard coded need to combine with others code
         self.iconLabel = QLabel(self)
         self.iconLabel.setText("Icon")
-        self.iconLabel.move(30, 150)
+        self.iconLabel.move(30, 240)
         combo = QComboBox(self)
-
         combo.addItem("iconA")
         combo.addItem("iconB")
         combo.addItem("iconC")
         combo.addItem("iconD")
-        combo.move(90, 150)
+        combo.move(90, 240)
         combo.activated[str].connect(self.onActivated)
+
+        # need to get image / icon from user
+        self.importButton = QPushButton("Import...", self)
+        self.importButton.move(190, 238)
 
 
         self.descriptionBox = QLineEdit(self)
