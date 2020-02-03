@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QDialogButtonBox, QLabel, QLineEdit, QTextEdit, QGridLayout,
-                             QGroupBox, QHBoxLayout, QFormLayout)
+                             QGroupBox, QHBoxLayout, QFormLayout, QScrollArea, QPushButton)
 
 
 class EventConfiguration(QDialog):
@@ -98,7 +98,13 @@ class EventConfiguration(QDialog):
     def create_vector_box(self):
         self.form_vector_box = QGroupBox("Vectors:")
         layout = QFormLayout()
-        # (TODO) Add Vector scroll window and button
-        # self.form_vector_box.setLayout(layout)
+
+        vector_scroll = QScrollArea()
+        b1 = QPushButton("Add")  # Might want ot resize add button
+        # self.b1.clicked.connect(lamda:self.add_vector(self.b1))
+
+        layout.addWidget(vector_scroll)
+        layout.addWidget(b1)
+        self.form_vector_box.setLayout(layout)
 
         # (TODO) read,Save, and Process information from fields, Change name ok button and connect it
