@@ -18,16 +18,16 @@ class Launcher(QWidget):
         self.show()
 
     def set_size(self):
-        self.resize(450, 500)
+        self.setFixedSize(450, 500)
         f_window = self.frameGeometry()
         window = QDesktopWidget().availableGeometry().center()
         f_window.moveCenter(window)
         self.move(f_window.topLeft())
         'Sets the background picture found inside resources'
-        #set_pic = QLabel(self)
-        #background_icon = QPixmap("../Resources/Images/eye_logo.png")
-        #set_pic.setPixmap(background_icon)
-        #self.resize(background_icon.width(), background_icon.height())
+        set_pic = QLabel(self)
+        background_icon = QPixmap("../Resources/Images/eye_logo.png")
+        set_pic.setPixmap(background_icon)
+        self.resize(background_icon.width(), background_icon.height())
 
     def set_buttons(self):
         btn_connect = QPushButton("Connect", self)
@@ -41,9 +41,6 @@ class Launcher(QWidget):
         btn_cancel.move(200, 400)
 
 
-'''buttons are not are relative to window size, when it opens they are somewhat in the right position but whe the window is set to full screen the lack
-    of not having it anchored to a relative position in the window becomes apparent.'''
-
 '''
     This is a way of connecting a button, there for sure are more elegant and better ways.
 
@@ -56,5 +53,3 @@ class Launcher(QWidget):
         sender = self.sender()
         self.
 '''
-
-
