@@ -50,9 +50,12 @@ class nodeCorrelation(QWidget):
         self.trueLabel.move(30,200)
 
         self.createButton = QPushButton("Create", self)
-        self.cancelButton = QPushButton("Cancel", self)
         self.createButton.move(100, 300)
+        self.createButton.clicked.connect(self.close)
+
+        self.cancelButton = QPushButton("Cancel", self)
         self.cancelButton.move(200, 300)
+        self.cancelButton.clicked.connect(self.close)
 
         self.show()
 

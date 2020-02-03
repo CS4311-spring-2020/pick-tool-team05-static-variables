@@ -16,19 +16,7 @@ class logIngestion(PyQt5.QtWidgets.QWidget):
         adjW = QDesktopWidget().availableGeometry().center()
         window.moveCenter(adjW)
 
-        layout = QVBoxLayout()
-
-
-        self.le = QLabel("Hello")
-        layout.addWidget(self.le)
-        self.btn1 = PyQt5.QtWidgets.QPushButton("QFileDialog object")
-        self.btn1.clicked.connect(self.getFiles)
-        layout.addWidget(self.btn1)
-
-        self.contents = QTextEdit()
-        layout.addWidget(self.contents)
-        self.setLayout(layout)
-        self.setWindowTitle("File Dialog demo")
+        # NEED TO FIX THIS WINDOW
 
         self.continueButton = PyQt5.QtWidgets.QPushButton("Continue", self)
         self.validateButton = PyQt5.QtWidgets.QPushButton("Validate", self)
