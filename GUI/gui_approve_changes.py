@@ -1,37 +1,86 @@
-import sys
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
-                             QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QApplication, QComboBox, QDialog,
+                             QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
+                             QLabel, QLineEdit, QMenu, QMenuBar, QPushButton, QSpinBox, QTextEdit,
+                             QVBoxLayout)
 
-    class Approve_Changes(QWidget):
-    def __init__(self, parent=None):
-        super(Approve_Changes, self).__init__(parent)
 
-        grid = QGridLayout()
-        grid.addWidget(self.createExampleGroup(), 0, 0)
-        grid.addWidget(self.createExampleGroup(), 1, 0)
-        grid.addWidget(self.createExampleGroup(), 0, 1)
-        grid.addWidget(self.createExampleGroup(), 1, 1)
-        self.setLayout(grid)
+class Approve_Changes(QDialog):
+    NumGridRows = 3
+    NumButtons = 4
 
-        self.setWindowTitle("PyQt5 Group Box")
-        self.resize(400, 300)
+    def __init__(self):
+        super(Approve_Changes, self).__init__()
 
-    def createExampleGroup(self):
-        groupBox = QGroupBox("Best Food")
+        self.createMenu()
+        self.createHorizontalGroupBox()
+        self.createGridGroupBox()
+        self.createFormGroupBox()
 
-        radio1 = QRadioButton("&Radio pizza")
-        radio2 = QRadioButton("R&adio taco")
-        radio3 = QRadioButton("Ra&dio burrito")
+        bigEditor = QTextEdit()
+        bigEditor.setPlainText("This widget takes up all the remaining space "
+                               "in the top-level layout.")
 
-        radio1.setChecked(True)
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 
-        vbox = QVBoxLayout()
-        vbox.addWidget(radio1)
-        vbox.addWidget(radio2)
-        vbox.addWidget(radio3)
-        vbox.addStretch(1)
-        groupBox.setLayout(vbox)
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
 
-        return groupBox
+        mainLayout = QVBoxLayout()
+        mainLayout.setMenuBar(self.menuBar)
+        mainLayout.addWidget(self.horizontalGroupBox)
+        mainLayout.addWidget(self.gridGroupBox)
+        mainLayout.addWidget(self.formGroupBox)
+        mainLayout.addWidget(bigEditor)
+        mainLayout.addWidget(buttonBox)
+        self.setLayout(mainLayout)
+
+        self.setWindowTitle("Basic Layouts")
+
+    def createMenu(self):
+        self.menuBar = QMenuBar()
+
+        self.fileMenu = QMenu("&File", self)
+        self.exitAction = self.fileMenu.addAction("E&xit")
+        self.menuBar.addMenu(self.fileMenu)
+
+        self.exitAction.triggered.connect(self.accept)
+
+    def createHorizontalGroupBox(self):
+        self.horizontalGroupBox = QGroupBox("Horizontal layout")
+        layout = QHBoxLayout()
+
+        for i in range(Dialog.NumButtons):
+            button = QPushButton("Button %d" % (i + 1))
+            layout.addWidget(button)
+
+        self.horizontalGroupBox.setLayout(layout)
+
+    def createGridGroupBox(self):
+        self.gridGroupBox = QGroupBox("Grid layout")
+        layout = QGridLayout()
+
+        for i in range(Dialog.NumGridRows):
+            label = QLabel("Line %d:" % (i + 1))
+            lineEdit = QLineEdit()
+            layout.addWidget(label, i + 1, 0)
+            layout.addWidget(lineEdit, i + 1, 1)
+
+        self.smallEditor = QTextEdit()
+        self.smallEditor.setPlainText("This widget takes up about two thirds "
+                                      "of the grid layout.")
+
+        layout.addWidget(self.smallEditor, 0, 2, 4, 1)
+
+        layout.setColumnStretch(1, 10)
+        layout.setColumnStretch(2, 20)
+        self.gridGroupBox.setLayout(layout)
+
+    def createFormGroupBox(self):
+        self.formGroupBox = QGroupBox("Form layout")
+        layout = QFormLayout()
+        layout.addRow(QLabel("Line 1:"), QLineEdit())
+        layout.addRow(QLabel("Line 2, long text:"), QComboBox())
+        layout.addRow(QLabel("Line 3:"), QSpinBox())
+        self.formGroupBox.setLayout(layout)
+
 
