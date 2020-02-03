@@ -1,5 +1,5 @@
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QLabel, QDesktopWidget, QComboBox
+from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QLabel, QDesktopWidget, QComboBox, QFileDialog, QAction
 
 
 class editNode(QWidget):
@@ -70,11 +70,6 @@ class editNode(QWidget):
         combo.move(90, 240)
         combo.activated[str].connect(self.onActivated)
 
-        # need to get image / icon from user
-        self.importButton = QPushButton("Import...", self)
-        self.importButton.move(190, 238)
-
-
         self.descriptionBox = QLineEdit(self)
         self.descriptionBox.move(100,290)
         self.descriptionBox.resize(200,60)
@@ -83,13 +78,26 @@ class editNode(QWidget):
         self.descriptionLabel.setText("Description")
         self.descriptionLabel.move(30,300)
 
+        self.importButton = QPushButton("Import...", self)
+        self.importButton.move(190, 238)
+        self.importButton.clicked.connect(self.file_open)
+
+
         self.saveButton = QPushButton("Save Changes", self)
-        self.cancelButton = QPushButton("Cancel", self)
         self.saveButton.move(100, 360)
+        self.saveButton.clicked.connect(self.close)
+
+        self.cancelButton = QPushButton("Cancel", self)
         self.cancelButton.move(200, 360)
+        self.cancelButton.clicked.connect(self.close)
 
         self.show()
 
+    def file_open(self):
+        name, _ = QFileDialog.getOpenFileName(self, 'Open File', options=QFileDialog.DontUseNativeDialog)
+        file = open(name, 'r')
+
+    # for dropdown menu
     def onActivated(self, text):
         self.lbl.setText(text)
         self.lbl.adjustSize()

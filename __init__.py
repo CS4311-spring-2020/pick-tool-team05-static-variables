@@ -14,6 +14,6 @@ if __name__ == '__main__':
     # test = addVector()
     # test = confirmation()
     # test = nodeCorrelation()
-    # test = logIngestion()
-    test = editNode()
+    test = logIngestion()
+    # test = editNode()
     sys.exit(app.exec_())

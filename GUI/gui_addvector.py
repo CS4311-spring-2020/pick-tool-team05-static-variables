@@ -33,8 +33,11 @@ class addVector(QWidget):
         self.descriptionLabel.move(25,120)
 
         self.addButton = QPushButton("Add", self)
-        self.cancelButton = QPushButton("Cancel",self)
         self.addButton.move(100,250)
+        self.addButton.clicked.connect(self.close)
+
+        self.cancelButton = QPushButton("Cancel",self)
         self.cancelButton.move(200, 250)
+        self.cancelButton.clicked.connect(self.close)
 
         self.show()
