@@ -17,12 +17,12 @@ class EventConfiguration(QDialog):
         button_options.accepted.connect(self.accept)
         button_options.rejected.connect(self.reject)
 
-        mainLayout = QVBoxLayout()
-        mainLayout.addWidget(self.grid_fields)
-        mainLayout.addWidget(self.form_vector_box)
-        mainLayout.addWidget(self.horizontal_message)
-        mainLayout.addWidget(button_options)
-        self.setLayout(mainLayout)
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.grid_fields)
+        main_layout.addWidget(self.form_vector_box)
+        main_layout.addWidget(self.horizontal_message)
+        main_layout.addWidget(button_options)
+        self.setLayout(main_layout)
 
         self.setWindowTitle("Event Configuration")
         # self.setWindowIcon()
