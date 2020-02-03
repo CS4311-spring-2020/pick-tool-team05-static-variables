@@ -1,44 +1,47 @@
-from PyQt5.QtWidgets import (QWidget, QDesktopWidget, QLabel, QLineEdit, QTextEdit, QGridLayout, QFrame, QProgressBar)
+from PyQt5.QtWidgets import (QWidget,QDialog,QDialogButtonBox, QPushButton, QDesktopWidget, QLabel, QLineEdit, QTextEdit,
+                             QGridLayout, QFrame,
+                             QHBoxLayout, QSplitter, QGroupBox, QFormLayout, QVBoxLayout)
 from PyQt5.QtGui import QIcon
 
 
-class AddVectorPopUp(QWidget):
+class AddVectorPopUp(QDialog):
 
     def __init__(self):
-        super().__init__()
+        super(AddVectorPopUp, self).__init__()
 
-        self.init_add_vector_pop_up()
-
-    def init_add_vector_pop_up(self):
-        self.setWindowTitle("Add Vector")
-        self.setWindowIcon(QIcon("../Resources/Images/add-square.png"))
-        self.set_window()
-        self.create_body()
+        self.create_horizontal_message()
+        self.create_edit_fields()
         self.show()
 
-    def set_window(self):
-        window = self.frameGeometry()
-        win_center = QDesktopWidget().availableGeometry().center()
-        window.moveCenter(win_center)
-        self.move(window.topLeft())
-        self.setStyleSheet('background-color:#333;color:#ccc')
+        button_options = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 
-    def create_body(self):
-        v_name = QLabel("Name* :")
-        v_description = QLabel("Description:")
+        button_options.accepted.connect(self.accept)
+        button_options.rejected.connect(self.reject)
 
-        e_v_name = QLineEdit()
-        e_v_description = QTextEdit()
+        main_layout = QVBoxLayout()
 
-        grid = QGridLayout()
-        #grid.setSpacing(10)
+        main_layout.addWidget(self.form_edit_field)
+        main_layout.addWidget(self.horizontal_message)
+        main_layout.addWidget(button_options)
+        self.setLayout(main_layout)
 
-        grid.addWidget(v_name, 1, 0)
-        grid.addWidget(e_v_name, 1, 1)
+        self.setWindowTitle("Add Vector")
+        self.setWindowIcon(QIcon("../Resources/Images/add-square.png"))
 
-        grid.addWidget(v_description, 2, 0)
-        grid.addWidget(e_v_description, 2, 1)
+    def create_horizontal_message(self):
+        self.horizontal_message = QGroupBox("Notice")
+        layout = QHBoxLayout()
 
-        self.setLayout(grid)
+        message = QLabel("Fields with * are necessary in order to continue.")
+        layout.addWidget(message)
 
+        self.horizontal_message.setLayout(layout)
 
+    def create_edit_fields(self):
+        self.form_edit_field = QGroupBox("New Vector:")
+        layout = QFormLayout()
+        layout.addRow(QLabel("Name* :"), QLineEdit())
+        layout.addRow(QLabel("Description:"), QTextEdit())
+        self.form_edit_field.setLayout(layout)
+
+    #(TODO): Read, Save, and process information inputed in the fields and connect button ok
