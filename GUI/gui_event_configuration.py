@@ -1,30 +1,55 @@
-from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, QTextEdit, QGridLayout, QDesktopWidget)
+from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QDialogButtonBox, QLabel, QLineEdit, QTextEdit, QGridLayout,
+                             QGroupBox, QHBoxLayout, QFormLayout)
 
 
-class EventConfiguration(QWidget):
+class EventConfiguration(QDialog):
 
     def __init__(self):
-        super().__init__()
+        super(EventConfiguration, self).__init__()
 
-        self.init_event_configuration()
-
-    def init_event_configuration(self):
-        self.setWindowTitle("Event Configuration")
-        # self.setWindowIcon()
-        self.set_window()
+        self.create_horizontal_message()
+        self.create_field_box()
+        self.create_vector_box()
         self.show()
 
-    def set_window(self):
-        e_name = QLabel('Event Name*')
-        e_description = QLabel("Event Description")
-        d_path = QLabel("Directory Path*")
-        d_one = QLabel("Directory 1*")
-        d_two = QLabel("Directory 2*")
-        d_three = QLabel("Directory 3*")
-        s_date = QLabel("Start Date*")
-        s_time = QLabel("Start Time*")
-        e_date = QLabel("End Date*")
-        e_time = QLabel("End Time*")
+        button_options = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+
+        button_options.accepted.connect(self.accept)
+        button_options.rejected.connect(self.reject)
+
+        mainLayout = QVBoxLayout()
+        mainLayout.addWidget(self.grid_fields)
+        mainLayout.addWidget(self.form_vector_box)
+        mainLayout.addWidget(self.horizontal_message)
+        mainLayout.addWidget(button_options)
+        self.setLayout(mainLayout)
+
+        self.setWindowTitle("Event Configuration")
+        # self.setWindowIcon()
+
+    def create_horizontal_message(self):
+        self.horizontal_message = QGroupBox("Message:")
+        layout = QHBoxLayout()
+
+        message = QLabel("Fields with * next to them are required before configuration can begin.")
+        layout.addWidget(message)
+        self.horizontal_message.setLayout(layout)
+
+    def create_field_box(self):
+        self.grid_fields = QGroupBox("Fields:")
+        grid = QGridLayout()
+        grid.setSpacing(10)
+
+        e_name = QLabel('Event Name* :')
+        e_description = QLabel("Event Description:")
+        d_path = QLabel("Directory Path* :")
+        d_one = QLabel("Directory 1* :")
+        d_two = QLabel("Directory 2* :")
+        d_three = QLabel("Directory 3* :")
+        s_date = QLabel("Start Date* :")
+        s_time = QLabel("Start Time* :")
+        e_date = QLabel("End Date* :")
+        e_time = QLabel("End Time* :")
 
         e_name_edit = QLineEdit()
         e_e_description = QTextEdit()
@@ -37,26 +62,23 @@ class EventConfiguration(QWidget):
         e_e_date = QLineEdit()
         e_e_time = QLineEdit()
 
-        grid = QGridLayout()
-        grid.setSpacing(10)
-
         grid.addWidget(e_name, 1, 0)
-        grid.addWidget(e_name_edit, 1, 1)
+        grid.addWidget(e_name_edit, 1, 1, 1, 4)
 
         grid.addWidget(e_description, 2, 0)
-        grid.addWidget(e_e_description, 2, 1)
+        grid.addWidget(e_e_description, 2, 1, 1, 4)
 
         grid.addWidget(d_path, 3, 0)
-        grid.addWidget(e_d_path, 3, 1)
+        grid.addWidget(e_d_path, 3, 1, 1, 4)
 
         grid.addWidget(d_one, 4, 0)
-        grid.addWidget(e_d_one, 4, 1)
+        grid.addWidget(e_d_one, 4, 1, 1, 4)
 
         grid.addWidget(d_two, 5, 0)
-        grid.addWidget(e_d_two, 5, 1)
+        grid.addWidget(e_d_two, 5, 1, 1, 4)
 
         grid.addWidget(d_three, 6, 0)
-        grid.addWidget(e_d_three, 6, 1)
+        grid.addWidget(e_d_three, 6, 1, 1, 4)
 
         grid.addWidget(s_date, 7, 0)
         grid.addWidget(e_s_date, 7, 1)
@@ -64,17 +86,19 @@ class EventConfiguration(QWidget):
         grid.addWidget(s_time, 8, 0)
         grid.addWidget(e_s_time, 8, 1)
 
-        grid.addWidget(e_date, 9, 0)
-        grid.addWidget(e_e_date, 9, 1)
+        grid.addWidget(e_date, 7, 3)
+        grid.addWidget(e_e_date, 7, 4)
 
-        grid.addWidget(e_time, 10, 0)
-        grid.addWidget(e_e_time, 10, 1)
+        grid.addWidget(e_time, 8, 3)
+        grid.addWidget(e_e_time, 8, 4)
 
-        self.setLayout(grid)
-        # sets window relative to desktop and the commented code in the bottom hardcodes the location
-        window = self.frameGeometry()
-        center_point = QDesktopWidget().availableGeometry().center()
-        window.moveCenter(center_point)
-        self.move(window.topLeft())
+        grid.setColumnStretch(1, 10)
+        self.grid_fields.setLayout(grid)
 
-        # self.setGeometry(600, 250, 450, 450)
+    def create_vector_box(self):
+        self.form_vector_box = QGroupBox("Vectors:")
+        layout = QFormLayout()
+        # (TODO) Add Vector scroll window and button
+        # self.form_vector_box.setLayout(layout)
+
+        # (TODO) read,Save, and Process information from fields, Change name ok button and connect it
