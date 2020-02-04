@@ -11,6 +11,7 @@ class Approve_Changes(QDialog):
     def __init__(self):
         super(Approve_Changes, self).__init__()
 
+        hkjhkjh
         self.createMenu()
         self.createHorizontalGroupBox()
         self.createGridGroupBox()
