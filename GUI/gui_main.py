@@ -1,38 +1,62 @@
 import sys
-
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QDesktopWidget, QMainWindow, QAction, QApplication, QMenu, QWidget, QSizePolicy
+from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication, QMenu, QWidget,
+                             QSizePolicy, QHBoxLayout, QFrame, QSplitter)
+
+from GUI.gui_graph import gui_graph
 
 
 class gui_main(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.initRoot()
+        self.hbox = QHBoxLayout()
+        self.menuBar = self.menuBar()
+        self.toolBar = self.addToolBar('Toolbar')
+        self.nodeTable = node_table()
+        self.logTable = log_table()
+        self.graph = gui_graph()
 
-    def initRoot(self):
+        self.main()
+
+    def main(self):
+        self.setWindow()
+
+        self.setFileMenu(self.menuBar.addMenu('&File'))
+        self.setEditMenu(self.menuBar.addMenu('&Edit'))
+        self.setViewMenu(self.menuBar.addMenu('&View'))
+        self.setHelpMenu(self.menuBar.addMenu('&Help'))
+
+        self.initToolBar()
+        self.show()
+
+    def setWindow(self):
         self.statusBar().showMessage('Ready')
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Resources/Images/icon.png'))
 
-        self.initSize()
-        self.initMenuBar()
-        self.initToolBar()
-        self.show()
-
-    def initSize(self):
+        # Centers window to provide consistent launch of app
         self.resize(1280, 720)
         r = self.frameGeometry()
         p = QDesktopWidget().availableGeometry().center()
         r.moveCenter(p)
         self.move(r.topLeft())
 
-    def initMenuBar(self):
-        menubar = self.menuBar()
-        self.setFileMenu(menubar.addMenu('&File'))
-        self.setEditMenu(menubar.addMenu('&Edit'))
-        self.setViewMenu(menubar.addMenu('&View'))
-        self.setHelpMenu(menubar.addMenu('&Help'))
+        splitH = QSplitter(Qt.Horizontal)
+        splitH.addWidget(self.nodeTable)
+        splitH.addWidget(self.logTable)
+        splitH.setStretchFactor(1, 1)
+        splitH.setSizes([500, 600])
+
+        splitV = QSplitter(Qt.Vertical)
+        splitV.addWidget(splitH)
+        splitV.addWidget(self.graph)
+        splitV.setStretchFactor(1, 1)
+        splitV.setSizes([450, 280])
+
+        self.hbox.addWidget(splitV)
+        self.setCentralWidget(QWidget(self))
+        self.centralWidget().setLayout(self.hbox)
 
     def setFileMenu(self, file_menu):
         # (TODO): Add triggers
@@ -85,44 +109,44 @@ class gui_main(QMainWindow):
         edit_menu.addAction(export_act)
 
     def setViewMenu(self, view_menu):
-        graph_orientation = QMenu('Graph Orientation', self)
+        graph_orientation = QMenu('&Graph Orientation', self)
         timeline = QMenu('Timeline Interval', self)
 
-        # (TODO): Triggers in toggleGraphView
+        # (TODO): Add triggers
         orientation_h = QAction('&Horizontal', self)
         orientation_h.setStatusTip('Position graph horizontally')
         orientation_h.setCheckable(True)
-        orientation_h.triggered.connect(self.toggleGraphView)
+        orientation_h.triggered.connect(self.graph.toggleGraphView)
 
-        # (TODO): Triggers in toggleGraphView
+        # (TODO): Add triggers
         orientation_v = QAction('&Vertical', self)
         orientation_v.setStatusTip('Position graph vertically')
         orientation_v.setCheckable(True)
-        orientation_v.triggered.connect(self.toggleGraphView)
+        orientation_v.triggered.connect(self.graph.toggleGraphView)
 
-        # (TODO): Triggers in zoom
+        # (TODO): Add triggers
         seconds_i = QAction('&Seconds', self)
         seconds_i.setStatusTip('Set timeline interval to seconds')
         seconds_i.setCheckable(True)
-        seconds_i.triggered.connect(self.zoom)
+        seconds_i.triggered.connect(self.graph.zoom)
 
-        # (TODO): Triggers in zoom
+        # (TODO): Add triggers
         minutes_i = QAction('&Minutes', self)
         minutes_i.setStatusTip('Set timeline interval to minutes')
         minutes_i.setCheckable(True)
-        minutes_i.triggered.connect(self.zoom)
+        minutes_i.triggered.connect(self.graph.zoom)
 
-        # (TODO): Triggers in zoom
+        # (TODO): Add triggers
         hours_i = QAction('&Hours', self)
         hours_i.setStatusTip('Set timeline interval to hours')
         hours_i.setCheckable(True)
-        hours_i.triggered.connect(self.zoom)
+        hours_i.triggered.connect(self.graph.zoom)
 
-        # (TODO): Triggers in zoom
+        # (TODO): Add triggers
         days_i = QAction('&Days', self)
         days_i.setStatusTip('Set timeline interval to hours')
         days_i.setCheckable(True)
-        days_i.triggered.connect(self.zoom)
+        days_i.triggered.connect(self.graph.zoom)
 
         graph_orientation.addAction(orientation_h)
         graph_orientation.addAction(orientation_v)
@@ -134,7 +158,7 @@ class gui_main(QMainWindow):
         view_menu.addMenu(timeline)
 
     def setHelpMenu(self, help_menu):
-        # About button, missing trigger
+        # (TODO): Add triggers
         help_act = QAction('&Help', self)
         help_act.setShortcut('f1')
         help_act.setStatusTip('Show Tips')
@@ -142,53 +166,69 @@ class gui_main(QMainWindow):
 
         help_menu.addSeparator()
 
+        # (TODO): Add triggers
         about_act = QAction('&About', self)
         about_act.setStatusTip('About PMR Insight Collective Knowledge Tool')
         help_menu.addAction(about_act)
 
     # (TODO): Add more buttons according to future developments
-    # (TODO): Complete adding basic icons
     def initToolBar(self):
-        toolbar = self.addToolBar('Toolbar')
-        toolbar.setMovable(False)
-        toolbar.setIconSize(QSize(20, 20))
+        self.toolBar.setMovable(False)
+        self.toolBar.setIconSize(QSize(20, 20))
 
+        # (TODO): Add triggers
         undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
         undo_act.setShortcut('Ctrl+Z')
         undo_act.setStatusTip('Undo action')
-        toolbar.addAction(undo_act)
+        self.toolBar.addAction(undo_act)
 
+        # (TODO): Add triggers
         redo_act = QAction(QIcon('Resources/Images/redo.png'), '&Redo', self)
         redo_act.setShortcut('Ctrl+Shift+Z')
         redo_act.setStatusTip('Redo action')
-        toolbar.addAction(redo_act)
+        self.toolBar.addAction(redo_act)
 
-        toolbar.addSeparator()
+        self.toolBar.addSeparator()
 
+        # (TODO): Add triggers
         refresh_act = QAction(QIcon('Resources/Images/button-refresh-arrows.png'), '&Refresh', self)
         refresh_act.setShortcut('Ctrl+R')
         refresh_act.setStatusTip('Refresh project')
-        toolbar.addAction(refresh_act)
+        self.toolBar.addAction(refresh_act)
 
+        # (TODO): Add triggers
         commit_act = QAction(QIcon('Resources/Images/check-1.png'), '&Commit', self)
         commit_act.setShortcut('Ctrl+Shift+C')
         commit_act.setStatusTip('Commit changes')
-        toolbar.addAction(commit_act)
+        self.toolBar.addAction(commit_act)
 
+        # (TODO): Add triggers
         push_act = QAction(QIcon('Resources/Images/share-1.png'), '&Push', self)
         push_act.setShortcut('Ctrl+Shift+P')
         push_act.setStatusTip('Push commit')
-        toolbar.addAction(push_act)
+        self.toolBar.addAction(push_act)
 
         # Buttons after this are set to the right side
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        toolbar.addWidget(spacer)
+        self.toolBar.addWidget(spacer)
 
-    #(TODO): Complete
-    def toggleGraphView(self):
-        print('hi')
 
-    #(TODO): Complete
-    def zoom(self):
-        print('hello')
+class node_table(QFrame):
+    def __init__(self):
+        super().__init__()
+
+        self.main()
+
+    def main(self):
+        self.setFrameShape(QFrame.StyledPanel)
+
+
+class log_table(QFrame):
+    def __init__(self):
+        super().__init__()
+
+        self.main()
+
+    def main(self):
+        self.setFrameShape(QFrame.StyledPanel)
