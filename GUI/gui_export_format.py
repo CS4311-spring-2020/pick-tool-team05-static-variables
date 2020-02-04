@@ -30,7 +30,7 @@ class ExportFormat(QWidget):
         # Buttons
         export_button = QPushButton("Export", self)
         export_button.move(48,75)
-        #export_button.clicked.connect(self.downloadImage)
+        
 
         cancel_button = QPushButton('Cancel', self)
         cancel_button.move(145, 75)
