@@ -1,3 +1,4 @@
+import sys
 from PyQt5.QtWidgets import (QApplication, QComboBox, QDialog,
                              QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
                              QLabel, QLineEdit, QMenu, QMenuBar, QPushButton, QSpinBox, QTextEdit,
@@ -11,7 +12,6 @@ class Approve_Changes(QDialog):
     def __init__(self):
         super(Approve_Changes, self).__init__()
 
-        hkjhkjh
         self.createMenu()
         self.createHorizontalGroupBox()
         self.createGridGroupBox()
@@ -50,7 +50,7 @@ class Approve_Changes(QDialog):
         self.horizontalGroupBox = QGroupBox("Horizontal layout")
         layout = QHBoxLayout()
 
-        for i in range(Dialog.NumButtons):
+        for i in range(Approve_Changes.NumButtons):
             button = QPushButton("Button %d" % (i + 1))
             layout.addWidget(button)
 
@@ -60,7 +60,7 @@ class Approve_Changes(QDialog):
         self.gridGroupBox = QGroupBox("Grid layout")
         layout = QGridLayout()
 
-        for i in range(Dialog.NumGridRows):
+        for i in range(Approve_Changes.NumGridRows):
             label = QLabel("Line %d:" % (i + 1))
             lineEdit = QLineEdit()
             layout.addWidget(label, i + 1, 0)
@@ -83,5 +83,4 @@ class Approve_Changes(QDialog):
         layout.addRow(QLabel("Line 2, long text:"), QComboBox())
         layout.addRow(QLabel("Line 3:"), QSpinBox())
         self.formGroupBox.setLayout(layout)
-
 

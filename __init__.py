@@ -1,8 +1,19 @@
+from PyQt5.QtWidgets import (QApplication, QComboBox, QDialog,
+                             QDialogButtonBox, QFormLayout, QGridLayout, QGroupBox, QHBoxLayout,
+                             QLabel, QLineEdit, QMenu, QMenuBar, QPushButton, QSpinBox, QTextEdit,
+                             QVBoxLayout)
 import sys
-from PyQt5.QtWidgets import QApplication
 
-#To test stuff, call your GUIs here in your branch. If you merge to master, make sure to leave the file like this.
+from GUI.gui_approve_changes import Approve_Changes
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    sys.exit(app.exec_())
+    test = Approve_Changes()
+    sys.exit(test.exec_())
+
+
+
+#original
+#if __name__ == '__main__':
+ #   app = QApplication(sys.argv)
+  #  sys.exit(app.exec_())
