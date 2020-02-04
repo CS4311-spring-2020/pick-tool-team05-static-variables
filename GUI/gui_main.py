@@ -2,7 +2,8 @@ import sys
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication, QMenu, QWidget,
-                             QSizePolicy, QHBoxLayout, QFrame, QSplitter)
+                             QSizePolicy, QHBoxLayout, QFrame, QSplitter, QTableWidget,
+                             QTableWidgetItem, QVBoxLayout, QAbstractScrollArea, QHeaderView, QToolBar, QPushButton)
 
 from GUI.gui_graph import gui_graph
 
@@ -44,13 +45,13 @@ class gui_main(QMainWindow):
 
         splitH = QSplitter(Qt.Horizontal)
         splitH.addWidget(self.nodeTable)
-        splitH.addWidget(self.logTable)
+        splitH.addWidget(self.graph)
         splitH.setStretchFactor(1, 1)
         splitH.setSizes([500, 600])
 
         splitV = QSplitter(Qt.Vertical)
         splitV.addWidget(splitH)
-        splitV.addWidget(self.graph)
+        splitV.addWidget(self.logTable)
         splitV.setStretchFactor(1, 1)
         splitV.setSizes([450, 280])
 
@@ -217,18 +218,87 @@ class gui_main(QMainWindow):
 class node_table(QFrame):
     def __init__(self):
         super().__init__()
-
+        self.layout = QVBoxLayout()
+        self.table = QTableWidget()
+        self.menu = QToolBar()
         self.main()
 
     def main(self):
         self.setFrameShape(QFrame.StyledPanel)
+        self.setLayout(self.layout)
+        self.initMenu()
+        self.initTable()
+
+    # (TODO): Apply stylesheet to buttons correctly
+    # (TODO): Add correct buttons
+    # (TODO): Add triggers
+    def initMenu(self):
+        self.layout.setMenuBar(self.menu)
+        self.menu.setMovable(False)
+        self.menu.setStyleSheet("""
+        QPushButton {
+         margin: 6px; 
+         padding: 6px; 
+         margin-bottom: 0px;
+         }
+        """)
+
+        btn_add_vector = QPushButton("Add Vector...", self)
+        self.menu.addWidget(btn_add_vector)
+        btn_edit_vector = QPushButton("Edit Vector...", self)
+        self.menu.addWidget(btn_edit_vector)
+        btn_delete_vector = QPushButton("Delete Vector...", self)
+        self.menu.addWidget(btn_delete_vector)
+
+    # (TODO): Add way of getting column # based on nodes in DB, hard coded for now based on SRS 1.7
+    # (TODO): Set columns to node attributes
+    def initTable(self):
+        self.table.setRowCount(4)
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(['ID', 'Host', 'Source', 'Source Type', 'Content'])
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.layout.addWidget(self.table)
 
 
 class log_table(QFrame):
     def __init__(self):
         super().__init__()
-
+        self.layout = QVBoxLayout()
+        self.table = QTableWidget()
+        self.menu = QToolBar()
         self.main()
 
     def main(self):
         self.setFrameShape(QFrame.StyledPanel)
+        self.setLayout(self.layout)
+        self.initMenu()
+        self.initTable()
+
+    # (TODO): Apply stylesheet to buttons correctly
+    # (TODO): Add correct buttons
+    # (TODO): Add triggers
+    def initMenu(self):
+        self.layout.setMenuBar(self.menu)
+        self.menu.setMovable(False)
+        self.menu.setStyleSheet("""
+        QPushButton {
+         margin: 6px; 
+         padding: 6px; 
+         margin-bottom: 0px;
+         }
+        """)
+
+        btn_log_files = QPushButton("Log Files...", self)
+        self.menu.addWidget(btn_log_files)
+        btn_edit_log = QPushButton("Edit Log...", self)
+        self.menu.addWidget(btn_edit_log)
+
+    # (TODO): Add way of getting column # based on log entries in DB, hard coded for now based on SRS 1.7
+    def initTable(self):
+        self.table.setRowCount(5)
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels(['ID', 'Timestamp', 'Host', 'Source', 'Source Type', 'Content'])
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.layout.addWidget(self.table)
