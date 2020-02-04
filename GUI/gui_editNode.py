@@ -40,7 +40,7 @@ class editNode(QWidget):
         self.nameLabel.setText("Name:  " + nameID)
         self.nameLabel.move(30, 120)
 
-        # hardcoded need to combine w/ pthers code
+        # hardcoded need to combine w/ others code
         timeID = "1/1/20   05:23"
         self.timeLabel = QLabel(self)
         self.timeLabel.setText("Time of Occurrence:  " + timeID)
