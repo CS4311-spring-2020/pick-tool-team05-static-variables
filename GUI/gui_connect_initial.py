@@ -32,9 +32,7 @@ class ConnectHost(QWidget):
         # Buttons in Window
         self.scan_button = QPushButton('Scan for Hosts', self)
         self.scan_button.move(110, 160)
-
         self.scan_button.clicked.connect(self.connect_error_message)  # Message box
-
         self.cancel_button = QPushButton('Cancel', self)
         self.cancel_button.move(290,160)
         self.cancel_button.clicked.connect(self.close)
