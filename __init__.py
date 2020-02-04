@@ -10,16 +10,16 @@ from GUI.gui_local_warning import LocalCopyWarning
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    #connect_host = ConnectHost()
-    #connect_host.show()
+    connect_host = ConnectHost()
+    connect_host.show()
 
-    #local_copy_warning = LocalCopyWarning()
-    #local_copy_warning.show()
+    local_copy_warning = LocalCopyWarning()
+    local_copy_warning.show()
 
     event_config_window = EventConfigError()
     event_config_window.show()
 
-    #export_image = ExportGraphImage()
-    #export_image.show()
+    export_image = ExportGraphImage()
+    export_image.show()
 
     sys.exit(app.exec_())
