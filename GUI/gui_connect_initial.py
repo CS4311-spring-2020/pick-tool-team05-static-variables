@@ -25,19 +25,26 @@ class ConnectHost(QWidget):
         name_label.move(70, 90)
 
         # Text Box in Window
-        self.textbox = QLineEdit(self)
-        self.textbox.move(165, 85)
-        self.textbox.resize(200, 30)
+        textbox = QLineEdit(self)
+        textbox.move(165, 85)
+        textbox.resize(200, 30)
 
         # Buttons in Window
+
         self.scan_button = QPushButton('Scan for Hosts', self)
         self.scan_button.move(110, 160)
-
         self.scan_button.clicked.connect(self.connect_error_message)  # Message box
-
         self.cancel_button = QPushButton('Cancel', self)
         self.cancel_button.move(290,160)
         self.cancel_button.clicked.connect(self.close)
+
+        scan_button = QPushButton('Scan for Hosts', self)
+        scan_button.move(110, 160)
+        scan_button.clicked.connect(self.connect_error_message)  # Message box
+        cancel_button = QPushButton('Cancel', self)
+        cancel_button.move(290,160)
+        cancel_button.clicked.connect(self.close)
+
 
         self.show()
 
@@ -48,12 +55,14 @@ class ConnectHost(QWidget):
         self.move(qr.topLeft())
 
 
+    def connect_error_message(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("Error")
+        msg.setText("The system could not connect to a network")
 
-
-
-
-
-
-
+        msg.setStandardButtons(QMessageBox.Ok | QMessageBox.Retry)
+        msg.setDefaultButton(QMessageBox.Ok)
+        # msg.buttonClicked.connect()    TODO: Connect to Main Page of app
+        x = msg.exec()
 
 
