@@ -4,8 +4,6 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
                              QLabel, QLineEdit, QMessageBox, QRadioButton, QVBoxLayout, QWizard,
                              QWizardPage)
 
-# gjhghjggj
-
 class ClassWizard(QWizard):
     def __init__(self, parent=None):
         super(ClassWizard, self).__init__(parent)
