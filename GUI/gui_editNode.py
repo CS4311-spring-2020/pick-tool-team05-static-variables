@@ -23,40 +23,63 @@ class editNode(QWidget):
         self.idLabel.move(30, 30)
 
         # hard coded need to combine with others code
-        artifactID = "none"
-        self.artifactLabel = QLabel(self)
-        self.artifactLabel.setText("Artifact:  " + artifactID)
-        self.artifactLabel.move(30, 60)
+        sourceID = "C:\Documents\Teams"
+        self.sourceLabel = QLabel(self)
+        self.sourceLabel.setText("Source:  ")
+        self.sourceLabel.move(30, 60)
+        self.sourceBox = QLineEdit(self)
+        self.sourceBox.setText(sourceID)
+        self.sourceBox.move(100, 55)
+
 
         # hard coded need to combine with others code
-        logID = "none"
         self.logLabel = QLabel(self)
-        self.logLabel.setText("Log Entry:  " + logID)
+        self.logLabel.setText("Log Entry:  ")
         self.logLabel.move(30, 90)
+        combo = QComboBox(self)
+        combo.addItem("sigA")
+        combo.addItem("sigB")
+        combo.addItem("sigC")
+        combo.move(100, 83)
+        combo.activated[str].connect(self.onActivated)
 
         # hard coded need to combine w/ others code
         nameID = "Detection"
         self.nameLabel = QLabel(self)
-        self.nameLabel.setText("Name:  " + nameID)
+        self.nameLabel.setText("Name:  ")
         self.nameLabel.move(30, 120)
+        self.nameBox = QLineEdit(self)
+        self.nameBox.setText(nameID)
+        self.nameBox.move(100, 115)
 
         # hardcoded need to combine w/ others code
-        timeID = "1/1/20   05:23"
+        timeID = "05:23    09/10/19"
         self.timeLabel = QLabel(self)
-        self.timeLabel.setText("Time of Occurrence:  " + timeID)
+        self.timeLabel.setText("Timestamp:  ")
         self.timeLabel.move(30, 150)
+        self.timeBox = QLineEdit(self)
+        self.timeBox.setText(timeID)
+        self.timeBox.move(100, 145)
+
 
         # hard coded need to combine with others code
         eventID = "Blue"
         self.eventLabel = QLabel(self)
-        self.eventLabel.setText("Event Type:  " + eventID)
+        self.eventLabel.setText("Event Type:  ")
         self.eventLabel.move(30, 180)
+        self.eventBox = QLineEdit(self)
+        self.eventBox.setText(eventID)
+        self.eventBox.move(100, 175)
 
         # hard coded need to combine with others code
         creatorID = "White"
         self.creatorLabel = QLabel(self)
-        self.creatorLabel.setText("Creator:  " + creatorID)
+        self.creatorLabel.setText("Creator:  ")
         self.creatorLabel.move(30, 210)
+        self.creatorBox = QLineEdit(self)
+        self.creatorBox.setText(creatorID)
+        self.creatorBox.move(100, 205)
+
 
         # hard coded need to combine with others code
         self.iconLabel = QLabel(self)
