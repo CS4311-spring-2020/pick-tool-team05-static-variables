@@ -5,10 +5,11 @@ from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication,
                              QSizePolicy, QHBoxLayout, QFrame, QSplitter, QTableWidget,
                              QTableWidgetItem, QVBoxLayout, QAbstractScrollArea, QHeaderView, QToolBar, QPushButton)
 
-from GUI.gui_graph import gui_graph
+from GUI.gui_node_configuration_g import Graph
 
+#hello, test
 
-class gui_main(QMainWindow):
+class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         self.hbox = QHBoxLayout()
@@ -16,7 +17,7 @@ class gui_main(QMainWindow):
         self.toolBar = self.addToolBar('Toolbar')
         self.nodeTable = node_table()
         self.logTable = log_table()
-        self.graph = gui_grap
+        self.graph = Graph()
 
         self.main()
 
