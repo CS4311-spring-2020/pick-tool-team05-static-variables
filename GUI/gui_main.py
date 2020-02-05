@@ -16,7 +16,7 @@ class gui_main(QMainWindow):
         self.toolBar = self.addToolBar('Toolbar')
         self.nodeTable = node_table()
         self.logTable = log_table()
-        self.graph = gui_graph()
+        self.graph = gui_grap
 
         self.main()
 
