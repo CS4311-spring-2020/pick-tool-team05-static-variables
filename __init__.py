@@ -4,12 +4,13 @@ from PyQt5.QtWidgets import (QApplication, QComboBox, QDialog,
                              QVBoxLayout)
 import sys
 
-from GUI.gui_approve_changes import Approve_Changes
+#from GUI.gui_approve_changes import Approve_Changes
+from GUI.gui_delete_vector import Delete_Vector
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    test = Approve_Changes()
-    sys.exit(test.exec_())
+    test = Delete_Vector()
+    sys.exit(app.exec_())
 
 
 
