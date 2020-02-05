@@ -38,15 +38,5 @@ class Launcher(QWidget):
 
         self.button_grid.setLayout(layout)
         # (TODO) Connect functionality to buttons.
-    '''
-    This is a way of connecting a button, there for sure are more elegant and better ways.
 
-        btn_cancel.clicked.connect(self.button_clicked)
-        btn_host.clicked.connect(self.button_clicked)
-        btn_connect.clicked.connect(self.button_clicked)
-
-    def button_clicked(self):
-
-        sender = self.sender()
-        self.
-    '''
+        # def exit_button(self):
