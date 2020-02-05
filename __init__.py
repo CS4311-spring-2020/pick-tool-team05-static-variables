@@ -6,5 +6,4 @@ from GUI.gui_main import gui_main
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    test = gui_main()
     sys.exit(app.exec_())
