@@ -7,19 +7,19 @@ class DirectoryConfiguration(QWidget):
     def __init__(self):
         super(DirectoryConfiguration, self).__init__()
 
-        self.createGridGroupBox()
+        self.create_grid_fields()
         self.show()
 
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.gridGroupBox)
+        main_layout.addWidget(self.grid_fields)
         self.setLayout(main_layout)
 
         self.setWindowTitle("Directory Configuration")
-        # self.setWindowIcon(QIcon("../Resources/Images/"))
+        self.setWindowIcon(QIcon("../Resources/Images/paper-write.png"))
 
 
-    def createGridGroupBox(self):
-        self.gridGroupBox = QGroupBox("Directory Configuration")
+    def create_grid_fields(self):
+        self.grid_fields = QGroupBox("Directory Configuration")
         layout = QGridLayout()
 
         d_path = QLabel("Root Directory:")
@@ -47,6 +47,6 @@ class DirectoryConfiguration(QWidget):
         start_ingestion_button = QPushButton("Start data ingestion")
         layout.addWidget(start_ingestion_button, 6, 2)
 
-        self.gridGroupBox.setLayout(layout)
+        self.grid_fields.setLayout(layout)
 
         # (TODO) Connect Button, Read, save process info, maybe change window size

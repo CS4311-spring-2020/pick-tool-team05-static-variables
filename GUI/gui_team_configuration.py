@@ -9,18 +9,18 @@ class TeamConfiguration(QWidget):
     def __init__(self):
         super(TeamConfiguration, self).__init__()
 
-        self.createGridGroupBox()
+        self.create_grid_fields()
         self.show()
 
         main_layout = QVBoxLayout()
-        main_layout.addWidget(self.gridGroupBox)
+        main_layout.addWidget(self.grid_fields)
         self.setLayout(main_layout)
 
         self.setWindowTitle("Team Configuration")
-        # self.setWindowIcon(QIcon("../Resources/Images/"))
+        self.setWindowIcon(QIcon("../Resources/Images/paper-write.png"))
 
-    def createGridGroupBox(self):
-        self.gridGroupBox = QGroupBox("Team Configuration")
+    def create_grid_fields(self):
+        self.grid_fields = QGroupBox("Team Configuration")
         layout = QGridLayout()
 
         check_box_lead = QCheckBox("Lead")
@@ -42,5 +42,5 @@ class TeamConfiguration(QWidget):
 
         # layout.setColumnStretch(1, 10)
         # layout.setColumnStretch(2, 20)
-        self.gridGroupBox.setLayout(layout)
+        self.grid_fields.setLayout(layout)
         # (TODO) Connect Buttons, Resize to smaller window

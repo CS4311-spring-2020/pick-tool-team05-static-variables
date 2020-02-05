@@ -16,7 +16,7 @@ class EventConfiguration(QWidget):
         self.setLayout(main_layout)
 
         self.setWindowTitle("Event Configuration")
-        # self.setWindowIcon(QIcon("../Resources/Images/")
+        self.setWindowIcon(QIcon("../Resources/Images/paper-write.png"))
 
 
     def create_field_box(self):
