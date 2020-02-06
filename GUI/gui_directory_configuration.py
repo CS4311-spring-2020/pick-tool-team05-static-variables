@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QVBoxLayout)
+from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QVBoxLayout,
+                             QDesktopWidget)
 from PyQt5.QtGui import QIcon
 
 
@@ -16,6 +17,12 @@ class DirectoryConfiguration(QWidget):
 
         self.setWindowTitle("Directory Configuration")
         self.setWindowIcon(QIcon("../Resources/Images/paper-write.png"))
+
+        self.resize(400, 300)
+        r = self.frameGeometry()
+        p = QDesktopWidget().availableGeometry().center()
+        r.moveCenter(p)
+        self.move(r.topLeft())
 
 
     def create_grid_fields(self):

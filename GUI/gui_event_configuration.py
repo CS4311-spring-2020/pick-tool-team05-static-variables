@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QGridLayout, QGroupBox, QPushButton)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QGridLayout, QGroupBox, QPushButton,
+                             QDesktopWidget)
 from PyQt5.QtGui import QIcon
 
 
@@ -17,6 +18,12 @@ class EventConfiguration(QWidget):
 
         self.setWindowTitle("Event Configuration")
         self.setWindowIcon(QIcon("../Resources/Images/paper-write.png"))
+
+        self.resize(400, 300)
+        r = self.frameGeometry()
+        p = QDesktopWidget().availableGeometry().center()
+        r.moveCenter(p)
+        self.move(r.topLeft())
 
 
     def create_field_box(self):

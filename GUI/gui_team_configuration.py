@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox,
                              QLabel, QLineEdit, QPushButton,
-                             QVBoxLayout, QCheckBox)
+                             QVBoxLayout, QCheckBox, QDesktopWidget)
 from PyQt5.QtGui import QIcon
 
 
@@ -18,6 +18,12 @@ class TeamConfiguration(QWidget):
 
         self.setWindowTitle("Team Configuration")
         self.setWindowIcon(QIcon("../Resources/Images/paper-write.png"))
+
+        self.resize(400, 300)
+        r = self.frameGeometry()
+        p = QDesktopWidget().availableGeometry().center()
+        r.moveCenter(p)
+        self.move(r.topLeft())
 
     def create_grid_fields(self):
         self.grid_fields = QGroupBox("Team Configuration")
