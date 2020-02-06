@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox, QVBoxLayout, QTableWidget, QTableWidgetItem,
                              QPushButton, QCheckBox, QDesktopWidget)
 from PyQt5.QtGui import QIcon
-
+from GUI.gui_main import gui_main
 
 class VectorConfiguration(QWidget):
 

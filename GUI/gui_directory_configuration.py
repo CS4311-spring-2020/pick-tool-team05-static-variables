@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox, QLabel, QLineEdit, QPushButton, QVBoxLayout,
                              QDesktopWidget)
 from PyQt5.QtGui import QIcon
+from GUI.gui_event_configuration import EventConfiguration
 
 
 class DirectoryConfiguration(QWidget):

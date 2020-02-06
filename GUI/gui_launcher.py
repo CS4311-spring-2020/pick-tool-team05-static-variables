@@ -17,7 +17,7 @@ class Launcher(QWidget):
         label = QLabel()
         logo = QPixmap('../Resources/Images/logo_large.png')
         label.setPixmap(logo)
-        # (TODO) Change logo position
+
         main_layout = QVBoxLayout()
         main_layout.addWidget(label)
         main_layout.addWidget(self.button_grid)
