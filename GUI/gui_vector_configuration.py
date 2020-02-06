@@ -36,10 +36,9 @@ class VectorConfiguration(QWidget):
         table.verticalHeader().setVisible(False)
         table.horizontalHeader().setStretchLastSection(True)
 
-        # cb = QCheckBox()
+        t_widget = QWidget()
+        cb = QCheckBox()
 
-        # layout.addWidget(table.setItem(0, 0, cb))
-        # table.setItem(0, 0, cb)
 
         add_vector_btn = QPushButton("Add Vector")
         delete_vector_btn = QPushButton("Delete Vector")

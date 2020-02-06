@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication,
                              QSizePolicy, QHBoxLayout, QFrame, QSplitter, QTableWidget,
                              QTableWidgetItem, QVBoxLayout, QAbstractScrollArea, QHeaderView, QToolBar, QPushButton)
 
-from GUI.gui_graph import gui_graph
+# from GUI.gui_graph import gui_graph
 
 
 class gui_main(QMainWindow):
