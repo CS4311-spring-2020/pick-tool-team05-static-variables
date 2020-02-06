@@ -8,6 +8,7 @@ class DirectoryConfiguration(QWidget):
     def __init__(self):
         super(DirectoryConfiguration, self).__init__()
 
+        self.launch_start_ingestion_btn()
         self.create_grid_fields()
         self.show()
 
@@ -23,7 +24,6 @@ class DirectoryConfiguration(QWidget):
         p = QDesktopWidget().availableGeometry().center()
         r.moveCenter(p)
         self.move(r.topLeft())
-
 
     def create_grid_fields(self):
         self.grid_fields = QGroupBox("Directory Configuration")
@@ -51,9 +51,13 @@ class DirectoryConfiguration(QWidget):
         layout.addWidget(d_white, 4, 0)
         layout.addWidget(e_d_white, 4, 1, 1, 4)
 
-        start_ingestion_button = QPushButton("Start data ingestion")
-        layout.addWidget(start_ingestion_button, 6, 2)
+        start_ingestion_btn = QPushButton("Start data ingestion")
+        start_ingestion_btn.setCheckable(True)
+        start_ingestion_btn.clicked.connect(self.launch_start_ingestion_btn)
+
+        layout.addWidget(start_ingestion_btn, 6, 2)
 
         self.grid_fields.setLayout(layout)
 
-        # (TODO) Connect Button, Read, save process info, maybe change window size
+    def launch_start_ingestion_btn(self):
+        self.hide()

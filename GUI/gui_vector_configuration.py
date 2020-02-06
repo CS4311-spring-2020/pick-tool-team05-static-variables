@@ -8,6 +8,9 @@ class VectorConfiguration(QWidget):
     def __init__(self):
         super(VectorConfiguration, self).__init__()
 
+        self.launch_add_vector_btn()
+        self.launch_edit_vector_btn()
+        self.launch_delete_vector_btn()
         self.create_grid_fields()
         self.show()
 
@@ -42,6 +45,15 @@ class VectorConfiguration(QWidget):
         delete_vector_btn = QPushButton("Delete Vector")
         edit_vector_btn = QPushButton("Edit Vector")
 
+        add_vector_btn.setCheckable(True)
+        add_vector_btn.clicked.connect(self.launch_add_vector_btn)
+
+        delete_vector_btn.setCheckable(True)
+        delete_vector_btn.clicked.connect(self.launch_delete_vector_btn)
+
+        edit_vector_btn.setCheckable(True)
+        edit_vector_btn.clicked.connect(self.launch_edit_vector_btn)
+
         layout.addWidget(table, 0, 0, 4, 3)
         layout.addWidget(add_vector_btn, 4, 0)
         layout.addWidget(delete_vector_btn, 4, 1)
@@ -49,4 +61,11 @@ class VectorConfiguration(QWidget):
 
         self.grid_fields.setLayout(layout)
 
-    # (TODO) Finish window, connect buttons and process info.
+    def launch_add_vector_btn(self):
+        self.hide()
+
+    def launch_delete_vector_btn(self):
+        self.hide()
+
+    def launch_edit_vector_btn(self):
+        self.hide()

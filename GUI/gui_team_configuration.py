@@ -9,6 +9,7 @@ class TeamConfiguration(QWidget):
     def __init__(self):
         super(TeamConfiguration, self).__init__()
 
+        self.launch_connect_btn()
         self.create_grid_fields()
         self.show()
 
@@ -35,18 +36,19 @@ class TeamConfiguration(QWidget):
         e_lead_ip = QLineEdit()
 
         established_connections = QLabel("No. of established connections to the lead's IP address:")
-        # no_connections = QLabel()
 
-        connect_button = QPushButton("Connect")
+        connect_btn = QPushButton("Connect")
+        connect_btn.setCheckable(True)
+        connect_btn.clicked.connect(self.launch_connect_btn)
 
         layout.addWidget(check_box_lead, 0, 1)
         layout.addWidget(lead_ip, 0, 2)
         layout.addWidget(e_lead_ip, 0, 3)
         layout.addWidget(established_connections, 1, 1)
-        # layout.addWidget(no_connections)
-        layout.addWidget(connect_button, 2, 2)
 
-        # layout.setColumnStretch(1, 10)
-        # layout.setColumnStretch(2, 20)
+        layout.addWidget(connect_btn, 2, 2)
+
         self.grid_fields.setLayout(layout)
-        # (TODO) Connect Buttons, Resize to smaller window
+
+    def launch_connect_btn(self):
+        self.hide()

@@ -9,7 +9,8 @@ class Launcher(QWidget):
     def __init__(self):
         super(Launcher, self).__init__()
 
-        self.launch_team_configuration()
+        self.launch_team_configuration_btn()
+        self.launch_cancel_btn()
         self.create_grid_buttons()
         self.show()
 
@@ -36,21 +37,26 @@ class Launcher(QWidget):
         layout = QGridLayout()
 
         btn_connect = QPushButton("Connect", self)
-        layout.addWidget(btn_connect, 0, 0)
+        layout.addWidget(btn_connect, 0, 2)
         btn_connect.setCheckable(True)
-        btn_connect.clicked.connect(self.launch_team_configuration)
+        btn_connect.clicked.connect(self.launch_team_configuration_btn)
         # btn_connect.setDefault(True)
         # btn_connect.clicked(btn)
 
-        btn_host = QPushButton("Host", self)
-        layout.addWidget(btn_host, 0, 2)
+        # btn_host = QPushButton("Host", self)
+        # layout.addWidget(btn_host, 0, 2)
 
         btn_cancel = QPushButton("Cancel", self)
-        layout.addWidget(btn_cancel, 2, 1)
+        layout.addWidget(btn_cancel, 0, 0)
+        btn_cancel.setCheckable(True)
+        btn_cancel.clicked.connect(self.launch_cancel_btn)
 
         self.button_grid.setLayout(layout)
 
-    def launch_team_configuration(self):
+    def launch_team_configuration_btn(self):
         self.hide()
         launch_window = TeamConfiguration()
         launch_window.show()
+
+    def launch_cancel_btn(self):
+        self.hide()

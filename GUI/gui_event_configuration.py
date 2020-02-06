@@ -8,6 +8,7 @@ class EventConfiguration(QWidget):
     def __init__(self):
         super(EventConfiguration, self).__init__()
 
+        self.launch_save_event_btn()
         self.create_field_box()
         self.show()
 
@@ -63,12 +64,13 @@ class EventConfiguration(QWidget):
         grid.addWidget(e_time, 4, 3)
         grid.addWidget(e_e_time, 4, 4)
 
-        # grid.setColumnStretch(1, 10)
+        save_event_btn = QPushButton("Save Event")
+        save_event_btn.setCheckable(True)
+        save_event_btn.clicked.connect(self.launch_save_event_btn)
 
-        save_event_button = QPushButton("Save Event")
-
-        grid.addWidget(save_event_button, 8, 2)
+        grid.addWidget(save_event_btn, 8, 2)
 
         self.grid_fields.setLayout(grid)
 
-        # (TODO) read,Save, and Process information from fields, Change name ok button and connect it
+    def launch_save_event_btn(self):
+        self.hide()
