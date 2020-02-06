@@ -23,13 +23,10 @@ class IconConfiguration(QWidget):
         # Buttons
         add_button = QPushButton("Add", self)
         add_button.move(75, 180)
-
         delete_button = QPushButton('Delete', self)
         delete_button.move(195, 180)
-
         edit_button = QPushButton('Edit', self)
         edit_button.move(320, 180)
-
         self.show()
 
     def createTable(self):
@@ -43,8 +40,7 @@ class IconConfiguration(QWidget):
         self.table.move(5,5)
         self.table.resize(5,5)
 
-        # Checkboxes
-
+        # TODO: Add the check boxes and icons in the table
 
     def center(self):
         qr = self.frameGeometry()

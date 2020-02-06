@@ -30,11 +30,12 @@ class ExportFormat(QWidget):
         # Buttons
         export_button = QPushButton("Export", self)
         export_button.move(48,75)
-        
 
         cancel_button = QPushButton('Cancel', self)
         cancel_button.move(145, 75)
         cancel_button.clicked.connect(self.close)
+
+        self.show()
 
     def center(self):
         qr = self.frameGeometry()
