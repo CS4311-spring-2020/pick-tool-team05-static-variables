@@ -1,127 +1,137 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QLabel, QDesktopWidget, QComboBox, QFileDialog, QSplitter, \
+    QHBoxLayout, QListWidget, QGridLayout, QMessageBox, QTableWidget, QVBoxLayout, QGroupBox, QFrame
+from PyQt5.uic.properties import QtGui
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QLabel, QDesktopWidget, QComboBox, QFileDialog, QAction
 
-
-class editNode(QWidget):
-
+class EditNode(QFrame):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Edit Node")
-        self.setGeometry(400, 400, 400, 400)
-        self.UI()
+        self.layout = QHBoxLayout()
+        self.relationships = RelationshipsTable()
+        self.node_info = NodeInfo()
+        self.main()
+
+    def main(self):
+        self.setWindow()
+        self.setLayout(self.layout)
+
+        splitH = QSplitter(Qt.Horizontal)
+        splitH.addWidget(self.node_info)
+        splitH.addWidget(self.relationships)
+        splitH.setStretchFactor(1, 1)
+        splitH.setSizes([300, 300])
+
+        self.layout.addWidget(splitH)
+        self.show()
+
+    def setWindow(self):
+        self.setWindowTitle('Edit Node')
+        self.resize(800, 300)
+        r = self.frameGeometry()
+        p = QDesktopWidget().availableGeometry().center()
+        r.moveCenter(p)
+        self.move(r.topLeft())
 
 
-    def UI(self):
-        window = self.frameGeometry()
-        adjW = QDesktopWidget().availableGeometry().center()
-        window.moveCenter(adjW)
+class RelationshipsTable(QFrame):
+    def __init__(self):
+        super().__init__()
+        self.layout = QHBoxLayout()
+        self.table = QTableWidget()
+        self.main()
 
-        # hard coded need to combine with others code
+    def main(self):
+        self.setLayout(self.layout)
+        self.initTable()
+
+    def initTable(self):
+        self.table.setRowCount(5)
+        self.table.setColumnCount(3)
+        self.table.setHorizontalHeaderLabels(["Relationship ID", "Child", "Label"])
+        self.table.verticalHeader().setVisible(False)
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.layout.addWidget(self.table)
+
+
+class NodeInfo(QFrame):
+    def __init__(self):
+        super().__init__()
+        self.layout = QHBoxLayout()
+        self.main()
+        self.show()
+
+    def main(self):
+        self.setLayout(self.layout)
+        self.nodeInfo()
+
+    def nodeInfo(self):
+        self.grid = QGridLayout()
+        self.layout.addLayout(self.grid)
+        # has the node info
         nodeID = "1-004"
-        self.idLabel = QLabel(self)
-        self.idLabel.setText("ID " + nodeID)
-        self.idLabel.move(30, 30)
+        self.grid.addWidget(QLabel("Node ID: " + nodeID),0,0)
 
+        #row, col
         # hard coded need to combine with others code
-        sourceID = "C:\Documents\Teams"
-        self.sourceLabel = QLabel(self)
-        self.sourceLabel.setText("Source:  ")
-        self.sourceLabel.move(30, 60)
-        self.sourceBox = QLineEdit(self)
-        self.sourceBox.setText(sourceID)
-        self.sourceBox.move(100, 55)
-
-
-        # hard coded need to combine with others code
-        self.logLabel = QLabel(self)
-        self.logLabel.setText("Log Entry:  ")
-        self.logLabel.move(30, 90)
+        self.grid.addWidget(QLabel("Log Entry"),1,0)
         combo = QComboBox(self)
+        self.grid.addWidget((combo),1,1)
         combo.addItem("sigA")
         combo.addItem("sigB")
         combo.addItem("sigC")
-        combo.move(100, 83)
         combo.activated[str].connect(self.onActivated)
 
         # hard coded need to combine w/ others code
         nameID = "Detection"
-        self.nameLabel = QLabel(self)
-        self.nameLabel.setText("Name:  ")
-        self.nameLabel.move(30, 120)
-        self.nameBox = QLineEdit(self)
-        self.nameBox.setText(nameID)
-        self.nameBox.move(100, 115)
+        self.grid.addWidget(QLabel("Name: "),2,0)
+        self.grid.addWidget(QLineEdit(nameID),2,1)
 
         # hardcoded need to combine w/ others code
-        timeID = "05:23    09/10/19"
-        self.timeLabel = QLabel(self)
-        self.timeLabel.setText("Timestamp:  ")
-        self.timeLabel.move(30, 150)
-        self.timeBox = QLineEdit(self)
-        self.timeBox.setText(timeID)
-        self.timeBox.move(100, 145)
-
+        timeID = " 05:23    09/10/19"
+        self.grid.addWidget(QLabel("Timestamp :"),3,0)
+        self.grid.addWidget(QLineEdit(timeID),3,1)
 
         # hard coded need to combine with others code
         eventID = "Blue"
-        self.eventLabel = QLabel(self)
-        self.eventLabel.setText("Event Type:  ")
-        self.eventLabel.move(30, 180)
-        self.eventBox = QLineEdit(self)
-        self.eventBox.setText(eventID)
-        self.eventBox.move(100, 175)
+        self.grid.addWidget(QLabel("Event Type: "),4,0)
+        self.grid.addWidget(QLineEdit(eventID),4,1)
 
         # hard coded need to combine with others code
         creatorID = "White"
-        self.creatorLabel = QLabel(self)
-        self.creatorLabel.setText("Creator:  ")
-        self.creatorLabel.move(30, 210)
-        self.creatorBox = QLineEdit(self)
-        self.creatorBox.setText(creatorID)
-        self.creatorBox.move(100, 205)
-
+        self.grid.addWidget(QLabel("Creator: "),5,0)
+        self.grid.addWidget(QLineEdit(creatorID),5,1)
 
         # hard coded need to combine with others code
-        self.iconLabel = QLabel(self)
-        self.iconLabel.setText("Icon")
-        self.iconLabel.move(30, 240)
-        combo = QComboBox(self)
-        combo.addItem("iconA")
-        combo.addItem("iconB")
-        combo.addItem("iconC")
-        combo.addItem("iconD")
-        combo.move(90, 240)
-        combo.activated[str].connect(self.onActivated)
+        self.grid.addWidget(QLabel("Icon "),6,0)
+        combo2 = QComboBox(self)
+        self.grid.addWidget((combo2),6,1)
+        combo2.addItem("iconA")
+        combo2.addItem("iconB")
+        combo2.addItem("iconC")
+        combo2.addItem("iconD")
+        combo2.activated[str].connect(self.onActivated)
 
-        self.descriptionBox = QLineEdit(self)
-        self.descriptionBox.move(100,290)
-        self.descriptionBox.resize(200,60)
-
-        self.descriptionLabel = QLabel(self)
-        self.descriptionLabel.setText("Description")
-        self.descriptionLabel.move(30,300)
-
-        self.importButton = QPushButton("Import...", self)
-        self.importButton.move(190, 238)
+        self.importButton = QPushButton("Import",self)
+        self.grid.addWidget((self.importButton),6,2)
         self.importButton.clicked.connect(self.file_open)
 
+        self.grid.addWidget(QLabel("Description"),7,0)
+        self.grid.addWidget(QLineEdit(self),7,1)
 
-        self.saveButton = QPushButton("Save Changes", self)
-        self.saveButton.move(100, 360)
+        self.saveButton = QPushButton("Save", self)
+        self.grid.addWidget((self.saveButton),8,0)
         self.saveButton.clicked.connect(self.close)
 
         self.cancelButton = QPushButton("Cancel", self)
-        self.cancelButton.move(200, 360)
+        self.grid.addWidget((self.cancelButton),8,1)
         self.cancelButton.clicked.connect(self.close)
 
-        self.show()
 
     def file_open(self):
         name, _ = QFileDialog.getOpenFileName(self, 'Open File', options=QFileDialog.DontUseNativeDialog)
         file = open(name, 'r')
 
-    # for dropdown menu
     def onActivated(self, text):
         self.lbl.setText(text)
         self.lbl.adjustSize()
-        # self.show()
