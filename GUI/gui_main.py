@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication,
                              QSizePolicy, QHBoxLayout, QFrame, QSplitter, QTableWidget,
                              QTableWidgetItem, QVBoxLayout, QAbstractScrollArea, QHeaderView, QToolBar, QPushButton)
 
-# from GUI.gui_graph import gui_graph
+from GUI.gui_export import ExportFormat
 
 
 class gui_main(QMainWindow):
@@ -16,13 +16,11 @@ class gui_main(QMainWindow):
         self.toolBar = self.addToolBar('Toolbar')
         self.nodeTable = node_table()
         self.logTable = log_table()
-        self.graph = gui_grap
 
         self.main()
 
     def main(self):
         self.setWindow()
-
         self.setFileMenu(self.menuBar.addMenu('&File'))
         self.setEditMenu(self.menuBar.addMenu('&Edit'))
         self.setViewMenu(self.menuBar.addMenu('&View'))
@@ -103,11 +101,18 @@ class gui_main(QMainWindow):
 
         edit_menu.addSeparator()
 
-        # (TODO): Add triggers
+        # Added Triggers, not fully tested
         export_act = QAction('&Export Graph...', self)
         export_act.setShortcut('Ctrl+Shift+E')
         export_act.setStatusTip('Export graph')
         edit_menu.addAction(export_act)
+        export_act.triggered.connect(self.export_graph)
+
+    def export_graph(self):
+        gui = ExportFormat()
+       # gui().__init__()
+        # self.show()
+
 
     def setViewMenu(self, view_menu):
         graph_orientation = QMenu('&Graph Orientation', self)
