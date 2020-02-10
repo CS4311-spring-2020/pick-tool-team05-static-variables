@@ -2,25 +2,29 @@ import sys
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication, QMenu, QWidget,
-                             QSizePolicy, QHBoxLayout, QFrame, QSplitter, QTableWidget,
-                             QTableWidgetItem, QVBoxLayout, QAbstractScrollArea, QHeaderView, QToolBar, QPushButton)
+                             QSizePolicy, QHBoxLayout, QFrame, QSplitter, QVBoxLayout, QTabWidget, QToolBar,
+                             QPushButton, QLabel, QCheckBox)
 
-from GUI.gui_export import ExportFormat
+from GUI.Tables import NodeTable, LogFileTable, LogEntryTable
+from GUI.gui_node_configuration_g import Graph
 
 
-class gui_main(QMainWindow):
+# (TODO): Reformat vector, graph, node map into attribute of main window, not VectorPages
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.hbox = QHBoxLayout()
         self.menuBar = self.menuBar()
         self.toolBar = self.addToolBar('Toolbar')
-        self.nodeTable = node_table()
-        self.logTable = log_table()
+        self.pages = TablePages()
+        self.vectorPages = VectorPages()
+        self.graph = Graph()
 
         self.main()
 
     def main(self):
         self.setWindow()
+
         self.setFileMenu(self.menuBar.addMenu('&File'))
         self.setEditMenu(self.menuBar.addMenu('&Edit'))
         self.setViewMenu(self.menuBar.addMenu('&View'))
@@ -35,23 +39,25 @@ class gui_main(QMainWindow):
         self.setWindowIcon(QIcon('Resources/Images/icon.png'))
 
         # Centers window to provide consistent launch of app
-        self.resize(1280, 720)
+        self.resize(1900, 1030)
         r = self.frameGeometry()
         p = QDesktopWidget().availableGeometry().center()
         r.moveCenter(p)
         self.move(r.topLeft())
 
+        # Top side of main window
         splitH = QSplitter(Qt.Horizontal)
-        splitH.addWidget(self.nodeTable)
+        splitH.addWidget(self.vectorPages)
         splitH.addWidget(self.graph)
         splitH.setStretchFactor(1, 1)
-        splitH.setSizes([500, 600])
+        splitH.setSizes([900, 600])
 
+        # Bottom side of main window
         splitV = QSplitter(Qt.Vertical)
         splitV.addWidget(splitH)
-        splitV.addWidget(self.logTable)
+        splitV.addWidget(self.pages)
         splitV.setStretchFactor(1, 1)
-        splitV.setSizes([450, 280])
+        splitV.setSizes([600, 280])
 
         self.hbox.addWidget(splitV)
         self.setCentralWidget(QWidget(self))
@@ -101,18 +107,11 @@ class gui_main(QMainWindow):
 
         edit_menu.addSeparator()
 
-        # Added Triggers, not fully tested
+        # (TODO): Add triggers
         export_act = QAction('&Export Graph...', self)
         export_act.setShortcut('Ctrl+Shift+E')
         export_act.setStatusTip('Export graph')
         edit_menu.addAction(export_act)
-        export_act.triggered.connect(self.export_graph)
-
-    def export_graph(self):
-        gui = ExportFormat()
-       # gui().__init__()
-        # self.show()
-
 
     def setViewMenu(self, view_menu):
         graph_orientation = QMenu('&Graph Orientation', self)
@@ -181,6 +180,12 @@ class gui_main(QMainWindow):
     def initToolBar(self):
         self.toolBar.setMovable(False)
         self.toolBar.setIconSize(QSize(20, 20))
+        self.toolBar.setStyleSheet("""
+            QToolBar {
+                spacing: 6px;
+                padding: 3px;
+            }
+        """)
 
         # (TODO): Add triggers
         undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
@@ -194,116 +199,113 @@ class gui_main(QMainWindow):
         redo_act.setStatusTip('Redo action')
         self.toolBar.addAction(redo_act)
 
-        self.toolBar.addSeparator()
-
         # (TODO): Add triggers
-        refresh_act = QAction(QIcon('Resources/Images/button-refresh-arrows.png'), '&Refresh', self)
-        refresh_act.setShortcut('Ctrl+R')
+        refresh_act = QAction(QIcon('Resources/Images/refresh.png'), '&Sync', self)
+        refresh_act.setShortcut('Ctrl+Shift+S')
         refresh_act.setStatusTip('Refresh project')
         self.toolBar.addAction(refresh_act)
 
+        self.toolBar.addSeparator()
+
         # (TODO): Add triggers
-        commit_act = QAction(QIcon('Resources/Images/check-1.png'), '&Commit', self)
+        commit_act = QAction(QIcon('Resources/Images/commit.png'), '&Commit Changes', self)
         commit_act.setShortcut('Ctrl+Shift+C')
-        commit_act.setStatusTip('Commit changes')
+        commit_act.setStatusTip('Refresh project')
         self.toolBar.addAction(commit_act)
 
         # (TODO): Add triggers
-        push_act = QAction(QIcon('Resources/Images/share-1.png'), '&Push', self)
-        push_act.setShortcut('Ctrl+Shift+P')
-        push_act.setStatusTip('Push commit')
-        self.toolBar.addAction(push_act)
+        changes = QAction(QIcon('Resources/Images/changes.png'), '&Changelist', self)
+        changes.setShortcut('Ctrl+Shift+L')
+        changes.setStatusTip('See changelist')
+        self.toolBar.addAction(changes)
 
         # Buttons after this are set to the right side
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.addWidget(spacer)
 
+        # (TODO): Add triggers
+        push_act = QAction(QIcon('Resources/Images/export.png'), '&Export Graph', self)
+        push_act.setShortcut('Ctrl+Shift+X')
+        push_act.setStatusTip('Export Graph')
+        self.toolBar.addAction(push_act)
 
-class node_table(QFrame):
+
+class TablePages(QFrame):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
-        self.table = QTableWidget()
-        self.menu = QToolBar()
+        self.tabs = QTabWidget()
+        self.log_files = LogFileTable()
+        self.log_entries = LogEntryTable()
         self.main()
 
     def main(self):
-        self.setFrameShape(QFrame.StyledPanel)
         self.setLayout(self.layout)
-        self.initMenu()
-        self.initTable()
+        self.setFrameShape(QFrame.StyledPanel)
+        self.layout.addWidget(self.tabs)
 
-    # (TODO): Apply stylesheet to buttons correctly
-    # (TODO): Add correct buttons
-    # (TODO): Add triggers
-    def initMenu(self):
-        self.layout.setMenuBar(self.menu)
-        self.menu.setMovable(False)
-        self.menu.setStyleSheet("""
-        QPushButton {
-         margin: 6px; 
-         padding: 6px; 
-         margin-bottom: 0px;
-         }
-        """)
-
-        btn_add_vector = QPushButton("Add Vector...", self)
-        self.menu.addWidget(btn_add_vector)
-        btn_edit_vector = QPushButton("Edit Vector...", self)
-        self.menu.addWidget(btn_edit_vector)
-        btn_delete_vector = QPushButton("Delete Vector...", self)
-        self.menu.addWidget(btn_delete_vector)
-
-    # (TODO): Add way of getting column # based on nodes in DB, hard coded for now based on SRS 1.7
-    # (TODO): Set columns to node attributes
-    def initTable(self):
-        self.table.setRowCount(4)
-        self.table.setColumnCount(5)
-        self.table.setHorizontalHeaderLabels(['ID', 'Host', 'Source', 'Source Type', 'Content'])
-        self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.layout.addWidget(self.table)
+        self.tabs.setTabPosition(QTabWidget.South)
+        self.tabs.addTab(self.log_files, "Log Files")
+        self.tabs.addTab(self.log_entries, "Log Entries")
 
 
-class log_table(QFrame):
+class VectorPages(QFrame):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
-        self.table = QTableWidget()
-        self.menu = QToolBar()
+        self.nodeVisibility = QToolBar('Toolbar')
+        self.tabs = QTabWidget()
+
+        # (TODO): Access vector global var, paginate OPEN vectors. Hardcoded for now.
+        self.vectors = ["DDoS", "Vector 2", "Reverse Shell", "+"]
+        # (TODO): Keep list of nodes = node tables
+        self.nodeTables = [NodeTable(), NodeTable(), NodeTable(), NodeTable()]
+        # (TODO): Keep list of graphs = graph tables
+        self.graphs = ["", "", "", ""]
+        # Map Vector -> Graph -> Node list
+        self.tabList = zip(self.vectors, self.nodeTables, self.graphs)
+
         self.main()
 
     def main(self):
-        self.setFrameShape(QFrame.StyledPanel)
         self.setLayout(self.layout)
-        self.initMenu()
-        self.initTable()
+        self.setFrameShape(QFrame.StyledPanel)
+        self.nodePropertyVisibilityToggles()
+        self.layout.addWidget(self.tabs)
 
-    # (TODO): Apply stylesheet to buttons correctly
+        for tab in self.tabList:
+            self.tabs.addTab(tab[1], tab[0])
+
     # (TODO): Add correct buttons
     # (TODO): Add triggers
-    def initMenu(self):
-        self.layout.setMenuBar(self.menu)
-        self.menu.setMovable(False)
-        self.menu.setStyleSheet("""
-        QPushButton {
-         margin: 6px; 
-         padding: 6px; 
-         margin-bottom: 0px;
-         }
+    def nodePropertyVisibilityToggles(self):
+        frame = QFrame()
+        frame.setFrameShape(QFrame.StyledPanel)
+        layout_frame = QVBoxLayout()
+        frame.setLayout(layout_frame)
+
+        header = QLabel("Selected NodeProperty Visibility")
+        header.setAlignment(Qt.AlignCenter)
+        layout_frame.addWidget(header)
+        layout_frame.addWidget(QLabel(""))
+
+        buttons_bar = QToolBar("Buttons")
+        buttons_bar.setStyleSheet("""
+        QToolBar {
+            spacing: 40px;
+        }
         """)
 
-        btn_log_files = QPushButton("Log Files...", self)
-        self.menu.addWidget(btn_log_files)
-        btn_edit_log = QPushButton("Edit Log...", self)
-        self.menu.addWidget(btn_edit_log)
+        buttons_bar.addWidget(QCheckBox("Node\nID"))
+        buttons_bar.addWidget(QCheckBox("Node\nName"))
+        buttons_bar.addWidget(QCheckBox("Node\nTimestamp"))
+        buttons_bar.addWidget(QCheckBox("Node\nDescription"))
+        buttons_bar.addWidget(QCheckBox("Log Entry\nReference"))
+        buttons_bar.addWidget(QCheckBox("Log\nCreator"))
+        buttons_bar.addWidget(QCheckBox("Event\nType"))
+        buttons_bar.addWidget(QCheckBox("Icon\nType"))
+        buttons_bar.addWidget(QCheckBox("Source"))
+        layout_frame.addWidget(buttons_bar)
 
-    # (TODO): Add way of getting column # based on log entries in DB, hard coded for now based on SRS 1.7
-    def initTable(self):
-        self.table.setRowCount(5)
-        self.table.setColumnCount(6)
-        self.table.setHorizontalHeaderLabels(['ID', 'Timestamp', 'Host', 'Source', 'Source Type', 'Content'])
-        self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.layout.addWidget(self.table)
+        self.layout.addWidget(frame)

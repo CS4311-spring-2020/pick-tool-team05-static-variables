@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QFrame
 
 
-class gui_graph(QFrame):
+class Graph(QFrame):
     def __init__(self):
         super().__init__()
 
