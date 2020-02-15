@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox,
                              QLabel, QLineEdit, QPushButton,
                              QVBoxLayout, QCheckBox, QDesktopWidget)
 from PyQt5.QtGui import QIcon
-from GUI.gui_directory_configuration import DirectoryConfiguration
 
 
 class TeamConfiguration(QWidget):

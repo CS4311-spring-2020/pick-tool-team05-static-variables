@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QGridLayout, QGroupBox, QDesktopWidget,
                              QLabel, QPushButton, QVBoxLayout)
 from PyQt5.QtGui import QIcon, QPixmap
-from GUI.gui_team_configuration import TeamConfiguration
+from Source.Frontend.gui_team_configuration import TeamConfiguration
 
 
 class Launcher(QWidget):

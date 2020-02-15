@@ -1,12 +1,11 @@
-import sys
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QDesktopWidget, QMainWindow, QAction, QApplication, QMenu, QWidget,
                              QSizePolicy, QHBoxLayout, QFrame, QSplitter, QVBoxLayout, QTabWidget, QToolBar,
-                             QPushButton, QLabel, QCheckBox)
+                             QLabel, QCheckBox)
 
-from GUI.Tables import NodeTable, LogFileTable, LogEntryTable
-from GUI.gui_node_configuration_g import Graph
+from Source.Frontend.Tables import NodeTable, LogFileTable, LogEntryTable
+from Source.Frontend.gui_node_configuration_g import Graph
 
 
 # (TODO): Reformat vector, graph, node map into attribute of main window, not VectorPages
