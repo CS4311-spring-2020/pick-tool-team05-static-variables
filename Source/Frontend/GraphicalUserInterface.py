@@ -22,7 +22,6 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('Ready')
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
-        self.setLayout(self.layout)
         self.resize(1900, 1030)
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
@@ -40,7 +39,8 @@ class MainWindow(QMainWindow):
         splitV.setSizes([600, 280])
 
         self.layout.addWidget(splitV)
-        self.setCentralWidget(QWidget(self).setLayout(self.layout))
+        self.setCentralWidget(QWidget(self))
+        self.centralWidget().setLayout(self.layout)
 
         self.show()
 
