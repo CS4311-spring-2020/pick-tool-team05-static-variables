@@ -1,12 +1,13 @@
 import sys
 import threading
 from PyQt5.QtWidgets import QApplication
-from Source.Frontend.GraphicalUserInterface import MainWindow
+from Source.Frontend.GraphicalUserInterface import MainWindow, VectorDatabase
 from Source.Frontend.gui_team_configuration import TeamConfiguration
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     g = MainWindow()
+    vector = VectorDatabase()
     # t1 = threading.Thread(target=TeamConfiguration, args=())
     # t2 = threading.Thread(target=MainWindow, args=())
     # t1.start()

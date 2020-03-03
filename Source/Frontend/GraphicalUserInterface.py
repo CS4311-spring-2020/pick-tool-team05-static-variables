@@ -1,7 +1,8 @@
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSize, QRect
-from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QWidget, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
-                             QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton)
+from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
+                             QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
+                             QLabel)
 
 
 class MainWindow(QMainWindow):
@@ -220,7 +221,6 @@ class GenericWindow(QWidget):
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
         self.setLayout(self.layout)
-        self.resize(600, 600)
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
 
@@ -236,8 +236,9 @@ class VectorFrame(GenericFrame):
     def __init__(self):
         super().__init__()
         self.tabs = QTabWidget()
+        self.__selected = -1
 
-        # (TODO): Access vectors in event config, hardcoded for now
+        # (TODO): Access vectors from database, hardcoded for now
         self.vectors = ["DDoS", "Vector 2", "Reverse Shell"]
 
         self.__initUI()
@@ -248,7 +249,18 @@ class VectorFrame(GenericFrame):
         for v in self.vectors:
             self.__initTab(v, 0)
         self.tabs.addTab(QWidget(), '+')
-        self.tabs.currentChanged.connect(self.__insertTab)
+        self.tabs.tabBarClicked.connect(self.__setSelected)
+        self.tabs.currentChanged.connect(self.insertTab)
+
+    def insertTab(self, t):
+        if t == self.tabs.count() - 1:
+            # (TODO): Call vector window to add vector to event config
+            self.__initTab(self.vectors[-1], t)
+            self.tabs.setCurrentIndex(t)
+
+    # (TODO): Connect to delete vector & context menu
+    def deleteTab(self, t):
+        self.tabs.removeTab(t)
 
     def __initTab(self, v, c):
         splitter = QSplitter(Qt.Horizontal)
@@ -264,11 +276,11 @@ class VectorFrame(GenericFrame):
         else:
             self.tabs.insertTab(c, t, self.vectors[-1])
 
-    def __insertTab(self, t):
-        if t == self.tabs.count() - 1:
-            # (TODO): Call vector window to add vector to event config
-            self.__initTab(self.vectors[-1], t)
-            self.tabs.setCurrentIndex(t)
+    def __setSelected(self, s):
+        if s == self.tabs.count() - 1:
+            self.__selected = -1
+        else:
+            self.__selected = s
 
 
 class NodeTableFrame(GenericFrame):
@@ -300,3 +312,30 @@ class NodeTableFrame(GenericFrame):
 class GraphFrame(GenericFrame):
     def __init__(self):
         super().__init__()
+
+
+class VectorDatabase(GenericWindow):
+    def __init__(self):
+        super().__init__()
+        self.resize(900, 600)
+        self.initUI()
+        self.show()
+
+    def initUI(self):
+        splitter = QSplitter(Qt.Horizontal)
+
+        form = GenericFrame()
+        form.setLayout(QVBoxLayout())
+
+        name = QHBoxLayout()
+        name.addWidget(QLineEdit())
+        name.addWidget(QLabel().setText("Name: "))
+
+        form.layout.addLayout(name)
+
+        # (TODO): Change to actual vector list
+        splitter.addWidget(NodeTableFrame())
+        splitter.addWidget(form)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([450, 300])
+        self.layout.addWidget(splitter)
