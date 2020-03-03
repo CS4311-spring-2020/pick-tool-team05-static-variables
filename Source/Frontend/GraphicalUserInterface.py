@@ -1,7 +1,7 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, QRect
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QWidget, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
-                             QTabWidget, QTableWidget, QAction, QMenu, QApplication)
+                             QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton)
 
 
 class MainWindow(QMainWindow):
@@ -238,17 +238,19 @@ class VectorFrame(GenericFrame):
         self.tabs = QTabWidget()
 
         # (TODO): Access vectors in event config, hardcoded for now
-        self.vectors = ["DDoS", "Vector 2", "Reverse Shell", "+"]
+        self.vectors = ["DDoS", "Vector 2", "Reverse Shell"]
 
-        self.initUI()
+        self.__initUI()
 
-    def initUI(self):
+    def __initUI(self):
         self.setFrameShape(QFrame.StyledPanel)
         self.layout.addWidget(self.tabs)
         for v in self.vectors:
-            self.initTab(v)
+            self.__initTab(v, 0)
+        self.tabs.addTab(QWidget(), '+')
+        self.tabs.currentChanged.connect(self.__insertTab)
 
-    def initTab(self, v):
+    def __initTab(self, v, c):
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(NodeTableFrame())
         splitter.addWidget(GraphFrame())
@@ -257,7 +259,16 @@ class VectorFrame(GenericFrame):
         t = GenericFrame()
         t.layout.addWidget(splitter)
         # (TODO): Refactor when vectors are pulled from event config
-        self.tabs.addTab(t, v)
+        if c == 0:
+            self.tabs.addTab(t, v)
+        else:
+            self.tabs.insertTab(c, t, self.vectors[-1])
+
+    def __insertTab(self, t):
+        if t == self.tabs.count() - 1:
+            # (TODO): Call vector window to add vector to event config
+            self.__initTab(self.vectors[-1], t)
+            self.tabs.setCurrentIndex(t)
 
 
 class NodeTableFrame(GenericFrame):
