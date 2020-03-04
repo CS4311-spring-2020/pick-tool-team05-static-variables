@@ -2,7 +2,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSize, QRect
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
-                             QLabel)
+                             QLabel, QTextEdit, QGridLayout)
 
 
 class MainWindow(QMainWindow):
@@ -35,7 +35,7 @@ class MainWindow(QMainWindow):
 
         splitV = QSplitter(Qt.Vertical)
         splitV.addWidget(self.vectors)
-        splitV.addWidget(GenericFrame())
+        splitV.addWidget(GenericFrame(QHBoxLayout))
         splitV.setStretchFactor(1, 1)
         splitV.setSizes([600, 280])
 
@@ -208,33 +208,30 @@ class MainWindow(QMainWindow):
 
 
 class GenericWindow(QWidget):
-    def __init__(self):
+    def __init__(self, layout):
         super().__init__()
         self.r = self.frameGeometry()
         self.p = QDesktopWidget().availableGeometry().center()
-        self.layout = QHBoxLayout()
-        self.initUI()
-
-    def initUI(self):
-        # Centers window to provide consistent launch of app
-        self.statusBar().showMessage('Ready')
-        self.setWindowTitle('PMR Insight Collective Knowledge')
-        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
-        self.setLayout(self.layout)
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
 
+        self.layout = layout
+        self.setLayout(self.layout)
+
+        self.setWindowTitle('PMR Insight Collective Knowledge')
+        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+
 
 class GenericFrame(QFrame):
-    def __init__(self):
+    def __init__(self, layout):
         super().__init__()
-        self.layout = QHBoxLayout()
+        self.layout = layout
         self.setLayout(self.layout)
 
 
 class VectorFrame(GenericFrame):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
         self.tabs = QTabWidget()
         self.__selected = -1
 
@@ -268,7 +265,7 @@ class VectorFrame(GenericFrame):
         splitter.addWidget(GraphFrame())
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([900, 600])
-        t = GenericFrame()
+        t = GenericFrame(QHBoxLayout)
         t.layout.addWidget(splitter)
         # (TODO): Refactor when vectors are pulled from event config
         if c == 0:
@@ -285,7 +282,7 @@ class VectorFrame(GenericFrame):
 
 class NodeTableFrame(GenericFrame):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
         self.table = QTableWidget()
         self.initTable()
 
@@ -311,31 +308,46 @@ class NodeTableFrame(GenericFrame):
 
 class GraphFrame(GenericFrame):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
 
 
 class VectorDatabase(GenericWindow):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
         self.resize(900, 600)
+        self.nl = QLabel('Name: ')
+        self.dl = QLabel('Description: ')
+        self.de = QTextEdit()
+        self.ne = QLineEdit()
+
         self.initUI()
         self.show()
 
     def initUI(self):
         splitter = QSplitter(Qt.Horizontal)
+        t = GenericFrame(QGridLayout())
+        t.layout.addWidget(self.nl, 1, 0)
+        t.layout.addWidget(self.ne, 1, 1)
+        t.layout.addWidget(self.dl, 2, 0)
+        t.layout.addWidget(self.de, 2, 1, 3, 1)
 
-        form = GenericFrame()
-        form.setLayout(QVBoxLayout())
-
-        name = QHBoxLayout()
-        name.addWidget(QLineEdit())
-        name.addWidget(QLabel().setText("Name: "))
-
-        form.layout.addLayout(name)
-
-        # (TODO): Change to actual vector list
+        # frame = GenericFrame()
+        # form = QGridLayout()
+        # form.setSpacing(10)
+        #
+        # form.addWidget(self.nl, 1, 0)
+        # form.addWidget(self.ne, 1, 1)
+        #
+        # form.addWidget(self.dl, 2, 0)
+        # form.addWidget(self.de, 2, 1, 3, 1)
+        #
+        # frame.layout = form
+        # frame.setLayout(frame.layout)
+        # frame.setGeometry(300, 300, 350, 300)
+        #
+        # # (TODO): Change to actual vector list
         splitter.addWidget(NodeTableFrame())
-        splitter.addWidget(form)
+        splitter.addWidget(t)
         splitter.setStretchFactor(1, 1)
-        splitter.setSizes([450, 300])
+        splitter.setSizes([400, 200])
         self.layout.addWidget(splitter)
