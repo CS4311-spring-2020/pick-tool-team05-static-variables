@@ -284,7 +284,6 @@ class VectorFrame(GenericFrame):
             self.tabs.removeTab(t)
 
 
-
 class NodeTableFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout())
