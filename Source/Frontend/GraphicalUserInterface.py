@@ -2,7 +2,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSize, QRect
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
-                             QLabel, QTextEdit, QGridLayout)
+                             QLabel, QTextEdit, QGridLayout, QToolBar)
 
 
 class MainWindow(QMainWindow):
@@ -235,7 +235,7 @@ class VectorFrame(GenericFrame):
         self.tabs = QTabWidget()
         self.__selected = -1
 
-        # (TODO): Access vectors from database, hardcoded for now
+        # (TODO): Access vectors from vector table, hardcoded for now
         self.vectors = ["DDoS", "Vector 2", "Reverse Shell"]
 
         self.__initUI()
@@ -243,21 +243,13 @@ class VectorFrame(GenericFrame):
     def __initUI(self):
         self.setFrameShape(QFrame.StyledPanel)
         self.layout.addWidget(self.tabs)
+
         for v in self.vectors:
             self.__initTab(v, 0)
+
         self.tabs.addTab(QWidget(), '+')
         self.tabs.tabBarClicked.connect(self.__setSelected)
         self.tabs.currentChanged.connect(self.insertTab)
-
-    def insertTab(self, t):
-        if t == self.tabs.count() - 1:
-            # (TODO): Call vector window to add vector to event config
-            self.__initTab(self.vectors[-1], t)
-            self.tabs.setCurrentIndex(t)
-
-    # (TODO): Connect to delete vector & context menu
-    def deleteTab(self, t):
-        self.tabs.removeTab(t)
 
     def __initTab(self, v, c):
         splitter = QSplitter(Qt.Horizontal)
@@ -267,6 +259,7 @@ class VectorFrame(GenericFrame):
         splitter.setSizes([900, 600])
         t = GenericFrame(QHBoxLayout())
         t.layout.addWidget(splitter)
+
         # (TODO): Refactor when vectors are pulled from event config
         if c == 0:
             self.tabs.addTab(t, v)
@@ -278,6 +271,18 @@ class VectorFrame(GenericFrame):
             self.__selected = -1
         else:
             self.__selected = s
+
+    def insertTab(self, t):
+        if t == self.tabs.count() - 1:
+            # (TODO): Call to create new vector in DB
+
+            self.__initTab(self.vectors[-1], t)
+            self.tabs.setCurrentIndex(t)
+
+        # (TODO): Connect to delete vector & context menu
+        def deleteTab(self, t):
+            self.tabs.removeTab(t)
+
 
 
 class NodeTableFrame(GenericFrame):
@@ -313,27 +318,72 @@ class GraphFrame(GenericFrame):
 
 class VectorDatabase(GenericWindow):
     def __init__(self):
-        super().__init__(QHBoxLayout())
-        self.resize(900, 600)
-        self.nl = QLabel('Name: ')
-        self.dl = QLabel('Description: ')
-        self.de = QTextEdit()
-        self.ne = QLineEdit()
+        super().__init__(QVBoxLayout())
+        self.__tabs = QTabWidget()
+        self.__buttons = QToolBar('Toolbar')
 
-        self.initUI()
+        # (TODO): Access vectors from vector table, hardcoded for now
+        self.__vectors = ["DDoS", "Vector 2", "Reverse Shell"]
+
+        self.__initUI()
         self.show()
 
-    def initUI(self):
-        splitter = QSplitter(Qt.Horizontal)
-        t = GenericFrame(QGridLayout())
-        t.layout.addWidget(self.nl, 1, 0)
-        t.layout.addWidget(self.ne, 1, 1)
-        t.layout.addWidget(self.dl, 2, 0)
-        t.layout.addWidget(self.de, 2, 1, 3, 1)
+    def __initUI(self):
+        self.resize(600, 400)
+        self.__initToolBar()
 
-        # (TODO): Change to actual vector list
-        splitter.addWidget(NodeTableFrame())
-        splitter.addWidget(t)
-        splitter.setStretchFactor(1, 1)
-        splitter.setSizes([400, 200])
-        self.layout.addWidget(splitter)
+        for v in self.__vectors:
+            self.__initTab(v)
+
+        self.layout.addWidget(self.__tabs)
+        self.layout.addWidget(self.__buttons)
+
+    def __initToolBar(self):
+        self.__buttons.setMovable(False)
+        self.__buttons.setStyleSheet("""
+                    QToolBar {
+                        spacing: 6px;
+                        padding: 3px;
+                    }
+                """)
+
+        # (TODO): Add triggers
+        b1 = QPushButton('Add Vector')
+        self.__buttons.addWidget(b1)
+
+        # (TODO): Add triggers
+        b2 = QPushButton('Delete Vector')
+        self.__buttons.addWidget(b2)
+
+        # Buttons after this are set to the right side
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__buttons.addWidget(spacer)
+
+        # (TODO): Add triggers
+        b3 = QPushButton('OK')
+        self.__buttons.addWidget(b3)
+
+        # (TODO): Add triggers
+        b4 = QPushButton('Cancel')
+        self.__buttons.addWidget(b4)
+
+    def __initTab(self, v):
+        frame = GenericFrame(QGridLayout())
+        frame.layout.addWidget(QLabel('Name:'), 1, 0)
+        frame.layout.addWidget(QLineEdit(v), 1, 1)
+        frame.layout.addWidget(QLabel('Description:'), 2, 0)
+        frame.layout.addWidget(QTextEdit(), 2, 1, 2, 1)
+        frame.layout.addWidget(QLabel('Associated Log Entries:'), 4, 0)
+        frame.layout.addWidget(QLabel('10'), 4, 1)
+        self.__tabs.addTab(frame, v)
+
+    # (TODO): Connect to delete vector, delete vector from DB
+    def deleteTab(self, t):
+        self.tabs.removeTab(t)
+
+    def insertTab(self, t):
+        # (TODO): Call to create new vector in DB
+
+        self.__initTab(self.vectors[-1], t)
+        self.tabs.setCurrentIndex(t)
