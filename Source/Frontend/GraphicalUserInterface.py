@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtCore import Qt, QSize, QRect, QCoreApplication
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
@@ -308,7 +308,14 @@ class NodeTableFrame(GenericFrame):
 class GraphFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout())
+        self.initImage()
 
+    def initImage(self):
+        label = QLabel(self)
+        pixmap = QPixmap('../Backend/Resources/Images/story.png')
+        label.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+        self.layout.addWidget(label)
 
 class VectorDatabase(GenericWindow):
     def __init__(self):
