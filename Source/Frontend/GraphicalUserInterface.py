@@ -1,8 +1,8 @@
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSize, QRect
+from PyQt5.QtCore import Qt, QSize, QRect, QCoreApplication
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
-                             QLabel)
+                             QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
 
 class MainWindow(QMainWindow):
@@ -27,15 +27,14 @@ class MainWindow(QMainWindow):
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
 
-        self.setFileMenu(self.menuBar.addMenu('&File'))
-        self.setEditMenu(self.menuBar.addMenu('&Edit'))
-        self.setViewMenu(self.menuBar.addMenu('&View'))
-        self.setHelpMenu(self.menuBar.addMenu('&Help'))
-        self.initToolBar()
+        self.__setFileMenu(self.menuBar.addMenu('&File'))
+        self.__setEditMenu(self.menuBar.addMenu('&Edit'))
+        self.__setViewMenu(self.menuBar.addMenu('&View'))
+        self.__initToolBar()
 
         splitV = QSplitter(Qt.Vertical)
         splitV.addWidget(self.vectors)
-        splitV.addWidget(GenericFrame())
+        splitV.addWidget(GenericFrame(QHBoxLayout()))
         splitV.setStretchFactor(1, 1)
         splitV.setSizes([600, 280])
 
@@ -45,7 +44,7 @@ class MainWindow(QMainWindow):
 
         self.show()
 
-    def setFileMenu(self, file_menu):
+    def __setFileMenu(self, file_menu):
         # (TODO): Add triggers
         connect_act = QAction('&Connect...', self)
         connect_act.setShortcut('Ctrl+Shift+C')
@@ -61,7 +60,7 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
 
         # (TODO): Add triggers
-        files_act = QAction('&View Log Files...', self)
+        files_act = QAction('&Project', self)
         files_act.setShortcut('Ctrl+Shift+V')
         files_act.setStatusTip('View log files')
         file_menu.addAction(files_act)
@@ -74,18 +73,20 @@ class MainWindow(QMainWindow):
         exit_act.triggered.connect(QApplication.quit)
         file_menu.addAction(exit_act)
 
-    def setEditMenu(self, edit_menu):
-        # (TODO): Add triggers
-        add_act = QAction('&Add Vector...', self)
-        add_act.setShortcut('Ctrl+Shift+N')
-        add_act.setStatusTip('Add vector')
-        edit_menu.addAction(add_act)
+    def __setEditMenu(self, edit_menu):
+        vdb = QAction('&Vectors...', self)
+        vdb.setShortcut('Ctrl+Shift+N')
+        vdb.setStatusTip('Open Vector Database')
+        vdb.triggered.connect(self.__openVDB)
+        edit_menu.addAction(vdb)
+
 
         # (TODO): Add triggers
-        del_act = QAction('&Delete Vector', self)
-        del_act.setShortcut('Ctrl+Shift+D')
-        del_act.setStatusTip('Delete vector')
-        edit_menu.addAction(del_act)
+        lfdb = QAction('Log files...', self)
+        lfdb.setShortcut('Ctrl+Shift+D')
+        lfdb.setStatusTip('Open Log File Database')
+        lfdb.triggered.connect(self.__openLFDB)
+        edit_menu.addAction(lfdb)
 
         edit_menu.addSeparator()
 
@@ -95,7 +96,7 @@ class MainWindow(QMainWindow):
         export_act.setStatusTip('Export graph')
         edit_menu.addAction(export_act)
 
-    def setViewMenu(self, view_menu):
+    def __setViewMenu(self, view_menu):
         graph_orientation = QMenu('&Graph Orientation', self)
         timeline = QMenu('Timeline Interval', self)
 
@@ -138,22 +139,8 @@ class MainWindow(QMainWindow):
         view_menu.addMenu(graph_orientation)
         view_menu.addMenu(timeline)
 
-    def setHelpMenu(self, help_menu):
-        # (TODO): Add triggers
-        help_act = QAction('&Help', self)
-        help_act.setShortcut('f1')
-        help_act.setStatusTip('Show Tips')
-        help_menu.addAction(help_act)
-
-        help_menu.addSeparator()
-
-        # (TODO): Add triggers
-        about_act = QAction('&About', self)
-        about_act.setStatusTip('About PMR Insight Collective Knowledge Tool')
-        help_menu.addAction(about_act)
-
     # (TODO): Add more buttons according to future developments
-    def initToolBar(self):
+    def __initToolBar(self):
         self.toolBar.setMovable(False)
         self.toolBar.setIconSize(QSize(20, 20))
         self.toolBar.setStyleSheet("""
@@ -206,39 +193,42 @@ class MainWindow(QMainWindow):
         push_act.setStatusTip('Export Graph')
         self.toolBar.addAction(push_act)
 
+    def __openVDB(self):
+        self.vdb = VectorDatabase()
+
+    def __openLFDB(self):
+        self.lfdb = LogFileDatabase()
+
 
 class GenericWindow(QWidget):
-    def __init__(self):
+    def __init__(self, layout):
         super().__init__()
         self.r = self.frameGeometry()
         self.p = QDesktopWidget().availableGeometry().center()
-        self.layout = QHBoxLayout()
-        self.initUI()
-
-    def initUI(self):
-        # Centers window to provide consistent launch of app
-        self.statusBar().showMessage('Ready')
-        self.setWindowTitle('PMR Insight Collective Knowledge')
-        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
-        self.setLayout(self.layout)
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
 
+        self.layout = layout
+        self.setLayout(self.layout)
+
+        self.setWindowTitle('PMR Insight Collective Knowledge')
+        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+
 
 class GenericFrame(QFrame):
-    def __init__(self):
+    def __init__(self, layout):
         super().__init__()
-        self.layout = QHBoxLayout()
+        self.layout = layout
         self.setLayout(self.layout)
 
 
 class VectorFrame(GenericFrame):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
         self.tabs = QTabWidget()
         self.__selected = -1
 
-        # (TODO): Access vectors from database, hardcoded for now
+        # (TODO): Access vectors from vector table, hardcoded for now
         self.vectors = ["DDoS", "Vector 2", "Reverse Shell"]
 
         self.__initUI()
@@ -246,30 +236,25 @@ class VectorFrame(GenericFrame):
     def __initUI(self):
         self.setFrameShape(QFrame.StyledPanel)
         self.layout.addWidget(self.tabs)
+
         for v in self.vectors:
             self.__initTab(v, 0)
+
         self.tabs.addTab(QWidget(), '+')
         self.tabs.tabBarClicked.connect(self.__setSelected)
         self.tabs.currentChanged.connect(self.insertTab)
 
-    def insertTab(self, t):
-        if t == self.tabs.count() - 1:
-            # (TODO): Call vector window to add vector to event config
-            self.__initTab(self.vectors[-1], t)
-            self.tabs.setCurrentIndex(t)
-
-    # (TODO): Connect to delete vector & context menu
-    def deleteTab(self, t):
-        self.tabs.removeTab(t)
-
     def __initTab(self, v, c):
         splitter = QSplitter(Qt.Horizontal)
+
         splitter.addWidget(NodeTableFrame())
         splitter.addWidget(GraphFrame())
+
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([900, 600])
-        t = GenericFrame()
+        t = GenericFrame(QHBoxLayout())
         t.layout.addWidget(splitter)
+
         # (TODO): Refactor when vectors are pulled from event config
         if c == 0:
             self.tabs.addTab(t, v)
@@ -282,10 +267,21 @@ class VectorFrame(GenericFrame):
         else:
             self.__selected = s
 
+    def insertTab(self, t):
+        if t == self.tabs.count() - 1:
+            # (TODO): Call to create new vector in DB
+
+            self.__initTab(self.vectors[-1], t)
+            self.tabs.setCurrentIndex(t)
+
+        # (TODO): Connect to delete vector & context menu
+        def deleteTab(self, t):
+            self.tabs.removeTab(t)
+
 
 class NodeTableFrame(GenericFrame):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
         self.table = QTableWidget()
         self.initTable()
 
@@ -311,31 +307,156 @@ class NodeTableFrame(GenericFrame):
 
 class GraphFrame(GenericFrame):
     def __init__(self):
-        super().__init__()
+        super().__init__(QHBoxLayout())
 
 
 class VectorDatabase(GenericWindow):
     def __init__(self):
-        super().__init__()
-        self.resize(900, 600)
-        self.initUI()
+        super().__init__(QVBoxLayout())
+        self.__tabs = QTabWidget()
+        self.__buttons = QToolBar('Toolbar')
+
+        # (TODO): Access vectors from vector table, hardcoded for now
+        self.__vectors = ["DDoS", "Vector 2", "Reverse Shell"]
+
+        self.__initUI()
         self.show()
 
-    def initUI(self):
+    def __initUI(self):
+        self.resize(600, 400)
+        self.__initToolBar()
+
+        for v in self.__vectors:
+            self.__initTab(v)
+
+        self.layout.addWidget(self.__tabs)
+        self.layout.addWidget(self.__buttons)
+
+    def __initToolBar(self):
+        self.__buttons.setMovable(False)
+        self.__buttons.setStyleSheet("""
+                    QToolBar {
+                        spacing: 6px;
+                        padding: 3px;
+                    }
+                """)
+
+        # (TODO): Add triggers
+        b1 = QPushButton('Add Vector')
+        self.__buttons.addWidget(b1)
+
+        # (TODO): Add triggers
+        b2 = QPushButton('Delete Vector')
+        self.__buttons.addWidget(b2)
+
+        # Buttons after this are set to the right side
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__buttons.addWidget(spacer)
+
+        # (TODO): Add triggers
+        b3 = QPushButton('OK')
+        self.__buttons.addWidget(b3)
+
+        # (TODO): Add triggers
+        b4 = QPushButton('Cancel')
+        self.__buttons.addWidget(b4)
+
+    def __initTab(self, v):
+        frame = GenericFrame(QGridLayout())
+        frame.layout.addWidget(QLabel('Name:'), 1, 0)
+        frame.layout.addWidget(QLineEdit(v), 1, 1)
+        frame.layout.addWidget(QLabel('Description:'), 2, 0)
+        frame.layout.addWidget(QTextEdit(), 2, 1, 2, 1)
+        frame.layout.addWidget(QLabel('Associated Log Entries:'), 4, 0)
+        frame.layout.addWidget(QLabel('10'), 4, 1)
+        self.__tabs.addTab(frame, v)
+
+    # (TODO): Connect to delete vector, delete vector from DB
+    def deleteTab(self, t):
+        self.tabs.removeTab(t)
+
+    def insertTab(self, t):
+        # (TODO): Call to create new vector in DB
+
+        self.__initTab(self.vectors[-1], t)
+        self.tabs.setCurrentIndex(t)
+
+
+class ReportFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QHBoxLayout())
+        self.__currentLog = None
+        self.__initUI()
+
+    def __initUI(self):
+        self.setFrameShape(QFrame.StyledPanel)
+        self.layout.addWidget(QLabel())
+
+    def updateReport(self, item):
+        for i in range(self.layout.count()):
+            self.layout.itemAt(i).widget().setParent(None)
+
+        # (TODO): Get log file after action report using log file name, hardcoded for now
+        self.__currentLog = item.text()
+        self.layout.addWidget(QLabel(self.__currentLog))
+
+
+class LogFileDatabase(GenericWindow):
+    def __init__(self):
+        super().__init__(QVBoxLayout())
+        self.__list = QListWidget()
+        self.__report = ReportFrame()
+        self.__buttons = QToolBar('Toolbar')
+
+        # (TODO): Access log files, hardcoded for now
+        self.__logs = ["Readme.txt", "20193019_101559.jpg", "20190220_161043.log"]
+
+        self.__initUI()
+
+    def __initUI(self):
+        self.resize(600, 400)
+        self.__initToolBar()
+        for log in self.__logs:
+            self.__list.addItem(log)
+
+        self.__list.itemClicked.connect(self.__report.updateReport)
+
         splitter = QSplitter(Qt.Horizontal)
 
-        form = GenericFrame()
-        form.setLayout(QVBoxLayout())
+        splitter.addWidget(self.__list)
+        splitter.addWidget(self.__report)
 
-        name = QHBoxLayout()
-        name.addWidget(QLineEdit())
-        name.addWidget(QLabel().setText("Name: "))
-
-        form.layout.addLayout(name)
-
-        # (TODO): Change to actual vector list
-        splitter.addWidget(NodeTableFrame())
-        splitter.addWidget(form)
         splitter.setStretchFactor(1, 1)
-        splitter.setSizes([450, 300])
+        splitter.setSizes([200, 200])
+
         self.layout.addWidget(splitter)
+        self.layout.addWidget(self.__buttons)
+        self.show()
+
+    def __initToolBar(self):
+        self.__buttons.setMovable(False)
+        self.__buttons.setStyleSheet("""
+                    QToolBar {
+                        spacing: 6px;
+                        padding: 3px;
+                    }
+                """)
+
+        # (TODO): Add triggers
+        b1 = QPushButton('Accept File...')
+        self.__buttons.addWidget(b1)
+
+        # Buttons after this are set to the right side
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__buttons.addWidget(spacer)
+
+        # (TODO): Add triggers
+        b2 = QPushButton('OK')
+        b2.clicked.connect(QApplication.instance().quit)
+        self.__buttons.addWidget(b2)
+
+        # (TODO): Add triggers
+        b3 = QPushButton('Cancel')
+        self.__buttons.addWidget(b3)
