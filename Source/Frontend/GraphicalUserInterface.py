@@ -34,9 +34,9 @@ class MainWindow(QMainWindow):
 
         splitV = QSplitter(Qt.Vertical)
         splitV.addWidget(self.vectors)
-        splitV.addWidget(GenericFrame(QHBoxLayout()))
+        splitV.addWidget(NodeTableFrame())
         splitV.setStretchFactor(1, 1)
-        splitV.setSizes([600, 280])
+        splitV.setSizes([300, 280])
 
         self.layout.addWidget(splitV)
         self.setCentralWidget(QWidget(self))
@@ -79,7 +79,6 @@ class MainWindow(QMainWindow):
         vdb.setStatusTip('Open Vector Database')
         vdb.triggered.connect(self.__openVDB)
         edit_menu.addAction(vdb)
-
 
         # (TODO): Add triggers
         lfdb = QAction('Log files...', self)
@@ -311,11 +310,11 @@ class GraphFrame(GenericFrame):
         self.initImage()
 
     def initImage(self):
-        label = QLabel(self)
+        picture = QLabel()
         pixmap = QPixmap('../Backend/Resources/Images/story.png')
-        label.setPixmap(pixmap)
-        self.resize(pixmap.width(), pixmap.height())
-        self.layout.addWidget(label)
+        picture.setPixmap(pixmap)
+        self.layout.addWidget(picture)
+
 
 class VectorDatabase(GenericWindow):
     def __init__(self):
