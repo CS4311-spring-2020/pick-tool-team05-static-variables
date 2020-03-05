@@ -1,5 +1,5 @@
-from PyQt5.QtGui import QIcon, QPixmap, QImage
-from PyQt5.QtCore import Qt, QSize, QRect, QCoreApplication
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
@@ -47,13 +47,11 @@ class MainWindow(QMainWindow):
     def __setFileMenu(self, file_menu):
         # (TODO): Add triggers
         connect_act = QAction('&Connect...', self)
-        connect_act.setShortcut('Ctrl+Shift+C')
         connect_act.setStatusTip('Connect to host')
         file_menu.addAction(connect_act)
 
         # (TODO): Add triggers
         disconnect_act = QAction('&Disconnect...', self)
-        disconnect_act.setShortcut('Ctrl+Shift+D')
         disconnect_act.setStatusTip('Disconnect from host')
         file_menu.addAction(disconnect_act)
 
@@ -61,9 +59,13 @@ class MainWindow(QMainWindow):
 
         # (TODO): Add triggers
         files_act = QAction('&Project', self)
-        files_act.setShortcut('Ctrl+Shift+V')
         files_act.setStatusTip('View log files')
         file_menu.addAction(files_act)
+
+        dirs = QAction('&Directories', self)
+        dirs.setStatusTip('View Project Directories')
+        dirs.triggered.connect(self.__openDIRS)
+        file_menu.addAction(dirs)
 
         file_menu.addSeparator()
 
@@ -75,14 +77,12 @@ class MainWindow(QMainWindow):
 
     def __setEditMenu(self, edit_menu):
         vdb = QAction('&Vectors...', self)
-        vdb.setShortcut('Ctrl+Shift+N')
         vdb.setStatusTip('Open Vector Database')
         vdb.triggered.connect(self.__openVDB)
         edit_menu.addAction(vdb)
 
         # (TODO): Add triggers
         lfdb = QAction('Log files...', self)
-        lfdb.setShortcut('Ctrl+Shift+D')
         lfdb.setStatusTip('Open Log File Database')
         lfdb.triggered.connect(self.__openLFDB)
         edit_menu.addAction(lfdb)
@@ -91,7 +91,6 @@ class MainWindow(QMainWindow):
 
         # (TODO): Add triggers
         export_act = QAction('&Export Graph...', self)
-        export_act.setShortcut('Ctrl+Shift+E')
         export_act.setStatusTip('Export graph')
         edit_menu.addAction(export_act)
 
@@ -198,6 +197,9 @@ class MainWindow(QMainWindow):
     def __openLFDB(self):
         self.lfdb = LogFileDatabase()
 
+    def __openDIRS(self):
+        self.dirs = DirectoryFrame()
+
 
 class GenericWindow(QWidget):
     def __init__(self, layout):
@@ -273,9 +275,9 @@ class VectorFrame(GenericFrame):
             self.__initTab(self.vectors[-1], t)
             self.tabs.setCurrentIndex(t)
 
-        # (TODO): Connect to delete vector & context menu
-        def deleteTab(self, t):
-            self.tabs.removeTab(t)
+    # (TODO): Connect to delete vector & context menu
+    def deleteTab(self, t):
+        self.tabs.removeTab(t)
 
 
 class NodeTableFrame(GenericFrame):
@@ -466,3 +468,27 @@ class LogFileDatabase(GenericWindow):
         # (TODO): Add triggers
         b3 = QPushButton('Cancel')
         self.__buttons.addWidget(b3)
+
+
+class DirectoryFrame(GenericWindow):
+    def __init__(self):
+        super().__init__(QVBoxLayout())
+        # (TODO) Antoine: Connect with the directories from event configuration
+        self.__directories = ['C:/Events/20190304', 'C:/Events/20190304/Blue', 'C:/Events/20190304/Red',
+                              'C:/Events/20190304/White']
+        self.__initUI()
+
+    def __initUI(self):
+        self.resize(600, 400)
+        frame = GenericFrame(QGridLayout())
+        frame.layout.addWidget(QLabel('Root Directory:'), 1, 0)
+        frame.layout.addWidget(QLineEdit(self.__directories[0]), 1, 1)
+        frame.layout.addWidget(QLabel('Blue Directory:'), 2, 0)
+        frame.layout.addWidget(QLineEdit(self.__directories[1]), 2, 1)
+        frame.layout.addWidget(QLabel('Red Directory:'), 3, 0)
+        frame.layout.addWidget(QLineEdit(self.__directories[2]), 3, 1)
+        frame.layout.addWidget(QLabel('White Directory:'), 4, 0)
+        frame.layout.addWidget(QLineEdit(self.__directories[3]), 4, 1)
+        self.layout.addWidget(frame)
+        self.show()
+
