@@ -4,6 +4,21 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
+class GUIFacade():
+    def __init__(self):
+        self.windowData = {} # k = data type, v = window dictionary
+        self.activeFrames = {} # k = window, v = status
+
+    def getInput(self, userInput):
+        # userInput is map where k = data type and v = input
+
+    def getData(self, requestType, window):
+        # Query requestType data and add window to self.windowData
+
+    def update(self, signal):
+        # Updates all windows in self.windowData tied to the signal
+
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -191,6 +206,7 @@ class MainWindow(QMainWindow):
         push_act.setStatusTip('Export Graph')
         self.toolBar.addAction(push_act)
 
+    # Following are used to open side windows based on menu clicks? Replace with popup windows that load specific frame
     def __openVDB(self):
         self.vdb = VectorDatabase()
 
@@ -208,10 +224,8 @@ class GenericWindow(QWidget):
         self.p = QDesktopWidget().availableGeometry().center()
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
-
         self.layout = layout
         self.setLayout(self.layout)
-
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
 
