@@ -2,6 +2,7 @@ import os
 from splunklib import results
 import splunklib.client as client
 
+
 class SplunkFacade:
     def __init__(self):
         # Hardcoded path
@@ -41,7 +42,7 @@ class SplunkFacade:
         return log_entries
 
 
-class test(SplunkFacade):
+class Test(SplunkFacade):
     pass
 
 
