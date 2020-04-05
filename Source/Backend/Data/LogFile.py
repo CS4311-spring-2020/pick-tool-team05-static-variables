@@ -1,3 +1,5 @@
+# Cleansing, validation should be through before the ingestion process should begin and after sent to Splunk Ingestion should be set to true
+# All this information should be saved in the database, where I believe it is through the ingestion facade where it should make the call.
 class LogFile:
     def __init__(self, name):       # Constructor of a Log File requires a name and sets flags to false
         self.cleansingStat = False
