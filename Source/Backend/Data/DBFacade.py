@@ -1,36 +1,25 @@
 from pymongo import MongoClient
 
-class DBFacade:
-    try:
-        connection = MongoClient()
-        print(" Established Connection")
-    except:
-        print("Connection not Established")
+class DBFacade():
+    def __init__(self, dbName=None, collectionName=None):
+        self.dbName = dbName
+        self.collectionName = collectionName
+        self.connection = MongoClient("localhost", 27017, maxPoolSize=20)
 
-    # database
-    db = connection.PICKDB
-    # Collection name
-    collection = db.EventConfiguration
+        self.db = self.connection[self.dbName]
+        self.collection = self.db[self.collectionName]
 
-    # Info to be stored in Collection
-    eventConfig = {
-        "Event Name": "",
-        "Event Start Time ": 24,
-        "Event End Time": 44,
-        "Root Directory": 'usr/local/..',
-        "Red Team Folder": "",
-        "White Team Folder":"",
-        "Lead:":"",
-        "Lead IP address":"",
-        "Connection Satus":""
-    }
+    def add(self, data):
+         # Insert Data
+        rec_id1 = self.collection.insert_one(data)
+        print("Data inserted with record ids", rec_id1, " ")
 
-    # Insert Data
-    rec_id1 = collection.insert_one(eventConfig)
+        # Printing the data inserted
+        cursor = self.collection.find()
+        for record in cursor:
+            print(record)
 
-    print("Data inserted with record ids", rec_id1, " ")
-
-    # Printing the data inserted
-    cursor = collection.find()
-    for record in cursor:
-        print(record)
+    def delete(self,data):
+        pass
+    def find(self,data):
+        pass
