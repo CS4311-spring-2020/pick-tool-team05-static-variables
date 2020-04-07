@@ -1,6 +1,8 @@
 import os
+import subprocess
 from splunklib import results
 import splunklib.client as client
+import json
 
 # I have not had time to implement everything discussed in the SDD in Splunk.
 # I still use this a lot for examples https://dev.splunk.com/enterprise/docs/python/sdk-python/howtousesplunkpython
@@ -8,13 +10,17 @@ import splunklib.client as client
 class SplunkFacade:
     def __init__(self):
         # Hardcoded path
-        self.path = "C:\\Users\\mdelgado\\Desktop\\Log Examples"
-
+        #self.path = "C:\\Users\\mdelgado\\Desktop\\Log Examples"
+        self.path = "C:\\Users\\yamel\\Desktop\\splunk\\tests"
         # Constants created with log-in information
         HOST = "localhost"
         PORT = 8089
-        USERNAME = "menny" # Individual information needed by Splunk, was thinking of creating a class in the future that will allow the individual user to set that info
-        PASSWORD = "Manuel27!"
+        #USERNAME = "menny" # Individual information needed by Splunk, was thinking of creating a class in the future that will allow the individual user to set that info
+        USERNAME = "Minikitteh"
+
+        #PASSWORD = "Manuel27!"
+        PASSWORD = "Mini111~@"
+
 
         # Create a Service instance and log in
         self.service = client.connect(
@@ -51,7 +57,7 @@ class SplunkFacade:
         return log_entries
 
 
-import json
+
 
 
 class Test(SplunkFacade): #Just a basic test to make sure information moves correctly.
