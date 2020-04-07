@@ -19,7 +19,7 @@ class Cleanser:
     # All these paths are hardcoded because it is for demonstration purposes, and because I don't know whether the cleansed log files should be saved or not
     # When you find out whether they need to be saved or not, it will talk with the dbFacade in order to save
     def __init__(self):
-        self.path = "C:\\Users\\mdelgado\\Desktop\\Log Examples3" # Example log file that I created in order to test out the cleansing
+        self.path = "C:\\Users\\yamel\\Desktop\\splunk\\tests" # Example log file that I created in order to test out the cleansing
         self.cpath = self.path + "\\Cleansed"
         self.upath = self.path + "\\unfiltered"
 
