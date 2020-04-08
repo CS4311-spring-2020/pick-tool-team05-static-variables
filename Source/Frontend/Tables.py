@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QTableWidget, QVBoxLayout, QAbstractScrollArea, QTableWidgetItem, QPushButton, \
     QToolBar, QLineEdit, QComboBox, QCheckBox
 
@@ -145,7 +146,6 @@ class LogEntryTable(QFrame):
 
     # (TODO): Add way of getting # of rows from log entries in DB
     def updateTable(self):
-
         # (TODO): Actually feed in data from log files
         for i in range(0, 4):
             self.table.insertRow(i)
