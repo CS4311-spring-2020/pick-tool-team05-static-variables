@@ -3,7 +3,7 @@ import inspect
 from PyQt5.QtWidgets import QTableWidgetItem
 
 
-class LogEntry(QTableWidgetItem):
+class SignificantLogEntry(QTableWidgetItem):
     def __init__(self):
         super().__init__()
 

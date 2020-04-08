@@ -4,20 +4,27 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
-class GUIFacade():
+
+class GUIFacade(QWidget):
     def __init__(self):
+        super().__init__()
         self.windowData = {} # k = data type, v = window dictionary
         self.activeFrames = {} # k = window, v = status
 
-    def getInput(self, userInput):
-        # userInput is map where k = data type and v = input
+    # def getInput(self, userInput):
+    #     # userInput is map where k = data type and v = input
 
-    def getData(self, requestType, window):
-        # Query requestType data and add window to self.windowData
+    @staticmethod
+    def getData(self, datatype):
+        # Query requestType data, sort before returning
+        if datatype == 'vectors':
+            # For now, return hardcoded vectors
+            return {"DDoS": Vector('DDoS'),
+                    "Vector 2": Vector('Vector 2'),
+                    "Reverse Shell": Vector('Reverse Shell')}
 
-    def update(self, signal):
-        # Updates all windows in self.windowData tied to the signal
-
+    # def update(self, signal):
+    #     # Updates all windows in self.windowData tied to the signal
 
 
 class MainWindow(QMainWindow):
@@ -43,7 +50,6 @@ class MainWindow(QMainWindow):
         self.move(self.r.topLeft())
 
         self.__setFileMenu(self.menuBar.addMenu('&File'))
-        self.__setEditMenu(self.menuBar.addMenu('&Edit'))
         self.__setViewMenu(self.menuBar.addMenu('&View'))
         self.__initToolBar()
 
@@ -73,14 +79,11 @@ class MainWindow(QMainWindow):
         file_menu.addSeparator()
 
         # (TODO): Add triggers
-        files_act = QAction('&Project', self)
-        files_act.setStatusTip('View log files')
-        file_menu.addAction(files_act)
+        project = QAction('&Project', self)
+        project.setStatusTip('View Project Data')
+        file_menu.addAction(project)
+        project.triggered.connect(self.__createMainMenu)
 
-        dirs = QAction('&Directories', self)
-        dirs.setStatusTip('View Project Directories')
-        dirs.triggered.connect(self.__openDIRS)
-        file_menu.addAction(dirs)
 
         file_menu.addSeparator()
 
@@ -89,25 +92,6 @@ class MainWindow(QMainWindow):
         exit_act.setStatusTip('Exit application')
         exit_act.triggered.connect(QApplication.quit)
         file_menu.addAction(exit_act)
-
-    def __setEditMenu(self, edit_menu):
-        vdb = QAction('&Vectors...', self)
-        vdb.setStatusTip('Open Vector Database')
-        vdb.triggered.connect(self.__openVDB)
-        edit_menu.addAction(vdb)
-
-        # (TODO): Add triggers
-        lfdb = QAction('Log files...', self)
-        lfdb.setStatusTip('Open Log File Database')
-        lfdb.triggered.connect(self.__openLFDB)
-        edit_menu.addAction(lfdb)
-
-        edit_menu.addSeparator()
-
-        # (TODO): Add triggers
-        export_act = QAction('&Export Graph...', self)
-        export_act.setStatusTip('Export graph')
-        edit_menu.addAction(export_act)
 
     def __setViewMenu(self, view_menu):
         graph_orientation = QMenu('&Graph Orientation', self)
@@ -206,15 +190,8 @@ class MainWindow(QMainWindow):
         push_act.setStatusTip('Export Graph')
         self.toolBar.addAction(push_act)
 
-    # Following are used to open side windows based on menu clicks? Replace with popup windows that load specific frame
-    def __openVDB(self):
-        self.vdb = VectorDatabase()
-
-    def __openLFDB(self):
-        self.lfdb = LogFileDatabase()
-
-    def __openDIRS(self):
-        self.dirs = DirectoryFrame()
+    def __createMainMenu(self):
+        self.mainMenu = MainMenu()
 
 
 class GenericWindow(QWidget):
@@ -230,16 +207,301 @@ class GenericWindow(QWidget):
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
 
 
+class MainMenu(GenericWindow):
+    def __init__(self):
+        super().__init__(QVBoxLayout())
+        self.__tabs = QTabWidget()
+        self.__buttons = QToolBar("Buttons")
+        self.__frames = []
+
+        self.__initUI()
+
+    def __initUI(self):
+        self.resize(900, 600)
+        self.__initTabs()
+        self.__initButtons()
+
+        self.layout.addWidget(self.__tabs)
+        self.layout.addWidget(self.__buttons)
+
+        self.show()
+
+    def __initTabs(self):
+        self.__frames.append(EventConfigurationFrame())
+        self.__frames.append(VectorDatabaseFrame())
+        self.__frames.append(LogFileFrame())
+        self.__frames.append(VersionControlFrame())
+        self.__frames.append(IconsFrame())
+
+        for frame in self.__frames:
+            self.__tabs.addTab(frame, frame.frameName)
+
+    def __initButtons(self):
+        self.__buttons.setMovable(False)
+        self.__buttons.setStyleSheet("""
+                    QToolBar {
+                        spacing: 6px;
+                        padding: 3px;
+                    }
+                """)
+
+        # Buttons after this are set to the right side
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__buttons.addWidget(spacer)
+
+        # (TODO): Save current work, then close
+        b1 = QPushButton('OK')
+        self.__buttons.addWidget(b1)
+        b1.clicked.connect(self.close)
+
+        # (TODO): prompt to continue without saving
+        b2 = QPushButton('Cancel')
+        self.__buttons.addWidget(b2)
+        b2.clicked.connect(self.close)
+
+
 class GenericFrame(QFrame):
-    def __init__(self, layout):
+    def __init__(self, layout, name):
         super().__init__()
         self.layout = layout
+        self.frameName = name
         self.setLayout(self.layout)
+
+
+class EventConfigurationFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QGridLayout(), 'Event Configuration')
+        self.__currentVector = None
+        self.__initUI()
+
+    def __initUI(self):
+        self.setFrameShape(QFrame.StyledPanel)
+        self.__loadInfo()
+
+    # (TODO): Get all this information from the event configuration
+    def __loadInfo(self):
+        self.layout.addWidget(QLabel('Name:'), 1, 0)
+        self.layout.addWidget(QLabel('Description:'), 2, 0)
+        self.layout.addWidget(QLabel('Event Start Timestamp:'), 4, 0)
+        self.layout.addWidget(QLabel('Event End Timestamp:'), 5, 0)
+        self.layout.addWidget(QLabel('Root Directory:'), 6, 0)
+        self.layout.addWidget(QLabel('Red Team Folder:'), 7, 0)
+        self.layout.addWidget(QLabel('White Team Folder:'), 8, 0)
+        self.layout.addWidget(QLabel('Blue Team Folder:'), 9, 0)
+        self.layout.addWidget(QLabel('Lead:'), 10, 0)
+        self.layout.addWidget(QLabel("Lead's IP Address:"), 11, 0)
+        self.layout.addWidget(QLabel('Connections Established:'), 12, 0)
+        self.layout.addWidget(QLineEdit('Breakfree'), 1, 1)
+        self.layout.addWidget(QTextEdit("This event is all about the breakfree phenomenon."), 2, 1, 2, 1)
+        self.layout.addWidget(QLineEdit('09:24 01/01/97 AM'), 4, 1)
+        self.layout.addWidget(QLineEdit('09:24 01/11/97 AM'), 5, 1)
+        self.layout.addWidget(QLineEdit("C/Events/Breakfree"), 6, 1)
+        self.layout.addWidget(QLineEdit("C/Events/Breakfree/Red"), 7, 1)
+        self.layout.addWidget(QLineEdit("C/Events/Breakfree/White"), 8, 1)
+        self.layout.addWidget(QLineEdit("C/Events/Breakfree/Blue"), 9, 1)
+        self.layout.addWidget(QLabel('True'), 10, 1)
+        self.layout.addWidget(QLabel('192.168.2.1'), 11, 1)
+        self.layout.addWidget(QLabel('5'), 12, 1)
+
+    def update(self, vector):
+        print(vector.text())
+        for i in reversed(range(self.layout.count())):
+            self.layout.itemAt(i).widget().setParent(None)
+
+        self.__currentVector = vector.text()
+        self.__loadInfo()
+
+
+class VectorDatabaseFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QHBoxLayout(), 'Vector Database')
+        self.__vectors = {"DDoS": "DDoS",
+                          "Vector 2": "Vector 2",
+                          "Reverse Shell": "Reverse Shell"}
+        self.__buttons = QToolBar('Buttons')
+        self.__list = QListWidget()
+        self.__vectorInfo = VectorInformationFrame()
+
+        self.__initFrame()
+
+    def __initFrame(self):
+        self.setFrameShape(QFrame.StyledPanel)
+        self.__initList()
+        self.__initButtons()
+
+        self.layout.addWidget(self.__list)
+        self.layout.addWidget(self.__vectorInfo)
+        self.layout.addWidget(self.__buttons)
+        self.setMinimumSize(600, 400)
+
+    def __initButtons(self):
+        self.__buttons.setOrientation(Qt.Vertical)
+        self.__buttons.setMovable(False)
+        self.__buttons.setStyleSheet("""
+                    QToolBar {
+                        spacing: 6px;
+                        padding: 3px;
+                    }
+                """)
+
+        # Buttons after this are set to the right side
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__buttons.addWidget(spacer)
+
+        # (TODO): Add triggers
+        b1 = QPushButton('Add Vector')
+        self.__buttons.addWidget(b1)
+
+        # (TODO): Add triggers
+        b2 = QPushButton('Delete Vector')
+        self.__buttons.addWidget(b2)
+
+    def __initList(self):
+        for v in self.__vectors:
+            self.__list.addItem(v)
+
+        self.__list.setCurrentItem(self.__list.itemAt(0, 0))
+        self.__vectorInfo.update(self.__list.itemAt(0, 0))
+        self.__list.itemClicked.connect(self.__vectorInfo.update)
+
+
+class VectorInformationFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QGridLayout(), 'Vector Information')
+        self.__currentVector = None
+        self.__initFrame()
+
+    def __initFrame(self):
+        self.setFrameShape(QFrame.StyledPanel)
+
+    def __loadInfo(self):
+        self.layout.addWidget(QLabel('Name:'), 1, 0)
+        self.layout.addWidget(QLineEdit(self.__currentVector), 1, 1)
+        self.layout.addWidget(QLabel('Description:'), 2, 0)
+        self.layout.addWidget(QTextEdit(self.__currentVector), 2, 1, 2, 1)
+        self.layout.addWidget(QLabel('Associated Log Entries:'), 4, 0)
+        self.layout.addWidget(QLabel('10'), 4, 1)
+
+    def update(self, vector):
+        for i in reversed(range(self.layout.count())):
+            self.layout.itemAt(i).widget().setParent(None)
+
+        self.__currentVector = vector.text()
+        self.__loadInfo()
+
+
+class LogFileFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QHBoxLayout(), 'Log Files')
+        self.__logFiles = {"Readme.txt": "Readme.txt",
+                           "20193019_101559.jpg": "20193019_101559.jpg",
+                           "20190220_161043.log": "20190220_161043.log"}
+        self.__buttons = QToolBar('Buttons')
+        self.__list = QListWidget()
+        self.__logFileInfo = LogFileInformationFrame()
+
+        self.__initFrame()
+
+    def __initFrame(self):
+        self.setFrameShape(QFrame.StyledPanel)
+        self.__initList()
+        self.__initButtons()
+
+        self.layout.addWidget(self.__list)
+        self.layout.addWidget(self.__logFileInfo)
+        self.layout.addWidget(self.__buttons)
+        self.setMinimumSize(600, 400)
+
+    def __initList(self):
+        for f in self.__logFiles:
+            self.__list.addItem(f)
+
+        self.__list.setCurrentItem(self.__list.itemAt(0, 0))
+        self.__logFileInfo.update(self.__list.itemAt(0, 0))
+        self.__list.itemClicked.connect(self.__logFileInfo.update)
+        self.__list.setMaximumWidth(200)
+
+    def __initButtons(self):
+        self.__buttons.setOrientation(Qt.Vertical)
+        self.__buttons.setMovable(False)
+        self.__buttons.setStyleSheet("""
+                    QToolBar {
+                        spacing: 6px;
+                        padding: 3px;
+                    }
+                """)
+
+        # Buttons after this are set to the right side
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.__buttons.addWidget(spacer)
+
+        # (TODO): Add triggers
+        b1 = QPushButton('Accept File...')
+        self.__buttons.addWidget(b1)
+
+        # (TODO): Add triggers
+        b2 = QPushButton('Reject File...')
+        self.__buttons.addWidget(b2)
+
+
+class LogFileInformationFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QGridLayout(), 'Log File Information')
+        self.__currentLog = None
+        self.__initFrame()
+
+    def __initFrame(self):
+        self.setFrameShape(QFrame.StyledPanel)
+
+    def __loadInfo(self):
+        # (TODO): Add after action report for file and status
+        self.layout.addWidget(QLabel('Name:'), 1, 0)
+        self.layout.addWidget(QLabel('Cleansing Status:'), 2, 0)
+        self.layout.addWidget(QLabel('Validation Status:'), 3, 0)
+        self.layout.addWidget(QLabel('Ingestion Status:'), 4, 0)
+        self.layout.addWidget(QLabel('Acknowledgement Status:'), 5, 0)
+        self.layout.addWidget(QLabel('Enforcement Action Report'), 6, 1, Qt.AlignCenter)
+
+        spacer = QLabel()
+        self.layout.addWidget(spacer, 6, 2)
+
+        self.layout.addWidget(QLabel(self.__currentLog), 1, 1, Qt.AlignLeft)
+        self.layout.addWidget(QLabel('Cleansed'), 2, 1)
+        self.layout.addWidget(QLabel('Validated'), 3, 1)
+        self.layout.addWidget(QLabel('Ingested'), 4, 1)
+        self.layout.addWidget(QLabel('Accepted'), 5, 1)
+
+        self.layout.addWidget(QTextEdit('No problems found'), 8, 0, 8, 3)
+
+
+    def update(self, logfile):
+        for i in reversed(range(self.layout.count())):
+            self.layout.itemAt(i).widget().setParent(None)
+
+        self.__currentLog = logfile.text()
+        self.__loadInfo()
+
+
+# TODO: Needs to handle accepting or rejecting network changes
+class VersionControlFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QHBoxLayout(), 'Version Control')
+
+
+# TODO: Needs to list al icons with preview and option to change their name or add/delete icons
+class IconsFrame(GenericFrame):
+    def __init__(self):
+        super().__init__(QHBoxLayout(), 'Icons')
+
+#################################################################################
 
 
 class VectorFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QHBoxLayout())
+        super().__init__(QHBoxLayout(), 'Vector Frame')
         self.tabs = QTabWidget()
         self.__selected = -1
 
@@ -267,7 +529,7 @@ class VectorFrame(GenericFrame):
 
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([900, 600])
-        t = GenericFrame(QHBoxLayout())
+        t = GenericFrame(QHBoxLayout(), 'vector tab')
         t.layout.addWidget(splitter)
 
         # (TODO): Refactor when vectors are pulled from event config
@@ -296,7 +558,7 @@ class VectorFrame(GenericFrame):
 
 class NodeTableFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QHBoxLayout())
+        super().__init__(QHBoxLayout(), 'Node Table Frame')
         self.table = QTableWidget()
         self.initTable()
 
@@ -322,7 +584,7 @@ class NodeTableFrame(GenericFrame):
 
 class GraphFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QHBoxLayout())
+        super().__init__(QHBoxLayout(), 'Graph Frame')
         self.initImage()
 
     def initImage(self):
@@ -330,179 +592,3 @@ class GraphFrame(GenericFrame):
         pixmap = QPixmap('../Backend/Resources/Images/story.png')
         picture.setPixmap(pixmap)
         self.layout.addWidget(picture)
-
-
-class VectorDatabase(GenericWindow):
-    def __init__(self):
-        super().__init__(QVBoxLayout())
-        self.__tabs = QTabWidget()
-        self.__buttons = QToolBar('Toolbar')
-
-        # (TODO): Access vectors from vector table, hardcoded for now
-        self.__vectors = ["DDoS", "Vector 2", "Reverse Shell"]
-
-        self.__initUI()
-        self.show()
-
-    def __initUI(self):
-        self.resize(600, 400)
-        self.__initToolBar()
-
-        for v in self.__vectors:
-            self.__initTab(v)
-
-        self.layout.addWidget(self.__tabs)
-        self.layout.addWidget(self.__buttons)
-
-    def __initToolBar(self):
-        self.__buttons.setMovable(False)
-        self.__buttons.setStyleSheet("""
-                    QToolBar {
-                        spacing: 6px;
-                        padding: 3px;
-                    }
-                """)
-
-        # (TODO): Add triggers
-        b1 = QPushButton('Add Vector')
-        self.__buttons.addWidget(b1)
-
-        # (TODO): Add triggers
-        b2 = QPushButton('Delete Vector')
-        self.__buttons.addWidget(b2)
-
-        # Buttons after this are set to the right side
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.__buttons.addWidget(spacer)
-
-        # (TODO): Add triggers
-        b3 = QPushButton('OK')
-        self.__buttons.addWidget(b3)
-
-        # (TODO): Add triggers
-        b4 = QPushButton('Cancel')
-        self.__buttons.addWidget(b4)
-
-    def __initTab(self, v):
-        frame = GenericFrame(QGridLayout())
-        frame.layout.addWidget(QLabel('Name:'), 1, 0)
-        frame.layout.addWidget(QLineEdit(v), 1, 1)
-        frame.layout.addWidget(QLabel('Description:'), 2, 0)
-        frame.layout.addWidget(QTextEdit(), 2, 1, 2, 1)
-        frame.layout.addWidget(QLabel('Associated Log Entries:'), 4, 0)
-        frame.layout.addWidget(QLabel('10'), 4, 1)
-        self.__tabs.addTab(frame, v)
-
-    # (TODO): Connect to delete vector, delete vector from DB
-    def deleteTab(self, t):
-        self.tabs.removeTab(t)
-
-    def insertTab(self, t):
-        # (TODO): Call to create new vector in DB
-
-        self.__initTab(self.vectors[-1], t)
-        self.tabs.setCurrentIndex(t)
-
-
-class ReportFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout())
-        self.__currentLog = None
-        self.__initUI()
-
-    def __initUI(self):
-        self.setFrameShape(QFrame.StyledPanel)
-        self.layout.addWidget(QLabel())
-
-    def updateReport(self, item):
-        for i in range(self.layout.count()):
-            self.layout.itemAt(i).widget().setParent(None)
-
-        # (TODO): Get log file after action report using log file name, hardcoded for now
-        self.__currentLog = item.text()
-        self.layout.addWidget(QLabel(self.__currentLog))
-
-
-class LogFileDatabase(GenericWindow):
-    def __init__(self):
-        super().__init__(QVBoxLayout())
-        self.__list = QListWidget()
-        self.__report = ReportFrame()
-        self.__buttons = QToolBar('Toolbar')
-
-        # (TODO): Access log files, hardcoded for now
-        self.__logs = ["Readme.txt", "20193019_101559.jpg", "20190220_161043.log"]
-
-        self.__initUI()
-
-    def __initUI(self):
-        self.resize(600, 400)
-        self.__initToolBar()
-        for log in self.__logs:
-            self.__list.addItem(log)
-
-        self.__list.itemClicked.connect(self.__report.updateReport)
-
-        splitter = QSplitter(Qt.Horizontal)
-
-        splitter.addWidget(self.__list)
-        splitter.addWidget(self.__report)
-
-        splitter.setStretchFactor(1, 1)
-        splitter.setSizes([200, 200])
-
-        self.layout.addWidget(splitter)
-        self.layout.addWidget(self.__buttons)
-        self.show()
-
-    def __initToolBar(self):
-        self.__buttons.setMovable(False)
-        self.__buttons.setStyleSheet("""
-                    QToolBar {
-                        spacing: 6px;
-                        padding: 3px;
-                    }
-                """)
-
-        # (TODO): Add triggers
-        b1 = QPushButton('Accept File...')
-        self.__buttons.addWidget(b1)
-
-        # Buttons after this are set to the right side
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.__buttons.addWidget(spacer)
-
-        # (TODO): Add triggers
-        b2 = QPushButton('OK')
-        b2.clicked.connect(QApplication.instance().quit)
-        self.__buttons.addWidget(b2)
-
-        # (TODO): Add triggers
-        b3 = QPushButton('Cancel')
-        self.__buttons.addWidget(b3)
-
-
-class DirectoryFrame(GenericWindow):
-    def __init__(self):
-        super().__init__(QVBoxLayout())
-        # (TODO) Antoine: Connect with the directories from event configuration
-        self.__directories = ['C:/Events/20190304', 'C:/Events/20190304/Blue', 'C:/Events/20190304/Red',
-                              'C:/Events/20190304/White']
-        self.__initUI()
-
-    def __initUI(self):
-        self.resize(600, 400)
-        frame = GenericFrame(QGridLayout())
-        frame.layout.addWidget(QLabel('Root Directory:'), 1, 0)
-        frame.layout.addWidget(QLineEdit(self.__directories[0]), 1, 1)
-        frame.layout.addWidget(QLabel('Blue Directory:'), 2, 0)
-        frame.layout.addWidget(QLineEdit(self.__directories[1]), 2, 1)
-        frame.layout.addWidget(QLabel('Red Directory:'), 3, 0)
-        frame.layout.addWidget(QLineEdit(self.__directories[2]), 3, 1)
-        frame.layout.addWidget(QLabel('White Directory:'), 4, 0)
-        frame.layout.addWidget(QLineEdit(self.__directories[3]), 4, 1)
-        self.layout.addWidget(frame)
-        self.show()
-
