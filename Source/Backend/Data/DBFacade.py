@@ -2,7 +2,7 @@ from bson import ObjectId
 from pymongo import MongoClient, collection
 
 
-class DBFacade():
+class DBFacade:
     def __init__(self, dbName=None, collectionName=None):
         self.dbName = dbName
         self.collectionName = collectionName
@@ -11,32 +11,31 @@ class DBFacade():
         self.db = self.connection[self.dbName]
         self.collection = self.db[self.collectionName]
 
+    # TODO: Enhance to add specific data within a document
+    # TODO: Add several objects into a collection: create an array of objects
+    # Adds object data into the DB saves the document id for future need
     def add(self, data):
-        # Checking for duplicate data within collections
-
-        # Insert Data
-        rec_id1 = self.collection.insert_one(data)
-        print("Data inserted with record ids", rec_id1, " ")
-
-        # Printing the data inserted
-        cursor = self.collection.find()
+        doc_id = self.collection.insert_one(data)
 
     # Updates data with a specified ID and the data its going to change it to,
     # if a document already exists with that ID it will create a new doc
     def update(self, doc_id, data):
-        document = collection.update_one({'_id': ObjectId(doc_id)}, {"$set": data}, upset=True)
+        document = self.collection.update_one({'_id': ObjectId(doc_id)}, {"$set": data})
         return document.acknowledged
 
-    def get_single_data(self, doc_id):
-        data = collection.find_one({'_id': ObjectId(doc_id)})
-        return data
+    # Retrieve a document within a collection specifying the ID
+    # TODO: Enhance function to retrieve a specific document given other search criteria
+    def get_single_doc(self, doc_id):
+        data = self.collection.find_one({'_id': ObjectId(doc_id)})
+        print(data)
+
+
+
+
+
+
 
     # Retrieve all the objects inside the collection on a specified criteria
-    def get_multiple_data(self):
-        data = collection.find()
-
-    def delete(self, data):
-        pass
-
-    def find(self, data):
-        pass
+    def get_multiple_docs(self):
+        data = self.collection.find()
+        print(data)
