@@ -9,18 +9,15 @@ from Source.Backend.Data.EventConfiguration import EventConfiguration
 
 
 if __name__ == '__main__':
-   #app = QApplication(sys.argv)
-    #g = MainWindow()
+   app = QApplication(sys.argv)
+   g = MainWindow()
+   sys.exit(app.exec_())
+
     #test2 = Cleanser()
     #test = SplunkFacade(test2.cpath)
 
     # Database Testing
-    ec = EventConfiguration("", "", "HH:MM MM/DD/YY AM/PM", "HH:MM MM/DD/YY AM/PM", 'usr/local/', "usr/local/red",
-                            "usr/local/white", "usr/local/blue", True, "127.0.0.1", 2)
-    #ec = EventConfiguration("", "", "HH:MM MM/DD/YY AM/PM", "HH:MM MM/DD/YY AM/PM", 'usr/local/', "usr/local/red",
-                            #"usr/local/white", "usr/local/blue", False, "127.0.0.1", 2)
+    #ec = EventConfiguration("SQL..", "", "HH:MM MM/DD/YY AM/PM", "HH:MM MM/DD/YY AM/PM", 'usr/local/', "usr/local/red",
+                            #"usr/locaffl/white", "usr/qfflocal/blue", False, "127.0.0.1", 4)
 
 
-
-
-    #sys.exit(app.exec_())

@@ -25,13 +25,31 @@ class EventConfiguration:
             "Red Team Folder": self.red_team_folder,
             "White Team Folder": self.white_team_folder,
             "Blue Team Folder": self.blue_team_folder,
-            "Lead:": self.lead,
+            "Lead": self.lead,
             "Lead IP address": self.lead_ip_add,
             "Connection Status": self.connection_status
         }
+
         # Communicating with Event Config collection through the DB Façade
-        db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
-        db_collection.add(event_config)
+        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
+
+        # Testing the adding of a document into the EC collection
+        #db_collection.add(event_config)
+
+        # Testing the deletion of a document in the EC collection
+        #db_collection.delete("Event Name" ,"SQL Injection")
+
+        # Testing the updating of a one or many attributes within the EC collection
+        #db_collection.update("5e962ecee3bcf9eb015223b1",event_config )
+
+        # Testing the updating of one specific attribute (needs to be fixed)
+        # db_collection.update_n("Lead","False", "True" )
+
+        # Testing the retrieval of documents in a collection with regex search
+        doc = self.db_collection.search_n("Event Name" , "S")
+        for i in doc:
+            print(i)
+
 
     # Setters for Event Config attributes
     def set_name(self, name):
