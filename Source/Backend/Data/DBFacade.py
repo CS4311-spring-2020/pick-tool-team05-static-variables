@@ -2,7 +2,7 @@ from bson import ObjectId
 from pymongo import MongoClient, collection
 
 
-class DBFacade():
+class DBFacade:
     def __init__(self, dbName=None, collectionName=None):
         self.dbName = dbName
         self.collectionName = collectionName
@@ -11,32 +11,45 @@ class DBFacade():
         self.db = self.connection[self.dbName]
         self.collection = self.db[self.collectionName]
 
+    """ Adds one full object into a collection in the DB 
+        data: dic()/JSON object that will be stored 
+    """
+
+    # Adds a full document
     def add(self, data):
-        # Checking for duplicate data within collections
+        return self.collection.insert_one(data)
 
-        # Insert Data
-        rec_id1 = self.collection.insert_one(data)
-        print("Data inserted with record ids", rec_id1, " ")
+    # Deletes a full document with provided matching criteria
+    def delete(self, field, criteria):
+        status = self.collection.remove({field: criteria})
+        print(status)
 
-        # Printing the data inserted
-        cursor = self.collection.find()
-
-    # Updates data with a specified ID and the data its going to change it to,
-    # if a document already exists with that ID it will create a new doc
+    # Updates all the documents with specified ID within the collection,can update one or many fields in that document.
     def update(self, doc_id, data):
-        document = collection.update_one({'_id': ObjectId(doc_id)}, {"$set": data}, upset=True)
-        return document.acknowledged
+        status = self.collection.update_many({'_id': ObjectId(doc_id)}, {"$set": data})
+        print(status)
 
-    def get_single_data(self, doc_id):
-        data = collection.find_one({'_id': ObjectId(doc_id)})
-        return data
+    # TODO: Check why this is not updating the data when given a String rather than the full object with its changes
+    # Updates specific fields of a document with the provided matching criteria along with the data it will update to.
+    def update_n(self, field, field_data, data):
+        status = self.collection.update_many({field: field_data}, {"$set": data})
+        print(status)
 
-    # Retrieve all the objects inside the collection on a specified criteria
-    def get_multiple_data(self):
-        data = collection.find()
+    # Returns one documents in a collection
+    def search_n(self,field, data_field):
+        simple_query = {'_id': ObjectId("5e962ecee3bcf9eb015223b1")}
+        regex_query = {field:{"$regex":data_field}}
+        logical_query = {""}
+        return self.collection.find(regex_query)
 
-    def delete(self, data):
-        pass
 
-    def find(self, data):
-        pass
+
+
+    # Method to return a node's content with a specified node ID through the Vector collection
+    def find_node(self, node_id):
+        self.collectionName = "Vector"
+        # traverse the Vector collection's graph to find a node based on its ID
+        self.db.self.collection.find({"Graph.Node": node_id})
+        self.collectionName = "Node"
+        # after it finds the node within the vector return the content of that node
+        return self.db.self.collection.find({})
