@@ -18,13 +18,26 @@ class GraphicsNode(QGraphicsItem):
         self.height = 240
 
         self.edge_size = 10.0
+        # self.title_height = 24.0
 
         self._pen_default = QPen(QColor("#7f000000"))
+        self._pen_selected = QPen(QColor("#FFFFA637"))
+
 
         self.initUI()
 
+        # Give selectable and movable ability to the bounds given to the node
     def initUI(self):
-        pass
+        self.setFlag(QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QGraphicsItem.ItemIsMovable)
+
+    def boundingRect(self):
+        return QRectF(
+            0,
+            0,
+            2 * self.edge_size + self.width,
+            2 * self.edge_size + self.height
+        ).normalized()
 
     def initTitle(self):
         self.title_item = QGraphicsTextItem(self)
@@ -50,6 +63,8 @@ class GraphicsNode(QGraphicsItem):
         path_outline = QPainterPath()
         # path_outline.addEllipse(0, 0, self.width, self.height, self.edge_size, self.edge_size)
         path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
-        painter.setPen(self._pen_default)
+
+        # Highlights selected node
+        painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
         painter.setBrush(Qt.NoBrush)
         painter.drawPath(path_outline.simplified())
