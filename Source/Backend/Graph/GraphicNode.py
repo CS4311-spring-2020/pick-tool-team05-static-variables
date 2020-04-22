@@ -99,7 +99,7 @@ class GraphicsNode(QGraphicsItem):
         painter.setBrush(self._brush_title)
         painter.drawPath(path_title.simplified())
 
-        # calculates size of body of the node and paints it the background contet
+        # calculates size of body of the node and paints it the background content
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
         path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_size,
@@ -110,6 +110,7 @@ class GraphicsNode(QGraphicsItem):
         painter.setBrush(self._brush_background)
         painter.drawPath(path_content.simplified())
 
+        # (TODO) Change construction of a node to a circle like figure, might have to change dimensions further in node
         # outline
         path_outline = QPainterPath()
         # path_outline.addEllipse(0, 0, self.width, self.height, self.edge_size, self.edge_size)
