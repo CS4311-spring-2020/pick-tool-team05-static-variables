@@ -10,7 +10,7 @@ from Source.Frontend.GraphicalUserInterface import MainWindow
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     g = MainWindow()
-    test2 = Cleanser()
-    test = SplunkFacade(test2.cpath)
+    # test2 = Cleanser()
+    # test = SplunkFacade(test2.cpath)
 
     sys.exit(app.exec_())

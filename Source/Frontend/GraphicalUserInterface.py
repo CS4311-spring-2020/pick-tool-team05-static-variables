@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
+from Source.Backend.Graph.GraphWindow import GraphWindow
 
 class GUIFacade(QWidget):
     def __init__(self):
@@ -13,7 +14,7 @@ class GUIFacade(QWidget):
 
     # def getInput(self, userInput):
     #     # userInput is map where k = data type and v = input
-
+'''
     @staticmethod
     def getData(self, datatype):
         # Query requestType data, sort before returning
@@ -22,7 +23,7 @@ class GUIFacade(QWidget):
             return {"DDoS": Vector('DDoS'),
                     "Vector 2": Vector('Vector 2'),
                     "Reverse Shell": Vector('Reverse Shell')}
-
+'''
     # def update(self, signal):
     #     # Updates all windows in self.windowData tied to the signal
 
@@ -584,11 +585,8 @@ class NodeTableFrame(GenericFrame):
 
 class GraphFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QHBoxLayout(), 'Graph Frame')
-        self.initImage()
+        super().__init__(QVBoxLayout(), 'Graph Frame')
+        self.graphInit()
 
-    def initImage(self):
-        picture = QLabel()
-        pixmap = QPixmap('../Backend/Resources/Images/story.png')
-        picture.setPixmap(pixmap)
-        self.layout.addWidget(picture)
+    def graphInit(self):
+        self.layout.addWidget(GraphWindow())

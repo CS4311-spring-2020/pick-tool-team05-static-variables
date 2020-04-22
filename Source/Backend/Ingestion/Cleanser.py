@@ -60,8 +60,3 @@ class TxtCleanser:
 class Test:
     pass
 
-
-c = Cleanser()
-n = TxtCleanser()
-
-c.read()
