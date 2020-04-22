@@ -4,8 +4,11 @@ from PyQt5.QtGui import *
 
 
 class GraphicsNode(QGraphicsItem):
-    def __init__(self, node, title="Node Graphics Item", parent=None):
+    def __init__(self, node, parent=None):
         super().__init__(parent)
+
+        self.node = node
+        self.content = self.node.content
 
         # settings
         # self.title = title
@@ -27,10 +30,27 @@ class GraphicsNode(QGraphicsItem):
         self._brush_title = QBrush(QColor("#FF515151"))
         self._brush_background = QBrush(QColor("#E3212121"))
 
+        # init title
         self.initTitle()
-        self.title = title
+        self.title = self.node.title
+
+        """---------------------------Not Sure if I will be using something similar to this--------------------------"""
+
+        # init sockets
+        """----------------------------------------------------------------------------------------------------------"""
+
+        # init content
+        self.initContent()
 
         self.initUI()
+
+    @property
+    def title(self): return self._title
+
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.title_item.setPlainText(self._title)
 
     # Give selectable and movable ability to the bounds given to the node
     def initUI(self):
@@ -59,13 +79,12 @@ class GraphicsNode(QGraphicsItem):
         )
         # self.title_item.setPlainText(self.title)
 
-    @property
-    def title(self): return self._title
-
-    @title.setter
-    def title(self, value):
-        self._title = value
-        self.title_item.setPlainText(self._title)
+    def initContent(self):
+        self.grContent = QGraphicsProxyWidget(self)
+        self.content.setGeometry(self.edge_size, self.title_height + self.edge_size,
+                                 self.width - 2 * self.edge_size, self.height - 2 * self.edge_size
+                                 - self.title_height)
+        self.grContent.setWidget(self.content)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
 

@@ -1,4 +1,5 @@
 from Source.Backend.Graph.GraphicNode import GraphicsNode
+from Source.Backend.Graph.NodeContentWidget import NodeContentWidget
 
 
 class Node:
@@ -7,7 +8,9 @@ class Node:
 
         self.title = title
 
-        self.grNode = GraphicsNode(self, title)
+        # create a widget for contents of a nodes and add itself to node graphics
+        self.content = NodeContentWidget()
+        self.grNode = GraphicsNode(self)
 
         # add itself to the scene
         self.scene.addNode(self)
