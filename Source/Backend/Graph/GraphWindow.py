@@ -11,6 +11,9 @@ class GraphWindow(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.styleSheet_filename = 'qss/nodestyle.qss'
+        self.loadStyleSheet(self.styleSheet_filename)
+
         self.initUI()
 
     def initUI(self):
@@ -21,22 +24,13 @@ class GraphWindow(QWidget):
         self.setLayout(self.layout)
 
         # create graphics scene
-        # self.grScene = QGraphicsScene()
-        # self.grScene = QDMGraphicsScene()
         self.scene = Scene()
-        # self.grScene = self.scene.grScene
 
         node = Node(self.scene, "My Awesome Node")
 
         # create graphics view
-        # self.view = QGraphicsView(self.grScene)
         self.view = GraphicsView(self.scene.grScene, self)
-        # self.view = QDMGraphicsView(self.grScene)
-        # self.view.setScene(self.grScene)
         self.layout.addWidget(self.view)
-
-        self.setWindowTitle("Node Editor")
-        # self.show()
 
         # self.addDebugContent()
 
@@ -68,3 +62,10 @@ class GraphWindow(QWidget):
         line = self.grScene.addLine(-200, -200, 400, -100, outlinePen)
         line.setFlag(QGraphicsItem.ItemIsMovable)
         line.setFlag(QGraphicsItem.ItemIsSelectable)
+
+    def loadStyleSheet(self, filename):
+        print("Style Loading:", filename)
+        file = QFile(filename)
+        file.open(QFile.ReadOnly | QFile.Text)
+        stylesheet = file.readAll()
+        QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf8'))
