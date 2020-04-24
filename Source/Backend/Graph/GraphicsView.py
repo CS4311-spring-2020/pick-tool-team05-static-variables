@@ -95,6 +95,7 @@ class GraphicsView(QGraphicsView):
             zoomFactor = zoomOutFactor
             self.zoom -= self.zoomStep
 
+        # set limit to the amount of zoom
         clamped = False
         if self.zoom < self.zoomRange[0]: self.zoom, clamped = self.zoomRange[0], True
         if self.zoom > self.zoomRange[1]: self.zoom, clamped = self.zoomRange[1], True

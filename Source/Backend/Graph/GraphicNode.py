@@ -113,7 +113,7 @@ class GraphicsNode(QGraphicsItem):
         # (TODO) Change construction of a node to a circle like figure, might have to change dimensions further in node
         # outline
         path_outline = QPainterPath()
-        # path_outline.addEllipse(0, 0, self.width, self.height, self.edge_size, self.edge_size)
+        # path_outline.addEllipse( self.width, self.height, self.edge_size, self.edge_size)
         path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
 
         # Highlights selected node

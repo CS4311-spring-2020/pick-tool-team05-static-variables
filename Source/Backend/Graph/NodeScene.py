@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QGraphicsScene
 from Source.Backend.Graph.GraphicsScene import GraphicsScene
 
 
-class Scene:
+class Scene(GraphicsScene):
     def __init__(self):
         self.nodes = []
         self.edges = []
@@ -14,7 +14,7 @@ class Scene:
         self.initUI()
 
     def initUI(self):
-        self.grScene = QGraphicsScene()
+        self.grScene = GraphicsScene(self)
         # self.grScene = QDMGraphicsScene(self)
         # self.grScene.setScene(self.scene_width, self.scene_height)
 
