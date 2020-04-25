@@ -26,7 +26,9 @@ class GraphWindow(QWidget):
         # create graphics scene
         self.scene = Scene()
 
-        node = Node(self.scene, "My Awesome Node")
+        # passing the scene reference, the name of the node, inputs and outputs
+        # inputs might represent different types of sockets
+        node = Node(self.scene, "My Awesome Node", inputs=[1, 2, 3], outputs=[1])
 
         # create graphics view
         self.view = GraphicsView(self.scene.grScene, self)
