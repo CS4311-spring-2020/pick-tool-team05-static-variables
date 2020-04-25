@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from Source.Backend.Graph.Node import Node
 from Source.Backend.Graph.GraphicsView import GraphicsView
 from Source.Backend.Graph.NodeScene import Scene
+from Source.Backend.Graph.NodeEdge import Edge
 
 
 class GraphWindow(QWidget):
@@ -26,13 +27,30 @@ class GraphWindow(QWidget):
         # create graphics scene
         self.scene = Scene()
 
-        # passing the scene reference, the name of the node, inputs and outputs
-        # inputs might represent different types of sockets
-        node = Node(self.scene, "My Awesome Node", inputs=[1, 2, 3], outputs=[1])
+        # create a node
+        self.addNode()
 
         # create graphics view
         self.view = GraphicsView(self.scene.grScene, self)
         self.layout.addWidget(self.view)
+
+    def addNode(self):
+        # passing the scene reference, the name of the node, inputs and outputs
+        # node = Node(self.scene, "My Awesome Node", inputs=(Socket(), Socket(), Socket()), outputs=Socket())
+
+        # inputs might represent different types of sockets
+        node1 = Node(self.scene, "My Awesome Node 1", inputs=[1, 2, 3], outputs=[1])
+        node2 = Node(self.scene, "My Awesome Node 2", inputs=[1, 2, 3], outputs=[1])
+        node3 = Node(self.scene, "My Awesome Node 3", inputs=[1, 2, 3], outputs=[1])
+
+        # set where node is supposed to be drawn from the start
+        node1.setPos(-450, -250)
+        node2.setPos(-75, 0)
+        node3.setPos(-200, -500)
+
+        # creation of edge takes scene, starting pos, ending pos, and type of edge to draw
+        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)
+        edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[2], edge_type=2)
 
     def loadStyleSheet(self, filename):
         print("Style Loading:", filename)

@@ -47,6 +47,11 @@ class GraphicsNode(QGraphicsItem):
 
         self.initUI()
 
+    # update and redraw edges connected to a socket when a node is moved by the mouse
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+        self.node.updateConnectedEdges()
+
     @property
     def title(self): return self._title
 

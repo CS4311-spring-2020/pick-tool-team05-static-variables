@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 
-DEBUG = True
+DEBUG = False
 
 
 # widget that will be extend to all corners that has a label and text edit
