@@ -4,10 +4,13 @@ from Source.Backend.Graph.NodeSocket import *
 
 
 class Node:
-    def __init__(self, scene, title="Undefined Node", inputs=[], outputs=[]):
+    def __init__(self, scene, title="Undefined Node", inputs=[], outputs=[], **content_info):
         self.scene = scene
 
         self.title = title
+
+        # saves individual information of a node
+        self.content_info = content_info
 
         # create a widget for contents of a nodes and add itself to node graphics
         self.content = NodeContentWidget()

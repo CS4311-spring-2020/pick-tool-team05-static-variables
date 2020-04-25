@@ -43,7 +43,7 @@ class GraphicsNode(QGraphicsItem):
         """----------------------------------------------------------------------------------------------------------"""
 
         # init content
-        # self.initContent()
+        self.initContent()
 
         self.initUI()
 
@@ -61,7 +61,7 @@ class GraphicsNode(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
     def boundingRect(self):
-        '''
+
         return QRectF(0, 0, self.width, self.height).normalized()
         '''
         return QRectF(
@@ -74,7 +74,7 @@ class GraphicsNode(QGraphicsItem):
             2 * self.radius
             + self.edge_size
         )
-
+        '''
     def initTitle(self):
         self.title_item = QGraphicsTextItem(self)
         self.title_item.setDefaultTextColor(self._title_color)
@@ -100,7 +100,7 @@ class GraphicsNode(QGraphicsItem):
         pass
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
-        '''
+
         # calculates size of title section and colors the background of the title
         path_title = QPainterPath()
         path_title.setFillRule(Qt.WindingFill)
@@ -111,10 +111,10 @@ class GraphicsNode(QGraphicsItem):
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_title)
         painter.drawPath(path_title.simplified())
-        '''
+
 
         # calculates size of body of the node and paints it the background content
-        '''
+
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
         path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_size,
@@ -124,14 +124,14 @@ class GraphicsNode(QGraphicsItem):
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_background)
         painter.drawPath(path_content.simplified())
-        '''
+
 
         # (TODO) Change construction of a node to a circle like figure, might have to change dimensions further in node
         # outline
         path_outline = QPainterPath()
         # path_outline.addEllipse( self.width, self.height, self.edge_size, self.edge_size)
-        # path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
-        path_outline.addEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
+        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
+        # path_outline.addEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
 
         # Highlights selected node
         painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)

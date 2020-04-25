@@ -14,7 +14,7 @@ class Socket:
 
         self.node = node
         self.index = index
-        self.position = LEFT_TOP
+        self.position = position
 
         # create graphical sockets
         self.grSocket = GraphicsSocket(self.node.grNode)
