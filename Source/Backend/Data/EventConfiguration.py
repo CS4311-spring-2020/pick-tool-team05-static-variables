@@ -17,9 +17,6 @@ class EventConfiguration:
         self.lead_ip_add = lead_ip_add
         self.connection_status = connection_status
 
-        # Connecting to the EC object to the EC collection in the DB
-        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
-
         # Mapping the object to the DB schema
         event_config = {
             "Event Name": self.name,
@@ -34,9 +31,10 @@ class EventConfiguration:
             "Lead IP Address": self.lead_ip_add,
             "Connection Status": self.connection_status
         }
-
+        # Connecting to the EC object to the EC collection in the DB
+        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
         # Adding the event configuration object into the DB
-        self.db_collection.add(event_config)
+        #self.db_collection.add(event_config)
 
     # Setters of the Event Config's attributes
     def set_name(self, name):
@@ -127,4 +125,5 @@ class EventConfiguration:
             self.white_team_folder = cursor.get("White Team Folder")
             self.lead = cursor.get("Lead")
             self.lead_ip_add = cursor.get("Lead IP Address")
+        print("Event Configuration pulled from DB with search criteria: ", attribute, "-->", value)
 
