@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import *
 
+DEBUG = True
+
 
 # widget that will be extend to all corners that has a label and text edit
 class NodeContentWidget(QWidget):
@@ -31,13 +33,18 @@ class NodeContentWidget(QWidget):
         labelPosy = 0
         for key in self.node_content.keys():
             self.key = QLabel(key)
-            self.key.setStyleSheet("QLabel {background-color:grey;  }")
+            if DEBUG : print("key: ", key)
+            if DEBUG : print(" self.key: ", self.key)
+            self.key.setStyleSheet("QLabel {background-color:grey;}")
+            visibleStat = self.key.isVisible()
+            if DEBUG : print("  self.key.isVisible: ", visibleStat)
             self.info = QLineEdit(self.node_content[key])
+            if DEBUG : print("  self.info: ", self.info)
             self.layout.addWidget(self.key, posx, labelPosy)
+            if DEBUG : print("    self.layout.addWidget: ", self.key, " ", posx, " ", labelPosy)
             self.layout.addWidget(self.info, posx, posy)
+            if DEBUG: print("    self.layout.addWidget: ", self.info, " ", posx, " ", labelPosy)
             posx += 1
-
-
 
         '''
         self.ID
