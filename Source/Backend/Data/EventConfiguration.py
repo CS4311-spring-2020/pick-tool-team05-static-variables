@@ -17,8 +17,13 @@ class EventConfiguration:
         self.lead_ip_add = lead_ip_add
         self.connection_status = connection_status
 
+        # Connecting to the EC object to the EC collection in the DB
+        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
+
+        # Mapping the object to the DB schema
         event_config = {
             "Event Name": self.name,
+            "Description": self.description,
             "Event Start Time ": self.start_time,
             "Event End Time": self.end_time,
             "Root Directory": self.root_directory,
@@ -26,34 +31,20 @@ class EventConfiguration:
             "White Team Folder": self.white_team_folder,
             "Blue Team Folder": self.blue_team_folder,
             "Lead": self.lead,
-            "Lead IP address": self.lead_ip_add,
+            "Lead IP Address": self.lead_ip_add,
             "Connection Status": self.connection_status
         }
 
-        # Communicating with Event Config collection through the DB Façade
-        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
+        # Adding the event configuration object into the DB
+        self.db_collection.add(event_config)
 
-        # Testing the adding of a document into the EC collection
-        #db_collection.add(event_config)
-
-        # Testing the deletion of a document in the EC collection
-        #db_collection.delete("Event Name" ,"SQL Injection")
-
-        # Testing the updating of a one or many attributes within the EC collection
-        #db_collection.update("5e962ecee3bcf9eb015223b1",event_config )
-
-        # Testing the updating of one specific attribute (needs to be fixed)
-        # db_collection.update_n("Lead","False", "True" )
-
-        # Testing the retrieval of documents in a collection with regex search
-        doc = self.db_collection.search_n("Event Name" , "S")
-        for i in doc:
-            print(i)
-
-
-    # Setters for Event Config attributes
+    # Setters of the Event Config's attributes
     def set_name(self, name):
         self.name = name
+        print(self.name)
+
+    def set_description(self, description):
+        self.description = description
 
     def set_start_time(self, start_time):
         self.start_time = start_time
@@ -82,9 +73,12 @@ class EventConfiguration:
     def set_connection_status(self, connection_status):
         self.connection_status = connection_status
 
-    # Getters For the Event Config Attributes
+    # Getters of the Event Config's attributes
     def get_name(self):
         return self.name
+
+    def get_description(self):
+        return self.description
 
     def get_start_time(self):
         return self.start_time
@@ -115,3 +109,22 @@ class EventConfiguration:
 
     def get_connection_status(self):
         return self.connection_status
+
+    # Function to obtain an EC object from the DB specifying search parameters
+    # attribute: The EC's attribute that will be searched for in the EC collection
+    # value: The attribute's value used as the search criteria
+    def pull_object(self, attribute, value):
+        cursor1 = self.db_collection.search_n(attribute, value)
+        for cursor in cursor1:
+
+            self.name = cursor.get("Event Name")
+            self.description = cursor.get("Description")
+            self.start_time = cursor.get("Start Time")
+            self.end_time = cursor.get("End Time")
+            self.root_directory = cursor.get("Root Directory")
+            self.red_team_folder = cursor.get("Red Team Folder")
+            self.blue_team_folder = cursor.get("Blue Team Folder")
+            self.white_team_folder = cursor.get("White Team Folder")
+            self.lead = cursor.get("Lead")
+            self.lead_ip_add = cursor.get("Lead IP Address")
+
