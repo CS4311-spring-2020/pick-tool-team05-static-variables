@@ -1,14 +1,26 @@
-from PyQt5.QtWidgets import QWidget
+from pprint import pprint
+from Source.Backend.Data.DBFacade import DBFacade
+from Source.Backend.Data.Graph import Graph
 
-from Source.Backend.Data.SignificantLogEntry import SignificantLogEntry
+class Vector:
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+        g = Graph("or", 88, 88, "sg", "Node1", "Relationship 2")
 
+        vector = {
+            "Name": self.name,
+            "Description": self.description,
+            "Graph": [g.graph]
+        }
 
-class Vector(QWidget):
-    def __init__(self, name=None, description=None):
-        super().__init__()
-        self.__name = name
-        self.__description = description
-        self.__associatedLogs = []
+        db_collection = DBFacade(dbName="PICKDB", collectionName="Vector")
+        d = db_collection.add(vector)
+        pprint(d)
+        #x = db_collection.search_n("Name","Ddos")
+        #for i in x:
+            #pprint(i)
+
 
     def getName(self):
         return self.__name
@@ -21,6 +33,3 @@ class Vector(QWidget):
 
     def setDescription(self, description):
         self.__description = description
-
-    def getAssociatedLogCount(self):
-        return self.__associatedLogs.count(SignificantLogEntry)
