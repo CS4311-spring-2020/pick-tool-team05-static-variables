@@ -16,14 +16,15 @@ class GraphicsView(QGraphicsView):
         # Settings for zooming in wheel event
         self.zoomInFactor = 1.25
         self.zoom = 10
-        self.zoomClamp = False
+        self.zoomClamp = True
         self.zoomStep = 1
-        self.zoomRange = [0, 10]
+        self.zoomRange = [0, 15]
 
     def initUI(self):
         # For a smoother look to the items drawn.
         self.setRenderHints(
-            QPainter.Antialiasing | QPainter.HighQualityAntialiasing | QPainter.TextAntialiasing | QPainter.SmoothPixmapTransform)
+            QPainter.Antialiasing | QPainter.HighQualityAntialiasing |
+            QPainter.TextAntialiasing | QPainter.SmoothPixmapTransform)
 
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
 
