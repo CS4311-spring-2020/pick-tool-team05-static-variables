@@ -2,7 +2,6 @@ import csv
 import os
 import re
 
-from Source.Backend.Ingestion.LogFile import LogFile
 
 class Cleanser:
 
@@ -20,8 +19,6 @@ class Cleanser:
         if not os.path.exists(self.upath):
             os.mkdir(self.upath)
 
-        self.cleanse()
-
     #gets rid of blank space & need to implement to get rid of non ascii
     def cleanse(self):
         print("starting cleanse")
@@ -35,8 +32,6 @@ class Cleanser:
                     for row in csv.reader(in_file):
                         if (any(field.strip() for field in row)) and self.is_ascii(str(row)):
                             writer.writerow(row)
-                            LogFile.cleansingStat = True
-
 
             print(filename + " finished cleansing")
 
@@ -46,7 +41,7 @@ class Cleanser:
 
 
 
-#c = Cleanser()
-#c.cleanse()
+c = Cleanser()
+c.cleanse()
 
 
