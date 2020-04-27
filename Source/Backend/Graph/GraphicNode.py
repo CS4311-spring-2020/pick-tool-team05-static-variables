@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+import math
+
 
 class GraphicsNode(QGraphicsItem):
     def __init__(self, node, parent=None):
@@ -15,11 +17,15 @@ class GraphicsNode(QGraphicsItem):
         self._title_color = Qt.black
         self._title_font = QFont("Times New Roman", 12)
 
-        self.width = 180
-        self.height = 240
         self.radius = 150
-
+        self.innerRectangleSize = self.radius * math.sin(45)
         self.edge_size = 10.0
+
+        self.width = (self.innerRectangleSize * 2) - (self.edge_size * 2)
+        self.height = (self.innerRectangleSize * 2) - (self.edge_size * 2)
+
+
+
         self.title_height = 24.0
 
         # offset from left side
@@ -66,79 +72,59 @@ class GraphicsNode(QGraphicsItem):
         self.setFlag(QGraphicsItem.ItemIsMovable)
 
     def boundingRect(self):
+        """ defines draggable surface of a node """
+        return QRectF(-self.innerRectangleSize + self.edge_size,
+                      -self.innerRectangleSize + self.edge_size,
+                      (self.innerRectangleSize * 2) - (self.edge_size * 2),
+                      (self.innerRectangleSize * 2) - (self.edge_size * 2)).normalized()
 
-        return QRectF(0, 0, self.width, self.height).normalized()
-        '''
-        return QRectF(
-            -self.radius
-            - self.edge_size,
-            -self.radius
-            - self.edge_size,
-            2 * self.radius
-            + self.edge_size,
-            2 * self.radius
-            + self.edge_size
-        )
-        '''
     def initTitle(self):
         self.title_item = QGraphicsTextItem(self)
         self.title_item.setDefaultTextColor(self._title_color)
         self.title_item.setFont(self._title_font)
 
         # sets padding to the title offset from the left
-        self.title_item.setPos(self._padding, 0)
+        self.title_item.setPos(-self.innerRectangleSize + (self.edge_size * 3.8) + self._padding,
+                               -self.innerRectangleSize - 4.0)
         self.title_item.setTextWidth(
             self.width
             - 2
             * self._padding
         )
-        # self.title_item.setPlainText(self.title)
 
     def initContent(self):
         self.grContent = QGraphicsProxyWidget(self)
-        self.content.setGeometry(self.edge_size, self.title_height + self.edge_size,
-                                 self.width - 2 * self.edge_size, self.height - 2 * self.edge_size
-                                 - self.title_height)
+        self.content.setGeometry(-self.innerRectangleSize + (self.edge_size * 2.5),
+                                 -self.innerRectangleSize + (self.edge_size * 2.5),
+                                 (self.innerRectangleSize * 2) - (self.edge_size * 5),
+                                 self.innerRectangleSize - (self.edge_size * 5) + self.title_height)
+
         self.grContent.setWidget(self.content)
 
     def initSockets(self):
         pass
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
-
-        # calculates size of title section and colors the background of the title
-        path_title = QPainterPath()
-        path_title.setFillRule(Qt.WindingFill)
-        path_title.addRoundedRect(0, 0, self.width, self.title_height, self.edge_size, self.edge_size)
-        path_title.addRect(0, self.title_height - self.edge_size, self.edge_size, self.edge_size)
-        path_title.addRect(self.width - self.edge_size, self.title_height - self.edge_size, self.edge_size,
-                           self.edge_size)
-        painter.setPen(Qt.NoPen)
-        painter.setBrush(self._brush_title)
-        painter.drawPath(path_title.simplified())
-
-
         # calculates size of body of the node and paints it the background content
-
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
-        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_size,
-                                    self.edge_size)
-        path_content.addRect(0, self.title_height, self.edge_size, self.edge_size)
-        path_content.addRect(self.width - self.edge_size, self.title_height, self.edge_size, self.edge_size)
+        path_content.addRoundedRect(
+            QRectF(-self.innerRectangleSize + (self.edge_size * 2),
+                   -self.innerRectangleSize + (self.edge_size * 2),
+                   (self.innerRectangleSize * 2) - (self.edge_size * 4),
+                   (self.innerRectangleSize * 2) - (self.edge_size * 4)),
+            self.edge_size, self.edge_size)
+
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_background)
         painter.drawPath(path_content.simplified())
 
-
-        # (TODO) Change construction of a node to a circle like figure, might have to change dimensions further in node
         # outline
         path_outline = QPainterPath()
-        # path_outline.addEllipse( self.width, self.height, self.edge_size, self.edge_size)
-        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_size, self.edge_size)
-        # path_outline.addEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
+        path_outline.addEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
 
         # Highlights selected node
         painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+        #painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern))
         painter.setBrush(Qt.NoBrush)
         painter.drawPath(path_outline.simplified())

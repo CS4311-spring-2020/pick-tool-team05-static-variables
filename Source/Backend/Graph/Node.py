@@ -22,9 +22,7 @@ class Node:
         self.scene.addNode(self)
         self.scene.grScene.addItem(self.grNode)
 
-        # self.grNode.title = "It is now changed"
-
-        self.socket_spacing = 22
+        self.socket_spacing = 1
 
         self.inputs = []
         self.outputs = []
@@ -33,13 +31,13 @@ class Node:
         # create sockets for input and outputs
         counter = 0
         for item in inputs:
-            socket = Socket(node=self, index=counter, position=LEFT_BOTTOM)
+            socket = Socket(node=self, index_Socket_xPos=counter, position_Socket_yPos=LEFT_BOTTOM)
             counter += 1
             self.inputs.append(socket)
 
         counter = 0
         for item in outputs:
-            socket = Socket(node=self, index=counter, position=RIGHT_TOP)
+            socket = Socket(node=self, index_Socket_xPos=counter, position_Socket_yPos=RIGHT_TOP)
             counter += 1
             self.outputs.append(socket)
 
@@ -51,32 +49,19 @@ class Node:
         self.grNode.setPos(x, y)
 
     # return coordinate position of a socket as a list for updating positions inside NodeEdge
-    def getSocketPosition(self, index, position):
-        x = 0 if (position in(LEFT_TOP, LEFT_BOTTOM)) else self.grNode.width
-        # y = index * 20
-        '''
-        y = (self.grNode.title_height
-        + self.grNode._padding
-        + self.grNode.edge_size
-        + index
-        * 20)
-        '''
-        if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
-            # start from bottom
-            y = self.grNode.height \
-                - self.grNode.edge_size \
-                - self.grNode._padding \
-                - index * \
-                self.socket_spacing
-        else:
-            # from top
-            y = self.grNode.title_height \
-                 + self.grNode._padding \
-                 + self.grNode.edge_size \
-                 + index \
-                 * self.socket_spacing
+    def getSocketPosition(self, index_xPos, position_yPos):
+        x = 0 if (position_yPos in (LEFT_TOP, LEFT_BOTTOM)) else (self.grNode.height/2)
+
+
+         # start from bottom
+        y = self.grNode.height/2
 
         return [x, y]
+
+    '''        if PARENT:
+            return [0, -self.grNode.height/2]
+        else:
+            return[0, self.grNode.height/2]'''
 
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:

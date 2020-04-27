@@ -15,11 +15,14 @@ class GraphicsEdge(QGraphicsPathItem):
         self.edge = edge
 
         # settings
+        # default pen
         self._color = QColor("#001000")
-        self._color_selected = QColor("#0ff000")
         self._pen = QPen(self._color)
-        self._pen_selected = QPen(self._color_selected)
         self._pen.setWidth(2.0)
+
+        # selected pen
+        self._color_selected = QColor("#0ff000")
+        self._pen_selected = QPen(self._color_selected)
         self._pen_selected.setWidth(2.0)
 
         self.setFlag(QGraphicsItem.ItemIsSelectable)
@@ -50,23 +53,3 @@ class GraphicsEdgeDirect(GraphicsEdge):
         path.lineTo(self.posDestination[0], self.posDestination[1])
         self.setPath(path)
 
-
-class GraphicsEdgeBezier(GraphicsEdge):
-    def updatePath(self):
-        s = self.posSource
-        d = self.posDestination
-        dist = (d[0]
-                - s[0]
-                * 0.5)
-        if s[0] > d[0]: dist *= -1
-
-        path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
-        path.cubicTo(s[0]
-                     + dist,
-                     s[1],
-                     d[0]
-                     - dist,
-                     d[1],
-                     self.posDestination[0],
-                     self.posDestination[1])
-        self.setPath(path)

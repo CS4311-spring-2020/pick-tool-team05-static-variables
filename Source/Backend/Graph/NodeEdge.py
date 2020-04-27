@@ -1,13 +1,12 @@
 from Source.Backend.Graph.GraphicEdge import *
 
 EDGE_TYPE_DIRECT = 1
-EDGE_TYPE_BEZIER = 2
 
 DEBUG = False
 
 
 class Edge:
-    def __init__(self, scene, start_socket, end_socket, edge_type=EDGE_TYPE_DIRECT):
+    def __init__(self, scene, start_socket, end_socket):
         self.scene = scene
 
         self.start_socket = start_socket
@@ -17,7 +16,7 @@ class Edge:
         if self.end_socket is not None:
             self.end_socket.edge = self
 
-        self.grEdge = GraphicsEdgeDirect(self) if edge_type == EDGE_TYPE_DIRECT else GraphicsEdgeBezier(self)
+        self.grEdge = GraphicsEdgeDirect(self)
 
         self.updatePositions()
         if DEBUG: print("Edge: ", self.grEdge.posSource, "to", self.grEdge.posDestination)

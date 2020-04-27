@@ -40,7 +40,7 @@ class GraphicsView(QGraphicsView):
         elif event.button() == Qt.LeftButton:
             self.leftMouseButtonPress(event)
         elif event.button() == Qt.RightButton:
-            self.rightMousetButtonPress(event)
+            self.rightMouseButtonPress(event)
         else:
             super().mousePressEvent(event)
 
@@ -78,7 +78,7 @@ class GraphicsView(QGraphicsView):
         return super().mouseReleaseEvent(event)
 
     def rightMouseButtonPress(self, event):
-        return super().mousePressEvent(event)
+        return super().mouseMoveEvent(event)
 
     def rightMouseButtonRelease(self, event):
         return super().mouseReleaseEvent(event)

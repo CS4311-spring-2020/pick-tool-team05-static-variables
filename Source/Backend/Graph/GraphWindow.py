@@ -9,7 +9,8 @@ from Source.Backend.Graph.NodeEdge import Edge
 
 
 class GraphWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, vector_name="Undifined Vector", parent=None):
+        vector = vector_name
         super().__init__(parent)
 
         self.styleSheet_filename = 'qss/nodestyle.qss'
@@ -39,9 +40,9 @@ class GraphWindow(QWidget):
         # node = Node(self.scene, "My Awesome Node", inputs=(Socket(), Socket(), Socket()), outputs=Socket())
 
         # inputs might represent different types of sockets
-        node1 = Node(self.scene, "My Awesome Node 1", inputs=[1, 2, 3], outputs=[1])
-        node2 = Node(self.scene, "My Awesome Node 2", inputs=[1, 2, 3], outputs=[1])
-        node3 = Node(self.scene, "My Awesome Node 3", inputs=[1, 2, 3], outputs=[1])
+        node1 = Node(self.scene, "My Awesome Node 1", inputs=[1], outputs=[1])
+        node2 = Node(self.scene, "My Awesome Node 2", inputs=[1], outputs=[1])
+        node3 = Node(self.scene, "My Awesome Node 3", inputs=[1], outputs=[1])
 
         # set where node is supposed to be drawn from the start
         node1.setPos(-450, -250)
@@ -49,8 +50,9 @@ class GraphWindow(QWidget):
         node3.setPos(-200, -500)
 
         # creation of edge takes scene, starting pos, ending pos, and type of edge to draw
-        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=2)
-        edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[2], edge_type=2)
+        edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0])
+        edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[0])
+
 
     def loadStyleSheet(self, filename):
         print("Style Loading:", filename)
