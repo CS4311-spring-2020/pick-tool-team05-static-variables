@@ -6,16 +6,16 @@ DEBUG = False
 
 
 class Node:
-    def __init__(self, scene, title="Undefined Node", inputs=[], outputs=[], **content_info):
+    def __init__(self, scene, inputs=[], outputs=[], **kwargs):
         self.scene = scene
 
-        self.title = title
+        self.title = kwargs.pop('name')
 
         # saves individual information of a node
-        self.content_info = content_info
+        self.content_info = kwargs
 
         # create a widget for contents of a nodes and add itself to node graphics
-        self.content = NodeContentWidget()
+        self.content = NodeContentWidget(self)
         self.grNode = GraphicsNode(self)
 
         # add itself to the scene
@@ -53,7 +53,6 @@ class Node:
             return [0, -self.grNode.height/2]
         else:
             pass
-
 
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:

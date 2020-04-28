@@ -20,7 +20,7 @@ class GraphicsSocket(QGraphicsItem):
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
 
         # painting circle
-        painter.setBrush(self._brush)
+        # painter.setBrush(self._brush)
         painter.setPen(self._pen)
 
         painter.drawEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)

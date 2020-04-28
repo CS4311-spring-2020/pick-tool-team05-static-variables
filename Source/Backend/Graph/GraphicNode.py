@@ -24,8 +24,6 @@ class GraphicsNode(QGraphicsItem):
         self.width = (self.innerRectangleSize * 2) - (self.edge_size * 2)
         self.height = (self.innerRectangleSize * 2) - (self.edge_size * 2)
 
-
-
         self.title_height = 24.0
 
         # offset from left side
@@ -91,7 +89,6 @@ class GraphicsNode(QGraphicsItem):
             - 2
             * self._padding
         )
-        self.title_item.setVisible(False)
 
     def initContent(self):
 
@@ -103,6 +100,8 @@ class GraphicsNode(QGraphicsItem):
                                  self.innerRectangleSize - (self.edge_size * 5) + self.title_height)
 
         self.grContent.setWidget(self.content)
+
+
 
     def initSockets(self):
         pass

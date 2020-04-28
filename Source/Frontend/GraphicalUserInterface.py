@@ -589,4 +589,4 @@ class GraphFrame(GenericFrame):
         self.graphInit()
 
     def graphInit(self):
-        self.layout.addWidget(GraphWindow())
+        self.layout.addWidget(GraphWindow("example1"))
