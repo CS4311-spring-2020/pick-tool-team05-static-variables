@@ -1,39 +1,35 @@
 from Source.Backend.Graph.GraphicNodeSocket import GraphicsSocket
 
-LEFT_TOP = 1
-LEFT_BOTTOM = 2
-RIGHT_TOP = 3
-RIGHT_BOTTOM = 4
-BOTTOM = 5
-TOP = 6
 
-PARENT = 1
-CHILD = 2
+TOP = 1
+BOTTOM = 2
 
-DEBUG = True
+DEBUG = False
 
 
 class Socket:
     # passing the parent node in order to added to the scene, and index to keep track of position
-    def __init__(self, node, index_Socket_xPos=0, position_Socket_yPos=LEFT_TOP):
+    def __init__(self, node, socket_x_pos=0, socket_y_pos=TOP):
 
         self.node = node
-        self.index = index_Socket_xPos
-        self.position = position_Socket_yPos
+        self.socket_x_pos = socket_x_pos
+        self.socket_y_pos = socket_y_pos
 
-        if DEBUG: print("Socket: -- creating with: ", self.index, self.position, self.node)
+        if DEBUG: print("Socket: -- creating with: ", self.socket_x_pos, self.socket_y_pos, self.node)
         # create graphical sockets
         self.grSocket = GraphicsSocket(self.node.grNode)
 
-        self.grSocket.setPos(*self.node.getSocketPosition(index_Socket_xPos, position_Socket_yPos))
+        self.grSocket.setPos(*self.node.getSocketPosition(socket_y_pos))
 
         self.edge = None
 
     # return coordinate: index,position
     def getSocketPosition(self):
-        if DEBUG: print(" GSP: ", self.index, self.position, "node: ", self.node)
-        result = self.node.getSocketPosition(self.index, self.position)
-        if DEBUG: print("   res: ", result)
+        if DEBUG: print(" GSP: ", self.socket_x_pos, self.socket_y_pos, "node: ", self.node)
+
+        result = self.node.getSocketPosition(self.socket_y_pos)
+
+        if DEBUG: print("  result: ", result)
         return result
 
     def setConnectedEdge(self, edge=None):

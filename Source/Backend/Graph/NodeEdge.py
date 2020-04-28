@@ -6,8 +6,10 @@ DEBUG = False
 
 
 class Edge:
-    def __init__(self, scene, start_socket, end_socket):
+    def __init__(self, scene, start_socket, end_socket, label):
         self.scene = scene
+
+        self.label = label
 
         self.start_socket = start_socket
         self.end_socket = end_socket
@@ -19,7 +21,9 @@ class Edge:
         self.grEdge = GraphicsEdgeDirect(self)
 
         self.updatePositions()
+
         if DEBUG: print("Edge: ", self.grEdge.posSource, "to", self.grEdge.posDestination)
+
         self.scene.grScene.addItem(self.grEdge)
 
         # update position receive coordinate point in a list [x,y]

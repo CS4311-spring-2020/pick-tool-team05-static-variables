@@ -29,16 +29,13 @@ class Node:
 
         # once node is instantiated sockets are created
         # create sockets for input and outputs
-        counter = 0
+
         for item in inputs:
-            socket = Socket(node=self, index_Socket_xPos=counter, position_Socket_yPos=LEFT_BOTTOM)
-            counter += 1
+            socket = Socket(node=self,  socket_y_pos=TOP)
             self.inputs.append(socket)
 
-        counter = 0
         for item in outputs:
-            socket = Socket(node=self, index_Socket_xPos=counter, position_Socket_yPos=RIGHT_TOP)
-            counter += 1
+            socket = Socket(node=self, socket_y_pos=BOTTOM)
             self.outputs.append(socket)
 
     @property
@@ -49,19 +46,14 @@ class Node:
         self.grNode.setPos(x, y)
 
     # return coordinate position of a socket as a list for updating positions inside NodeEdge
-    def getSocketPosition(self, index_xPos, position_yPos):
-        x = 0 if (position_yPos in (LEFT_TOP, LEFT_BOTTOM)) else (self.grNode.height/2)
-
-
-         # start from bottom
-        y = self.grNode.height/2
-
-        return [x, y]
-
-    '''        if PARENT:
+    def getSocketPosition(self, socket_y_position):
+        if socket_y_position == TOP:
+            return [0, self.grNode.height/2]
+        elif socket_y_position == BOTTOM:
             return [0, -self.grNode.height/2]
         else:
-            return[0, self.grNode.height/2]'''
+            pass
+
 
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:

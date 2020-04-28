@@ -91,9 +91,12 @@ class GraphicsNode(QGraphicsItem):
             - 2
             * self._padding
         )
+        self.title_item.setVisible(False)
 
     def initContent(self):
+
         self.grContent = QGraphicsProxyWidget(self)
+
         self.content.setGeometry(-self.innerRectangleSize + (self.edge_size * 2.5),
                                  -self.innerRectangleSize + (self.edge_size * 2.5),
                                  (self.innerRectangleSize * 2) - (self.edge_size * 5),
@@ -105,6 +108,7 @@ class GraphicsNode(QGraphicsItem):
         pass
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        '''
         # calculates size of body of the node and paints it the background content
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
@@ -118,6 +122,7 @@ class GraphicsNode(QGraphicsItem):
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_background)
         painter.drawPath(path_content.simplified())
+        '''
 
         # outline
         path_outline = QPainterPath()

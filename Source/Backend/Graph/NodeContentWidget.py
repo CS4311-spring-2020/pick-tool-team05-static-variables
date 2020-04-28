@@ -5,7 +5,7 @@ DEBUG = False
 
 # widget that will be extend to all corners that has a label and text edit
 class NodeContentWidget(QWidget):
-    def __init__(self, node_content={}, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
         self.node_content = {"name": "something1",
@@ -32,10 +32,11 @@ class NodeContentWidget(QWidget):
         posy = 1
         labelPosy = 0
         for key in self.node_content.keys():
-            self.key = QLabel(key)
+            newKey = key + ":"
+            self.key = QLabel(newKey)
             if DEBUG : print("key: ", key)
             if DEBUG : print(" self.key: ", self.key)
-            self.key.setStyleSheet("QLabel {background-color:grey;}")
+            # self.key.setStyleSheet("QLabel {background-color:grey;}")
             visibleStat = self.key.isVisible()
             if DEBUG : print("  self.key.isVisible: ", visibleStat)
             self.info = QLineEdit(self.node_content[key])
