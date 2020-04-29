@@ -37,6 +37,7 @@ class SplunkFacade:
         self.upload()
 
         self.logList = []
+        self.get_log_entries()
 
     def get_log_entries(self):
         for items in self.getLogEntries():
@@ -61,20 +62,14 @@ class SplunkFacade:
             except Exception as e:
                 print("Failed to upload, error ", str(e))
 
-    #def getLogEntries(self):
-        # Create a job instance and query the first five events(log entries)
-     #   job = self.service.jobs.create("search * | head 5")
-      #  rr = results.ResultsReader(job.preview()) # returns a dictionary with the information inside Splunk
-       # log_entries = [] # Creates a list and just append the information with the right keys from Splunk
-        #for entry in rr:
-         #   log_entries.append([entry['_serial'], entry['_raw'], entry['_time'], entry['source']])
-        #'''
-        #for item in log_entries:
-         #   print(*item)
-        #'''
-        #''''
-        #print(log_entries)
-        #'''
-        #return log_entries
+    def getLogEntries(self):
+        #Create a job instance and query the first five events(log entries)
+        job = self.service.jobs.create("search * | head 5")
+        rr = results.ResultsReader(job.preview()) # returns a dictionary with the information inside Splunk
+        log_entries = [] # Creates a list and just append the information with the right keys from Splunk
+        for entry in rr:
+            log_entries.append([entry['_serial'], entry['_raw'], entry['_time'], entry['source']])
+
+        return log_entries
 
 
