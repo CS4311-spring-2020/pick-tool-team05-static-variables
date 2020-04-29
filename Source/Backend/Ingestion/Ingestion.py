@@ -44,8 +44,31 @@ class ingestion:
         pass
 
 
+
+
+
+
     def total_files(self, path):
         file_count = len(path(os.getcwd()))
         return file_count
 
+    #this function recognizes unsupported file types
+    #& gets rid of them from the dire
+    def unsupported_file_type(self):
+        d = self.path
+        #yeilds only to files of type from directory
+        type = d.walkfiles("*.txt")
+        #ocr
+        type1 = d.walkfiles("*.jpg")
+        type2 = d.walkfile("*.png")
+        type3 = d.walkfile("*.pdf")
+        #audio
+        type4 = d.walkfiles("*.mp3")
+        type5 = d.walkfile("*.mp4")
+        type6 = d.walkfile("*.wav")
+
+        if not type:
+            for file in type1:
+                file.remove()
+                print("Removed {} file".format(file))
 
