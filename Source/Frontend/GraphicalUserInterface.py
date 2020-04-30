@@ -285,10 +285,9 @@ class EventConfigurationFrame(GenericFrame):
         self.setFrameShape(QFrame.StyledPanel)
         self.__loadInfo()
 
-    # (TODO): Get all this information from the event configuration
     def __loadInfo(self):
         # Obtains an EC object from the DB specifying search parameters
-        EventConfiguration.pull_object(EventConfiguration, "Event Name", "S")
+        EventConfiguration.pull_object(EventConfiguration, "Event Name", "A")
 
         self.layout.addWidget(QLabel('Event Name'), 1, 0)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
@@ -303,9 +302,7 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(QLabel('Connections Established:'), 12, 0)
         self.layout.addWidget(QLineEdit(EventConfiguration.get_name(EventConfiguration)), 1, 1)
         self.layout.addWidget(QTextEdit(EventConfiguration.get_description(EventConfiguration)), 2, 1, 2, 1)
-        # TODO: FIX THIS: NOT DISPLAYING IN THE WINDOW
         self.layout.addWidget(QLineEdit(EventConfiguration.get_start_time(EventConfiguration)), 4, 1)
-        # TODO: FIX THIS: NOT DISPLAYING IN THE WINDOW
         self.layout.addWidget(QLineEdit(EventConfiguration.get_end_time(EventConfiguration)), 5, 1)
         self.layout.addWidget(QLineEdit(EventConfiguration.get_root_directory(EventConfiguration)), 6, 1)
         self.layout.addWidget(QLineEdit(EventConfiguration.get_red_team_folder(EventConfiguration)), 7, 1)
@@ -313,8 +310,7 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(QLineEdit(EventConfiguration.get_blue_team_folder(EventConfiguration)), 9, 1)
         self.layout.addWidget(QLabel(EventConfiguration.get_lead(EventConfiguration)), 10, 1)
         self.layout.addWidget(QLabel(EventConfiguration.get_lead_ip_add(EventConfiguration)), 11, 1)
-        # TODO: FIX THIS: Does not detect/obtain the connect status attribute from EC
-        #self.layout.addWidget(QLabel(EventConfiguration.get_connect_stat(EventConfiguration)), 12, 1)
+        self.layout.addWidget(QLabel(EventConfiguration.get_connect_stat(EventConfiguration)), 12, 1)
 
     def update(self, vector):
         print(vector.text())
