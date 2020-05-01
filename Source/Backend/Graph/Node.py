@@ -9,10 +9,10 @@ class Node:
     def __init__(self, scene, inputs=[], outputs=[], **kwargs):
         self.scene = scene
 
-        self.title = kwargs.pop('name')
-
         # saves individual information of a node
         self.content_info = kwargs
+
+        self.title = kwargs.pop('name')
 
         # create a widget for contents of a nodes and add itself to node graphics
         self.content = NodeContentWidget(self)

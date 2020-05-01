@@ -20,10 +20,10 @@ class Scene(GraphicsScene):
         self.nodes.append(node)
 
     def addEdge(self, edge):
-        self.addEdge.append(edge)
+        self.edges.append(edge)
 
     def removeNode(self, node):
-        self.node.remove(node)
+        self.nodes.remove(node)
 
     def removeEdge(self, edge):
         self.edges.remove(edge)

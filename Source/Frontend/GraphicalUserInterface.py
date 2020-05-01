@@ -4,7 +4,8 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem)
 
-from Source.Backend.Graph.GraphWindow import GraphWindow
+
+from Source.Backend.Vector.VectorFacade import VectorFacade
 
 DEBUG = True
 
@@ -627,4 +628,5 @@ class GraphFrame(GenericFrame):
         self.graphInit()
 
     def graphInit(self):
-        self.layout.addWidget(GraphWindow("example1"))
+        vector = VectorFacade("name", "description")
+        self.layout.addWidget(vector.graph)
