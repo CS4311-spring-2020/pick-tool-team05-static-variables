@@ -7,10 +7,7 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
-
-
-# from Source.Backend.Data import EventConfiguration
-# from Source.Backend.Data.Vector import Vector
+from Source.Backend.Data.mongo_setup import global_init
 
 class GUIFacade(QWidget):
     def __init__(self):
@@ -286,8 +283,7 @@ class EventConfigurationFrame(GenericFrame):
         self.__loadInfo()
 
     def __loadInfo(self):
-        # Obtains an EC object from the DB specifying search parameters
-        EventConfiguration.pull_object(EventConfiguration, "Event Name", "A")
+
 
         self.layout.addWidget(QLabel('Event Name'), 1, 0)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
@@ -300,6 +296,9 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(QLabel('Lead:'), 10, 0)
         self.layout.addWidget(QLabel("Lead's IP Address:"), 11, 0)
         self.layout.addWidget(QLabel('Connections Established:'), 12, 0)
+        # TODO: Change the hardcoded search param to the values that the user input
+        # Obtains an EC object from the DB specifying search parameters
+        EventConfiguration.pull_object(EventConfiguration, "Event Name", "A")
         self.layout.addWidget(QLineEdit(EventConfiguration.get_name(EventConfiguration)), 1, 1)
         self.layout.addWidget(QTextEdit(EventConfiguration.get_description(EventConfiguration)), 2, 1, 2, 1)
         self.layout.addWidget(QLineEdit(EventConfiguration.get_start_time(EventConfiguration)), 4, 1)
@@ -606,3 +605,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     g = MainWindow()
     sys.exit(app.exec_())
+    mongo_setup('PICKDB')
