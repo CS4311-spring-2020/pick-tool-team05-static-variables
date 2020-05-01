@@ -19,6 +19,8 @@ class Cleanser:
         if not os.path.exists(self.upath):
             os.mkdir(self.upath)
 
+        self.cleanse()
+
     #gets rid of blank space & need to implement to get rid of non ascii
     def cleanse(self):
         print("starting cleanse")
@@ -41,7 +43,7 @@ class Cleanser:
 
 
 
-c = Cleanser()
-c.cleanse()
+#c = Cleanser()
+#c.cleanse()
 
 

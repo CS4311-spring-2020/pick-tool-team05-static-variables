@@ -2,6 +2,7 @@
 import csv
 import os
 import path
+import datetime
 
 #know log file from ingestion
 #know the errors of the log file from error cless
@@ -12,8 +13,14 @@ import path
 
 class EnforcementActionReport:
 
-    def __init__(self):
-        pass
+    def __init__(self, cpath):
+        self.path = cpath
+        self.errorList = []
 
+
+
+    def validate_date(self, file):
+        #pass
+        try:
 
 
