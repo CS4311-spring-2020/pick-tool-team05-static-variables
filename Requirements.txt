@@ -1,3 +1,4 @@
+pymongo== 3.10.1
 splunk-sdk
 PyQt5==5.14.1
 PyQt5-sip==12.7.0
