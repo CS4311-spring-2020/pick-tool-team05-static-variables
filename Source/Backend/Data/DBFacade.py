@@ -1,42 +1,42 @@
-from bson import ObjectId
-from pymongo import MongoClient, collection
+from pymongo import MongoClient
+
+connection = MongoClient("localhost", 27017, maxPoolSize=20)
+db = connection['PICKDB']
+
+""" 
+    Adds one full object into a collection in the DB 
+    data: dic()/JSON object that will be stored 
+"""
 
 
-class DBFacade():
-    def __init__(self, dbName=None, collectionName=None):
-        self.dbName = dbName
-        self.collectionName = collectionName
-        self.connection = MongoClient("localhost", 27017, maxPoolSize=20)
+def add(collection, data):
+    collection_name = db[collection]
+    status = collection_name.insert_one(data)
+    print(status)
 
-        self.db = self.connection[self.dbName]
-        self.collection = self.db[self.collectionName]
 
-    def add(self, data):
-        # Checking for duplicate data within collections
+"""
+    Deletes a full document with provided matching criteria
+    @:param field: A String specifying the attribute of the document that will be searched on to find the right doc
+    @:param criteria: The String data will be used to find a doc 
+"""
 
-        # Insert Data
-        rec_id1 = self.collection.insert_one(data)
-        print("Data inserted with record ids", rec_id1, " ")
 
-        # Printing the data inserted
-        cursor = self.collection.find()
+def delete(collection,field, criteria):
+    collection_name = db[collection]
+    status = collection_name.remove({field: criteria})
+    print(status)
 
-    # Updates data with a specified ID and the data its going to change it to,
-    # if a document already exists with that ID it will create a new doc
-    def update(self, doc_id, data):
-        document = collection.update_one({'_id': ObjectId(doc_id)}, {"$set": data}, upset=True)
-        return document.acknowledged
 
-    def get_single_data(self, doc_id):
-        data = collection.find_one({'_id': ObjectId(doc_id)})
-        return data
+# TODO: Check why this is not updating the data when given a String rather than the full object with its changes
+# Updates specific fields of a document with the provided matching criteria along with the data it will update to.
+def update_n(self, field, field_data, data):
+    status = self.collection.update_one({field: field_data}, {"$set": data})
+    print(status)
 
-    # Retrieve all the objects inside the collection on a specified criteria
-    def get_multiple_data(self):
-        data = collection.find()
 
-    def delete(self, data):
-        pass
-
-    def find(self, data):
-        pass
+# Returns the document from a collection in the DB
+def search_n(collection, field, data_field):
+    collection_name = db[collection]
+    regex_query = {field: {"$regex": data_field}}
+    return collection_name.find(regex_query)

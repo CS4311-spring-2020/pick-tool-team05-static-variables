@@ -1,15 +1,19 @@
-from PyQt5.QtGui import QIcon, QPixmap
+import sys
+
 from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
+from Source.Backend.Data.EventConfiguration import EventConfiguration
+from Source.Backend.Data.mongo_setup import global_init
 
 class GUIFacade(QWidget):
     def __init__(self):
         super().__init__()
-        self.windowData = {} # k = data type, v = window dictionary
-        self.activeFrames = {} # k = window, v = status
+        self.windowData = {}  # k = data type, v = window dictionary
+        self.activeFrames = {}  # k = window, v = status
 
     # def getInput(self, userInput):
     #     # userInput is map where k = data type and v = input
@@ -83,7 +87,6 @@ class MainWindow(QMainWindow):
         project.setStatusTip('View Project Data')
         file_menu.addAction(project)
         project.triggered.connect(self.__createMainMenu)
-
 
         file_menu.addSeparator()
 
@@ -279,9 +282,8 @@ class EventConfigurationFrame(GenericFrame):
         self.setFrameShape(QFrame.StyledPanel)
         self.__loadInfo()
 
-    # (TODO): Get all this information from the event configuration
     def __loadInfo(self):
-        self.layout.addWidget(QLabel('Name:'), 1, 0)
+        self.layout.addWidget(QLabel('Event Name'), 1, 0)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
         self.layout.addWidget(QLabel('Event Start Timestamp:'), 4, 0)
         self.layout.addWidget(QLabel('Event End Timestamp:'), 5, 0)
@@ -292,17 +294,20 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(QLabel('Lead:'), 10, 0)
         self.layout.addWidget(QLabel("Lead's IP Address:"), 11, 0)
         self.layout.addWidget(QLabel('Connections Established:'), 12, 0)
-        self.layout.addWidget(QLineEdit('Breakfree'), 1, 1)
-        self.layout.addWidget(QTextEdit("This event is all about the breakfree phenomenon."), 2, 1, 2, 1)
-        self.layout.addWidget(QLineEdit('09:24 01/01/97 AM'), 4, 1)
-        self.layout.addWidget(QLineEdit('09:24 01/11/97 AM'), 5, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree"), 6, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree/Red"), 7, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree/White"), 8, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree/Blue"), 9, 1)
-        self.layout.addWidget(QLabel('True'), 10, 1)
-        self.layout.addWidget(QLabel('192.168.2.1'), 11, 1)
-        self.layout.addWidget(QLabel('5'), 12, 1)
+        # TODO: Change the hardcoded search param to the values that the user input
+        # Obtains an EC object from the DB specifying search parameters
+        EventConfiguration.pull_object(EventConfiguration, "Event Name", "A")
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_name(EventConfiguration)), 1, 1)
+        self.layout.addWidget(QTextEdit(EventConfiguration.get_description(EventConfiguration)), 2, 1, 2, 1)
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_start_time(EventConfiguration)), 4, 1)
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_end_time(EventConfiguration)), 5, 1)
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_root_directory(EventConfiguration)), 6, 1)
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_red_team_folder(EventConfiguration)), 7, 1)
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_white_team_folder(EventConfiguration)), 8, 1)
+        self.layout.addWidget(QLineEdit(EventConfiguration.get_blue_team_folder(EventConfiguration)), 9, 1)
+        self.layout.addWidget(QLabel(EventConfiguration.get_lead(EventConfiguration)), 10, 1)
+        self.layout.addWidget(QLabel(EventConfiguration.get_lead_ip_add(EventConfiguration)), 11, 1)
+        self.layout.addWidget(QLabel(EventConfiguration.get_connect_stat(EventConfiguration)), 12, 1)
 
     def update(self, vector):
         print(vector.text())
@@ -476,7 +481,6 @@ class LogFileInformationFrame(GenericFrame):
 
         self.layout.addWidget(QTextEdit('No problems found'), 8, 0, 8, 3)
 
-
     def update(self, logfile):
         for i in reversed(range(self.layout.count())):
             self.layout.itemAt(i).widget().setParent(None)
@@ -495,6 +499,7 @@ class VersionControlFrame(GenericFrame):
 class IconsFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout(), 'Icons')
+
 
 #################################################################################
 
@@ -592,3 +597,10 @@ class GraphFrame(GenericFrame):
         pixmap = QPixmap('../Backend/Resources/Images/story.png')
         picture.setPixmap(pixmap)
         self.layout.addWidget(picture)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    g = MainWindow()
+    sys.exit(app.exec_())
+    mongo_setup('PICKDB')
