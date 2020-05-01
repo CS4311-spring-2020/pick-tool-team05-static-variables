@@ -8,11 +8,6 @@ import splunklib.client as client
 # Dr.Roach also sent out email regarding Splunk, it might also be helpful
 class SplunkFacade:
     def __init__(self, cpath):
-        # Hardcoded path
-        #self.path = "C:\\Users\\mdelgado\\Desktop\\Log Examples"
-        #this is uncleansed path
-        #self.path = "C:\\Users\\yamel\\Desktop\\splunk\\tests"
-
         #cleansed
         self.path = cpath
         #self.path = Cleanser.cpath
@@ -20,9 +15,7 @@ class SplunkFacade:
         # Constants created with log-in information
         HOST = "localhost"
         PORT = 8089
-        #USERNAME = "menny" # Individual information needed by Splunk, was thinking of creating a class in the future that will allow the individual user to set that info
         #USERNAME = "Minikitteh"
-        #PASSWORD = "Manuel27!"
         #PASSWORD = "Mini111~@"
 
         # Create a Service instance and log in
