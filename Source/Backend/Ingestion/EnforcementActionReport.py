@@ -13,7 +13,7 @@ import path
 class EnforcementActionReport:
 
     def __init__(self):
-
+        pass
 
 
 
