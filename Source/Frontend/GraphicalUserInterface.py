@@ -1,33 +1,21 @@
+import psutil
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
-
-class GUIFacade(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.windowData = {} # k = data type, v = window dictionary
-        self.activeFrames = {} # k = window, v = status
-
-    # def getInput(self, userInput):
-    #     # userInput is map where k = data type and v = input
-
-    @staticmethod
-    def getData(self, datatype):
-        # Query requestType data, sort before returning
-        if datatype == 'vectors':
-            # For now, return hardcoded vectors
-            return {"DDoS": Vector('DDoS'),
-                    "Vector 2": Vector('Vector 2'),
-                    "Reverse Shell": Vector('Reverse Shell')}
-
-    # def update(self, signal):
-    #     # Updates all windows in self.windowData tied to the signal
+from Source.Backend.Data.EventConfiguration import EventConfiguration
 
 
 class MainWindow(QMainWindow):
+
+    # TODO: Maybe refactor somewhere else?
+    def closeEvent(self, event):
+        for proc in psutil.process_iter():
+            if proc.name() == "mongod.exe":
+                proc.kill()
+
     def __init__(self):
         super().__init__()
         self.r = self.frameGeometry()
@@ -67,23 +55,10 @@ class MainWindow(QMainWindow):
 
     def __setFileMenu(self, file_menu):
         # (TODO): Add triggers
-        connect_act = QAction('&Connect...', self)
-        connect_act.setStatusTip('Connect to host')
-        file_menu.addAction(connect_act)
-
-        # (TODO): Add triggers
-        disconnect_act = QAction('&Disconnect...', self)
-        disconnect_act.setStatusTip('Disconnect from host')
-        file_menu.addAction(disconnect_act)
-
-        file_menu.addSeparator()
-
-        # (TODO): Add triggers
-        project = QAction('&Project', self)
-        project.setStatusTip('View Project Data')
+        project = QAction('&Event Information', self)
+        project.setStatusTip('Event Information')
         file_menu.addAction(project)
         project.triggered.connect(self.__createMainMenu)
-
 
         file_menu.addSeparator()
 
@@ -147,37 +122,35 @@ class MainWindow(QMainWindow):
             }
         """)
 
-        # (TODO): Add triggers
-        undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
-        undo_act.setShortcut('Ctrl+Z')
-        undo_act.setStatusTip('Undo action')
-        self.toolBar.addAction(undo_act)
+        # (TODO): Add triggers, reimplement
+        # undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
+        # undo_act.setShortcut('Ctrl+Z')
+        # undo_act.setStatusTip('Undo action')
+        # self.toolBar.addAction(undo_act)
 
-        # (TODO): Add triggers
-        redo_act = QAction(QIcon('Resources/Images/redo.png'), '&Redo', self)
-        redo_act.setShortcut('Ctrl+Shift+Z')
-        redo_act.setStatusTip('Redo action')
-        self.toolBar.addAction(redo_act)
+        # # (TODO): Add triggers, reimplement
+        # redo_act = QAction(QIcon('Resources/Images/redo.png'), '&Redo', self)
+        # redo_act.setShortcut('Ctrl+Shift+Z')
+        # redo_act.setStatusTip('Redo action')
+        # self.toolBar.addAction(redo_act)
 
-        # (TODO): Add triggers
-        refresh_act = QAction(QIcon('Resources/Images/refresh.png'), '&Sync', self)
-        refresh_act.setShortcut('Ctrl+Shift+S')
-        refresh_act.setStatusTip('Refresh project')
-        self.toolBar.addAction(refresh_act)
+        # (TODO): Add triggers, reimplement
+        # refresh_act = QAction(QIcon('Resources/Images/refresh.png'), '&Sync', self)
+        # refresh_act.setShortcut('Ctrl+Shift+S')
+        # refresh_act.setStatusTip('Refresh project')
+        # self.toolBar.addAction(refresh_act)
 
-        self.toolBar.addSeparator()
+        # (TODO): Add triggers, reimplement
+        # commit_act = QAction(QIcon('Resources/Images/commit.png'), '&Commit Changes', self)
+        # commit_act.setShortcut('Ctrl+Shift+C')
+        # commit_act.setStatusTip('Refresh project')
+        # self.toolBar.addAction(commit_act)
 
-        # (TODO): Add triggers
-        commit_act = QAction(QIcon('Resources/Images/commit.png'), '&Commit Changes', self)
-        commit_act.setShortcut('Ctrl+Shift+C')
-        commit_act.setStatusTip('Refresh project')
-        self.toolBar.addAction(commit_act)
-
-        # (TODO): Add triggers
-        changes = QAction(QIcon('Resources/Images/changes.png'), '&Changelist', self)
-        changes.setShortcut('Ctrl+Shift+L')
-        changes.setStatusTip('See changelist')
-        self.toolBar.addAction(changes)
+        # (TODO): Add triggers, reimplement
+        # changes = QAction(QIcon('Resources/Images/changes.png'), '&Changelist', self)
+        # changes.setShortcut('Ctrl+Shift+L')
+        # changes.setStatusTip('See changelist')
+        # self.toolBar.addAction(changes)
 
         # Buttons after this are set to the right side
         spacer = QWidget()
@@ -207,6 +180,16 @@ class GenericWindow(QWidget):
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
 
 
+class GenericFrame(QFrame):
+    def __init__(self, layout, name):
+        super().__init__()
+        self.layout = layout
+        self.frameName = name
+        self.setLayout(self.layout)
+
+########################################################################################################################
+
+
 class MainMenu(GenericWindow):
     def __init__(self):
         super().__init__(QVBoxLayout())
@@ -230,7 +213,6 @@ class MainMenu(GenericWindow):
         self.__frames.append(EventConfigurationFrame())
         self.__frames.append(VectorDatabaseFrame())
         self.__frames.append(LogFileFrame())
-        self.__frames.append(VersionControlFrame())
         self.__frames.append(IconsFrame())
 
         for frame in self.__frames:
@@ -255,62 +237,48 @@ class MainMenu(GenericWindow):
         self.__buttons.addWidget(b1)
         b1.clicked.connect(self.close)
 
-        # (TODO): prompt to continue without saving
+        # (TODO): close without saving
         b2 = QPushButton('Cancel')
         self.__buttons.addWidget(b2)
         b2.clicked.connect(self.close)
 
 
-class GenericFrame(QFrame):
-    def __init__(self, layout, name):
-        super().__init__()
-        self.layout = layout
-        self.frameName = name
-        self.setLayout(self.layout)
-
-
 class EventConfigurationFrame(GenericFrame):
     def __init__(self):
         super().__init__(QGridLayout(), 'Event Configuration')
-        self.__currentVector = None
+        self.event_configuration = EventConfiguration()
         self.__initUI()
 
     def __initUI(self):
         self.setFrameShape(QFrame.StyledPanel)
         self.__loadInfo()
 
-    # (TODO): Get all this information from the event configuration
     def __loadInfo(self):
-        self.layout.addWidget(QLabel('Name:'), 1, 0)
+        # Labels
+        self.layout.addWidget(QLabel('Event Name:'), 1, 0)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
-        self.layout.addWidget(QLabel('Event Start Timestamp:'), 4, 0)
-        self.layout.addWidget(QLabel('Event End Timestamp:'), 5, 0)
+        self.layout.addWidget(QLabel('Event Start Time:'), 4, 0)
+        self.layout.addWidget(QLabel('Event End Time:'), 5, 0)
         self.layout.addWidget(QLabel('Root Directory:'), 6, 0)
         self.layout.addWidget(QLabel('Red Team Folder:'), 7, 0)
         self.layout.addWidget(QLabel('White Team Folder:'), 8, 0)
         self.layout.addWidget(QLabel('Blue Team Folder:'), 9, 0)
-        self.layout.addWidget(QLabel('Lead:'), 10, 0)
-        self.layout.addWidget(QLabel("Lead's IP Address:"), 11, 0)
-        self.layout.addWidget(QLabel('Connections Established:'), 12, 0)
-        self.layout.addWidget(QLineEdit('Breakfree'), 1, 1)
-        self.layout.addWidget(QTextEdit("This event is all about the breakfree phenomenon."), 2, 1, 2, 1)
-        self.layout.addWidget(QLineEdit('09:24 01/01/97 AM'), 4, 1)
-        self.layout.addWidget(QLineEdit('09:24 01/11/97 AM'), 5, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree"), 6, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree/Red"), 7, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree/White"), 8, 1)
-        self.layout.addWidget(QLineEdit("C/Events/Breakfree/Blue"), 9, 1)
-        self.layout.addWidget(QLabel('True'), 10, 1)
-        self.layout.addWidget(QLabel('192.168.2.1'), 11, 1)
-        self.layout.addWidget(QLabel('5'), 12, 1)
+        self.layout.addWidget(QLabel('Lead Status:'), 10, 0)
+        self.layout.addWidget(QLabel("Lead IP Address:"), 11, 0)
+        self.layout.addWidget(QLabel('Connections:'), 12, 0)
 
-    def update(self, vector):
-        print(vector.text())
-        for i in reversed(range(self.layout.count())):
-            self.layout.itemAt(i).widget().setParent(None)
-
-        self.__currentVector = vector.text()
-        self.__loadInfo()
+        # Data
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Event Name"]), 1, 1)
+        self.layout.addWidget(QTextEdit(self.event_configuration.data.get["Description"]), 2, 1, 2, 1)
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Event Start Time"]), 4, 1)
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Event End Time"]), 5, 1)
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Root Directory"]), 6, 1)
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Red Team Folder"]), 7, 1)
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["White Team Folder"]), 8, 1)
+        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Blue Team Folder"]), 9, 1)
+        self.layout.addWidget(QLabel(self.event_configuration.data.get["Lead Status"]), 10, 1)
+        self.layout.addWidget(QLabel(self.event_configuration.data.get["Lead IP Address"]), 11, 1)
+        self.layout.addWidget(QLabel(self.event_configuration.data.get["Connections"]), 12, 1)
 
 
 class VectorDatabaseFrame(GenericFrame):
@@ -485,18 +453,12 @@ class LogFileInformationFrame(GenericFrame):
         self.__loadInfo()
 
 
-# TODO: Needs to handle accepting or rejecting network changes
-class VersionControlFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Version Control')
-
-
 # TODO: Needs to list al icons with preview and option to change their name or add/delete icons
 class IconsFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout(), 'Icons')
 
-#################################################################################
+########################################################################################################################
 
 
 class VectorFrame(GenericFrame):

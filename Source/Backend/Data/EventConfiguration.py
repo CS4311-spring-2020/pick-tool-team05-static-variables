@@ -1,117 +1,33 @@
-from Source.Backend.Data.DBFacade import DBFacade
+from PyQt5.QtCore import pyqtSignal
+from Source.Backend.Data.DBFacade import add_object, search_object
 
 
 class EventConfiguration:
+    eventConfigurationSignal = pyqtSignal()
 
-    def __init__(self, name, description, start_time, end_time, root_directory, red_team_folder, white_team_folder,
-                 blue_team_folder, lead, lead_ip_add, connection_status):
-        self.name = name
-        self.description = description
-        self.start_time = start_time
-        self.end_time = end_time
-        self.root_directory = root_directory
-        self.red_team_folder = red_team_folder
-        self.white_team_folder = white_team_folder
-        self.blue_team_folder = blue_team_folder
-        self.lead = lead
-        self.lead_ip_add = lead_ip_add
-        self.connection_status = connection_status
+    def __init__(self, name=None, description=None, start_time=None, end_time=None, root_directory=None,
+                 red_team_folder=None, white_team_folder=None, blue_team_folder=None, lead_status=None,
+                 lead_ip_address=None, connections=None):
 
-        event_config = {
-            "Event Name": self.name,
-            "Event Start Time ": self.start_time,
-            "Event End Time": self.end_time,
-            "Root Directory": self.root_directory,
-            "Red Team Folder": self.red_team_folder,
-            "White Team Folder": self.white_team_folder,
-            "Blue Team Folder": self.blue_team_folder,
-            "Lead": self.lead,
-            "Lead IP address": self.lead_ip_add,
-            "Connection Status": self.connection_status
-        }
+        # Search event configuration in Database
+        s = search_object("Event Name", "event configuration", "EventConfiguration")
 
-        # Communicating with Event Config collection through the DB Façade
-        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
+        # If it doesn't exist in database, add it to Database. Else, instantiate object with data from search result
+        if s is None:
+            self.data = {
+                "Event Name": name,
+                "Description": description,
+                "Event Start Time ": start_time,
+                "Event End Time": end_time,
+                "Root Directory": root_directory,
+                "Red Team Folder": red_team_folder,
+                "White Team Folder": white_team_folder,
+                "Blue Team Folder": blue_team_folder,
+                "Lead Status": lead_status,
+                "Lead IP Address": lead_ip_address,
+                "Connections": connections
+            }
 
-        # Testing the adding of a document into the EC collection
-        #db_collection.add(event_config)
-
-        # Testing the deletion of a document in the EC collection
-        #db_collection.delete("Event Name" ,"SQL Injection")
-
-        # Testing the updating of a one or many attributes within the EC collection
-        #db_collection.update("5e962ecee3bcf9eb015223b1",event_config )
-
-        # Testing the updating of one specific attribute (needs to be fixed)
-        # db_collection.update_n("Lead","False", "True" )
-
-        # Testing the retrieval of documents in a collection with regex search
-        doc = self.db_collection.search_n("Event Name" , "S")
-        for i in doc:
-            print(i)
-
-
-    # Setters for Event Config attributes
-    def set_name(self, name):
-        self.name = name
-
-    def set_start_time(self, start_time):
-        self.start_time = start_time
-
-    def set_end_time(self, end_time):
-        self.end_time = end_time
-
-    def set_root_directory(self, root_directory):
-        self.root_directory = root_directory
-
-    def set_red_team_folder(self, red_folder):
-        self.red_team_folder = red_folder
-
-    def set_white_team_folder(self, white_folder):
-        self.white_team_folder = white_folder
-
-    def set_blue_team_folder(self, blue_folder):
-        self.blue_team_folder = blue_folder
-
-    def set_lead(self, lead):
-        self.lead = lead
-
-    def set_lead_ip_add(self, lead_ip):
-        self.lead_ip_add = lead_ip
-
-    def set_connection_status(self, connection_status):
-        self.connection_status = connection_status
-
-    # Getters For the Event Config Attributes
-    def get_name(self):
-        return self.name
-
-    def get_start_time(self):
-        return self.start_time
-
-    def get_end_time(self):
-        return self.end_time
-
-    def get_root_directory(self):
-        return self.root_directory
-
-    def get_red_team_folder(self):
-        return self.red_team_folder
-
-    def get_white_team_folder(self):
-        return self.white_team_folder
-
-    def get_blue_team_folder(self):
-        return self.blue_team_folder
-
-    def get_lead(self, lead):
-        return self.lead
-
-    def get_lead_ip_add(self):
-        return self.lead_ip_add
-
-    def get_lead_ip_add(self):
-        return self.lead_ip_add
-
-    def get_connection_status(self):
-        return self.connection_status
+            add_object(self.data, "EventConfiguration")
+        else:
+            self.data = s
