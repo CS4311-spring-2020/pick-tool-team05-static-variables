@@ -8,6 +8,7 @@ from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Frontend.GraphicalUserInterface import MainWindow
 # from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Backend.Data.Vector import Vector
+from Source.Backend.Data.mongo_setup import global_init
 
 
 # Database Testing
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     # test = SplunkFacade(test2.cpath)
 
     #db_ec_tests()
+    mongo_setup('PICKDB')
     db_vector_tests()
     #EventConfiguration.pull_object(EventConfiguration,"Event Name", "A")
     #s = EventConfiguration.get_start_time(EventConfiguration)
