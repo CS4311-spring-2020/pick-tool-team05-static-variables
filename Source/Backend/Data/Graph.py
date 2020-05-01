@@ -21,6 +21,6 @@ class Graph:
             "Orientation": self.orientation,
             "Interval Units": self.interval_units,
             "Interval": self.interval,
-            "Position of Nodes": self.n.node,
-            "Position of Relationships": self.r.relationships
+            "Position of Nodes": [self.n.node],
+            "Position of Relationships": [self.r.relationships]
         }
