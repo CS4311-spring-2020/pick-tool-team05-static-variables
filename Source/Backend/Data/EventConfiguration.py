@@ -1,4 +1,5 @@
-from Source.Backend.Data.DBFacade import DBFacade
+from Source.Backend.Data.DBFacade import add
+from Source.Backend.Data.DBFacade import search_n
 
 
 class EventConfiguration:
@@ -32,11 +33,7 @@ class EventConfiguration:
             "Connection Status": self.connect_stat
         }
 
-        # Connecting to the EC object to the EC collection in the DB
-        self.db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
-        # Adds the EC object into the DB, the adding of the object will be triggered when "OK" is clicked
-        self.id = self.db_collection.add(self.event_config)
-
+        add("Event Configuration", self.event_config)
 
     # Setters of the Event Config's attributes
     def set_name(self, name):  # Editable
@@ -113,8 +110,7 @@ class EventConfiguration:
     """
 
     def pull_object(self, attribute, value):
-        db_collection = DBFacade(dbName="PICKDB", collectionName="EventConfiguration")
-        cursor1 = db_collection.search_n(attribute, value)
+        cursor1 = search_n(EventConfiguration,"Event Configuration", attribute, value)
         for cursor in cursor1:
             self.name = cursor.get("Event Name")
             self.description = cursor.get("Description")
