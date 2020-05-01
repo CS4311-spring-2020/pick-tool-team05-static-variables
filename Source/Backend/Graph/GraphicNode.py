@@ -13,7 +13,7 @@ class GraphicsNode(QGraphicsItem):
         self.content = self.node.content
 
         # settings
-        # self.title = title
+
         self._title_color = Qt.black
         self._title_font = QFont("Times New Roman", 12)
 
@@ -100,8 +100,6 @@ class GraphicsNode(QGraphicsItem):
                                  self.innerRectangleSize - (self.edge_size * 5) + self.title_height)
 
         self.grContent.setWidget(self.content)
-
-
 
     def initSockets(self):
         pass

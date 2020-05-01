@@ -23,6 +23,9 @@ class Socket:
 
         self.edge = None
 
+    def __str__(self):
+        return "<Edge: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
+
     # return coordinate: index,position
     def getSocketPosition(self):
         if DEBUG: print(" GSP: ", self.socket_x_pos, self.socket_y_pos, "node: ", self.node)

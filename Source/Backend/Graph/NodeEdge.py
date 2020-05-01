@@ -24,7 +24,13 @@ class Edge:
 
         if DEBUG: print("Edge: ", self.grEdge.posSource, "to", self.grEdge.posDestination)
 
+        self.scene.addEdge(self)
+
+        # adding graphical edge to the scene itself
         self.scene.grScene.addItem(self.grEdge)
+
+        def __str__(self):
+            return "<Edge: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
 
         # update position receive coordinate point in a list [x,y]
     def updatePositions(self):
@@ -37,6 +43,8 @@ class Edge:
             end_pos[0] += self.end_socket.node.grNode.pos().x()
             end_pos[1] += self.end_socket.node.grNode.pos().y()
             self.grEdge.setDestination(*end_pos)
+        else:
+            self.grEdge.setDestination(*source_pos)
             if DEBUG:
                 print(" SS:", self.start_socket)
                 print(" ES:", self.end_socket)

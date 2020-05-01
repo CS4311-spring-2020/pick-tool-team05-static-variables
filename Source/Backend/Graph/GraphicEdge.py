@@ -15,18 +15,24 @@ class GraphicsEdge(QGraphicsPathItem):
         self.edge = edge
 
         # settings
-        # default pen
+        #--- regular pen properties ---#
         self._color = QColor("#001000")
         self._pen = QPen(self._color)
-        self._pen.setWidth(2.0)
+        self._pen.setWidthF(2.0)
 
-        # selected pen
+        # --- selected pen properties ---#
         self._color_selected = QColor("#0ff000")
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidth(2.0)
+        self._pen_selected.setWidthF(2.0)
+
+        # --- dragging pen properties ---#
+        self._pen_dragging = QPen(self._color)
+        self._pen_dragging.setStyle(Qt.DashDotLine)
+        self._pen_dragging.setWidthF(2.0)
 
         self.setFlag(QGraphicsItem.ItemIsSelectable)
 
+        # sets drawing behind anything else drawn
         self.setZValue(-1)
 
     def setSource(self, x, y):

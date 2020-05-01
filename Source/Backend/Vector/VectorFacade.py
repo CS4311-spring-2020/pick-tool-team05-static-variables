@@ -1,6 +1,6 @@
 from Source.Backend.Graph.GraphWindow import GraphWindow
 
-DEBUG = False
+DEBUG = True
 
 
 """ VectorFacade takes name and description as string parameters and initializes a graph for that individual vector
