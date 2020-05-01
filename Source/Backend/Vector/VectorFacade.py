@@ -1,6 +1,6 @@
 from Source.Backend.Graph.GraphWindow import GraphWindow
 
-DEBUG = True
+DEBUG = False
 
 
 """ VectorFacade takes name and description as string parameters and initializes a graph for that individual vector
@@ -18,3 +18,15 @@ class VectorFacade:
 
         if DEBUG: print("Name of vector: ", self.name, " and description: ", self.description)
         if DEBUG: print(" Graph initialized with it: ", self.graph)
+
+    def getVectorName(self):
+        return self.name
+
+    def getVectorDescription(self):
+        return self.description
+
+    def setVectorName(self, vName):
+        self.name = vName
+
+    def setVectorDescription(self, description):
+        self.description = description
