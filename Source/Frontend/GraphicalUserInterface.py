@@ -283,8 +283,6 @@ class EventConfigurationFrame(GenericFrame):
         self.__loadInfo()
 
     def __loadInfo(self):
-
-
         self.layout.addWidget(QLabel('Event Name'), 1, 0)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
         self.layout.addWidget(QLabel('Event Start Timestamp:'), 4, 0)

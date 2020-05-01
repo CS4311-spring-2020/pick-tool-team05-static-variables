@@ -1,6 +1,5 @@
-import inspect
-
 from PyQt5.QtWidgets import QTableWidgetItem
+from Source.Backend.Data.DBFacade import add
 
 
 class SignificantLogEntry(QTableWidgetItem):

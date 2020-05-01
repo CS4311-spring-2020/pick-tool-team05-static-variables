@@ -22,8 +22,9 @@ def add(collection, data):
 """
 
 
-def delete(self, field, criteria):
-    status = self.collection.remove({field: criteria})
+def delete(collection,field, criteria):
+    collection_name = db[collection]
+    status = collection_name.remove({field: criteria})
     print(status)
 
 

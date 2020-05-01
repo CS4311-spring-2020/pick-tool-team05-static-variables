@@ -1,6 +1,8 @@
-from pprint import pprint
-from Source.Backend.Data.DBFacade import DBFacade
+from Source.Backend.Data.DBFacade import add
+from Source.Backend.Data.DBFacade import delete
+from Source.Backend.Data.DBFacade import search_n
 from Source.Backend.Data.Graph import Graph
+
 
 class Vector:
     def __init__(self, name, description):
@@ -11,25 +13,31 @@ class Vector:
         vector = {
             "Name": self.name,
             "Description": self.description,
-            "Graph": [g.graph]
+            "Graph": g.graph
         }
 
-        db_collection = DBFacade(dbName="PICKDB", collectionName="Vector")
-        d = db_collection.add(vector)
-        pprint(d)
-        #x = db_collection.search_n("Name","Ddos")
-        #for i in x:
-            #pprint(i)
+        add("Vector", vector)       # adds vector when its created
 
+    def get_name(self):
+        return self.name
 
-    def getName(self):
-        return self.__name
+    def get_description(self):
+        return self.description
 
-    def getDescription(self):
-        return self.__description
+    def set_name(self, name):
+        self.name = name
 
-    def setName(self, name):
-        self.__name = name
+    def set_description(self, description):
+        self.description = description
 
-    def setDescription(self, description):
-        self.__description = description
+    """
+    Function to delete a full vector along its content in the Vector collection in the DB  with
+    specified search values
+    """
+
+    def delete(self, attribute, value):
+        delete("Vector", attribute, value)
+
+    # TODO: Pull object ot
+    def pull_objectv(self):
+        pass
