@@ -33,7 +33,7 @@ class EventConfiguration:
             "Connection Status": self.connect_stat
         }
 
-        add("Event Configuration", self.event_config)
+        add("EventConfiguration", self.event_config)
 
     # Setters of the Event Config's attributes
     def set_name(self, name):  # Editable
@@ -110,7 +110,7 @@ class EventConfiguration:
     """
 
     def pull_object(self, attribute, value):
-        cursor1 = search_n(EventConfiguration,"Event Configuration", attribute, value)
+        cursor1 = search_n("EventConfiguration", attribute, value)
         for cursor in cursor1:
             self.name = cursor.get("Event Name")
             self.description = cursor.get("Description")
