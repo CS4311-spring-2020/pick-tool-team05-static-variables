@@ -483,7 +483,6 @@ class LogFileInformationFrame(GenericFrame):
 
         self.layout.addWidget(QTextEdit('No problems found'), 8, 0, 8, 3)
 
-
     def update(self, logfile):
         for i in reversed(range(self.layout.count())):
             self.layout.itemAt(i).widget().setParent(None)
