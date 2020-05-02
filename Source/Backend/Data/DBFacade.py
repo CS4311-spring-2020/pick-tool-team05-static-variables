@@ -44,5 +44,11 @@ def search_object(key, value, collection_name):
     return result
 
 
-def update_object(key, value, collection_name):
-    print(database[collection_name].update_one(key, value))
+def update_object(object_id, object_data, collection_name):
+    oid = {
+        "_id": object_id
+    }
+    query = {
+        "$set": object_data
+    }
+    print(database[collection_name].update_one(oid, query))

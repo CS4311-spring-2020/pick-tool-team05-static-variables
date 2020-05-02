@@ -168,6 +168,7 @@ class MainWindow(QMainWindow):
 
 ########################################################################################################################
 
+
 class GenericWindow(QWidget):
     def __init__(self, layout):
         super().__init__()
@@ -233,15 +234,19 @@ class MainMenu(GenericWindow):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.__buttons.addWidget(spacer)
 
-        # (TODO): Save current work, then close
         b1 = QPushButton('OK')
         self.__buttons.addWidget(b1)
-        b1.clicked.connect(self.close)
+        b1.clicked.connect(self.__save_input)
 
         # (TODO): close without saving
         b2 = QPushButton('Cancel')
         self.__buttons.addWidget(b2)
         b2.clicked.connect(self.close)
+
+    def __save_input(self):
+        for f in self.__frames:
+            f.save_forms()
+        self.close()
 
 
 class EventConfigurationFrame(GenericFrame):
@@ -264,7 +269,6 @@ class EventConfigurationFrame(GenericFrame):
         self.event_configuration.eventConfigurationSignal.connect(self.__loadInfo)
 
     def __loadInfo(self):
-        print('hi')
         self.name_form.setText(self.event_configuration.data.get("Event Name"))
         self.description_form.setText(self.event_configuration.data.get("Description"))
         self.start_form.setText(self.event_configuration.data.get("Event Start Time"))
@@ -278,14 +282,14 @@ class EventConfigurationFrame(GenericFrame):
         self.connections_label.setText(self.event_configuration.data.get("Connections"))
 
     def save_forms(self):
-        self.event_configuration.data["Event Name"] = self.name_form
-        self.event_configuration.data['Description'] = self.description_form
-        self.event_configuration.data['Event Start Time'] = self.start_form
-        self.event_configuration.data['Event End Time'] = self.end_form
-        self.event_configuration.data['Root Directory'] = self.root_form
-        self.event_configuration.data['Red Team Folder'] = self.red_form
-        self.event_configuration.data['White Team Folder'] = self.white_form
-        self.event_configuration.data['Blue Team Folder'] = self.blue_form
+        self.event_configuration.data['Event Name'] = self.name_form.text()
+        self.event_configuration.data['Description'] = self.description_form.toPlainText()
+        self.event_configuration.data['Event Start Time'] = self.start_form.text()
+        self.event_configuration.data['Event End Time'] = self.end_form.text()
+        self.event_configuration.data['Root Directory'] = self.root_form.text()
+        self.event_configuration.data['Red Team Folder'] = self.red_form.text()
+        self.event_configuration.data['White Team Folder'] = self.white_form.text()
+        self.event_configuration.data['Blue Team Folder'] = self.blue_form.text()
         self.event_configuration.update()
 
     def __initUI(self):
@@ -373,6 +377,9 @@ class VectorDatabaseFrame(GenericFrame):
         self.__vectorInfo.update(self.__list.itemAt(0, 0))
         self.__list.itemClicked.connect(self.__vectorInfo.update)
 
+    def save_forms(self):
+        print('saved')
+
 
 class VectorInformationFrame(GenericFrame):
     def __init__(self):
@@ -453,6 +460,9 @@ class LogFileFrame(GenericFrame):
         b2 = QPushButton('Reject File...')
         self.__buttons.addWidget(b2)
 
+    def save_forms(self):
+        print('saved')
+
 
 class LogFileInformationFrame(GenericFrame):
     def __init__(self):
@@ -495,6 +505,9 @@ class LogFileInformationFrame(GenericFrame):
 class IconsFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout(), 'Icons')
+
+    def save_forms(self):
+        print('saved')
 
 ########################################################################################################################
 
