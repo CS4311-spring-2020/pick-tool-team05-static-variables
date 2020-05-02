@@ -5,6 +5,7 @@ class LogFile:
         self.cleansingStat = False
         self.validationStat = False
         self.ingestionStat = False
+        self.acknowledgementStat = self.setAcknowledgementStatus()
         self.name = name
 
 # Class  functions to change the status of the attributes of any log file
@@ -19,9 +20,10 @@ class LogFile:
 
 # Class function that will force validate, changing all the log file attributes to true
     def setAcknowledgementStatus(self):
-        self.cleansingStat = True
-        self.validationStat = True
-        self.ingestionStat = True
+        if self.cleansingStat and self.validationStat and self.ingestionStat:
+            return True
+        else:
+            return False
 
 # Getters for all the Log File attributes
     def getCleansingStat(self):
