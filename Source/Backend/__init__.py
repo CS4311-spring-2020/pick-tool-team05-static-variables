@@ -11,8 +11,8 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     #g = MainWindow()
 
-    #test2 = Cleanser()
-    #test = SplunkFacade(test2.cpath)
-    #test3 = EnforcementActionReport()
+    test2 = Cleanser()
+    test = SplunkFacade(test2.cpath)
+    test3 = EnforcementActionReport(test.path)
 
     sys.exit(app.exec_())
