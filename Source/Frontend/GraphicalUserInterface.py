@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
-from Source.Backend.Data.mongo_setup import global_init
+from Source.Backend.Data.Vector import Vector
 
 class GUIFacade(QWidget):
     def __init__(self):
@@ -296,7 +296,7 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(QLabel('Connections Established:'), 12, 0)
         # TODO: Change the hardcoded search param to the values that the user input
         # Obtains an EC object from the DB specifying search parameters
-        EventConfiguration.pull_object(EventConfiguration, "Event Name", "A")
+        EventConfiguration.pull_object(EventConfiguration, "Event Name", "C")
         self.layout.addWidget(QLineEdit(EventConfiguration.get_name(EventConfiguration)), 1, 1)
         self.layout.addWidget(QTextEdit(EventConfiguration.get_description(EventConfiguration)), 2, 1, 2, 1)
         self.layout.addWidget(QLineEdit(EventConfiguration.get_start_time(EventConfiguration)), 4, 1)

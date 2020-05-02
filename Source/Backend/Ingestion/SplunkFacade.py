@@ -1,11 +1,7 @@
 import os
-import subprocess
 from splunklib import results
 import splunklib.client as client
 
-from Source.Backend.Ingestion.Cleanser import Cleanser
-
-import json
 
 # I have not had time to implement everything discussed in the SDD in Splunk.
 # I still use this a lot for examples https://dev.splunk.com/enterprise/docs/python/sdk-python/howtousesplunkpython
