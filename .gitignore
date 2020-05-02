@@ -1,3 +1,9 @@
 .idea/
 venv/
+Source/Database
+Source/__pycache__
 Source/Frontend/__pycache__
+Source/Backend/__pycache__
+Source/Backend/Data/__pycache__
+Source/Backend/Ingestion/__pycache__
+Source/Backend/Vector/__pycache__

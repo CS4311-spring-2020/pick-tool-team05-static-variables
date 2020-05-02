@@ -1,42 +1,48 @@
+from bson import ObjectId
+
 from pymongo import MongoClient
 
-connection = MongoClient("localhost", 27017, maxPoolSize=20)
-db = connection['PICKDB']
+mongo_client = MongoClient("localhost", 27017, maxPoolSize=20)
+database = mongo_client["PICKDB"]
 
 """ 
     Adds one full object into a collection in the DB 
-    data: dic()/JSON object that will be stored 
+    @:param data: dic()/JSON object that will be stored
+    @:param collection_name: A string specifying which collection to search in
 """
 
 
-def add(collection, data):
-    collection_name = db[collection]
-    status = collection_name.insert_one(data)
-    print(status)
+def add_object(data, collection_name):
+    print(database[collection_name].insert_one(data))
 
 
 """
     Deletes a full document with provided matching criteria
-    @:param field: A String specifying the attribute of the document that will be searched on to find the right doc
-    @:param criteria: The String data will be used to find a doc 
+    @:param key: A String specifying the attribute of the document that will be searched on to find the right doc
+    @:param value: The String data will be used to find a doc 
+    @:param collection_name: A string specifying which collection to search in
 """
 
 
-def delete(collection,field, criteria):
-    collection_name = db[collection]
-    status = collection_name.remove({field: criteria})
-    print(status)
+def del_object(key, value, collection_name):
+    print(database[collection_name].remove({key: value}))
 
 
-# TODO: Check why this is not updating the data when given a String rather than the full object with its changes
-# Updates specific fields of a document with the provided matching criteria along with the data it will update to.
-def update_n(self, field, field_data, data):
-    status = self.collection.update_one({field: field_data}, {"$set": data})
-    print(status)
+"""
+    Searches for an object with provided mathcing criteria
+    @:param key: A String specifying the attribute of the document that will be searched on to find the right doc
+    @:param value: The String data will be used to find a doc 
+    @:param collection_name: A string specifying which collection to search in
+"""
 
 
-# Returns the document from a collection in the DB
-def search_n(collection, field, data_field):
-    collection_name = db[collection]
-    regex_query = {field: {"$regex": data_field}}
-    return collection_name.find(regex_query)
+def search_object(key, value, collection_name):
+    if value == "event configuration":
+        result = database[collection_name].find_one()
+    else:
+        result = database[collection_name].find_one({key: value})
+    return result
+
+
+def update_object(key, value, collection_name):
+    print(database[collection_name].update_one(key, value))

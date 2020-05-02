@@ -1,126 +1,38 @@
-from Source.Backend.Data.DBFacade import add
-from Source.Backend.Data.DBFacade import search_n
+from PyQt5.QtCore import pyqtSignal, QObject
+from Source.Backend.Data.DBFacade import add_object, search_object, update_object
 
 
-class EventConfiguration:
+class EventConfiguration(QObject):
+    eventConfigurationSignal = pyqtSignal()
 
-    def __init__(self, name, description, start_time, end_time, root_directory, red_team_folder, white_team_folder,
-                 blue_team_folder, lead, lead_ip_add, connect_stat):
-        self.name = name
-        self.description = description
-        self.start_time = start_time
-        self.end_time = end_time
-        self.root_directory = root_directory
-        self.red_team_folder = red_team_folder
-        self.white_team_folder = white_team_folder
-        self.blue_team_folder = blue_team_folder
-        self.lead = lead
-        self.lead_ip_add = lead_ip_add
-        self.connect_stat = connect_stat
+    def __init__(self, name=None, description=None, start_time=None, end_time=None, root_directory=None,
+                 red_team_folder=None, white_team_folder=None, blue_team_folder=None, lead_status=None,
+                 lead_ip_address=None, connections=None):
+        super().__init__()
 
-        # Mapping the object to the DB schema
-        self.event_config = {
-            "Event Name": self.name,
-            "Description": self.description,
-            "Event Start Time ": self.start_time,
-            "Event End Time": self.end_time,
-            "Root Directory": self.root_directory,
-            "Red Team Folder": self.red_team_folder,
-            "White Team Folder": self.white_team_folder,
-            "Blue Team Folder": self.blue_team_folder,
-            "Lead": self.lead,
-            "Lead IP Address": self.lead_ip_add,
-            "Connection Status": self.connect_stat
-        }
+        # Search event configuration in Database
+        s = search_object("Event Name", "event configuration", "EventConfiguration")
 
-        add("EventConfiguration", self.event_config)
+        # If it doesn't exist in database, add it to Database. Else, instantiate object with data from search result
+        if s is None:
+            self.data = {
+                "Event Name": name,
+                "Description": description,
+                "Event Start Time": start_time,
+                "Event End Time": end_time,
+                "Root Directory": root_directory,
+                "Red Team Folder": red_team_folder,
+                "White Team Folder": white_team_folder,
+                "Blue Team Folder": blue_team_folder,
+                "Lead Status": lead_status,
+                "Lead IP Address": lead_ip_address,
+                "Connections": connections
+            }
 
-    # Setters of the Event Config's attributes
-    def set_name(self, name):  # Editable
-        self.name = name
+            add_object(self.data, "EventConfiguration")
+        else:
+            self.data = s
 
-    def set_description(self, description):  # Editable
-        self.description = description
-
-    def set_start_time(self, start_time):  # Editable
-        self.start_time = start_time
-
-    def set_end_time(self, end_time):  # Editable
-        self.end_time = end_time
-
-    def set_root_directory(self, root_directory):  # Non Editable
-        self.root_directory = root_directory
-
-    def set_red_team_folder(self, red_folder):  # Non Editable
-        self.red_team_folder = red_folder
-
-    def set_white_team_folder(self, white_folder):  # Non Editable
-        self.white_team_folder = white_folder
-
-    def set_blue_team_folder(self, blue_folder):  # Non Editable
-        self.blue_team_folder = blue_folder
-
-    def set_lead(self, lead):  # Editable
-        self.lead = lead
-
-    def set_lead_ip_add(self, lead_ip):  # Editable
-        self.lead_ip_add = lead_ip
-
-    def set_connection_status(self, connect_stat):  # Non Editable
-        self.connect_stat = connect_stat
-
-    # Getters of the Event Config's attributes
-    def get_name(self):
-        return self.name
-
-    def get_description(self):
-        return self.description
-
-    def get_start_time(self):
-        return self.start_time
-
-    def get_end_time(self):
-        return self.end_time
-
-    def get_root_directory(self):
-        return self.root_directory
-
-    def get_red_team_folder(self):
-        return self.red_team_folder
-
-    def get_white_team_folder(self):
-        return self.white_team_folder
-
-    def get_blue_team_folder(self):
-        return self.blue_team_folder
-
-    def get_lead(self):
-        return self.lead
-
-    def get_connect_stat(self):
-        return self.connect_stat
-
-    def get_lead_ip_add(self):
-        return self.lead_ip_add
-
-    """
-        Function to obtain an EC object from the DB specifying search parameters
-            - attribute: The EC's attribute that will be searched for in the EC collection
-            - value: The attribute's value used as the search criteria
-    """
-
-    def pull_object(self, attribute, value):
-        cursor1 = search_n("EventConfiguration", attribute, value)
-        for cursor in cursor1:
-            self.name = cursor.get("Event Name")
-            self.description = cursor.get("Description")
-            self.start_time = cursor.get("Event Start Time ")
-            self.end_time = cursor.get("Event End Time")
-            self.root_directory = cursor.get("Root Directory")
-            self.red_team_folder = cursor.get("Red Team Folder")
-            self.blue_team_folder = cursor.get("Blue Team Folder")
-            self.white_team_folder = cursor.get("White Team Folder")
-            self.lead = cursor.get("Lead")
-            self.lead_ip_add = cursor.get("Lead IP Address")
-            self.connect_stat = cursor.get("Connection Status")
-        print("Event Configuration pulled from DB with search criteria: ", attribute, "-->", value)
+    def update(self):
+        update_object(self.data.get("_id"), self.data)
+        self.eventConfigurationSignal.emit()
