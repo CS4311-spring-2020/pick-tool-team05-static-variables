@@ -166,6 +166,7 @@ class MainWindow(QMainWindow):
     def __createMainMenu(self):
         self.mainMenu = MainMenu()
 
+########################################################################################################################
 
 class GenericWindow(QWidget):
     def __init__(self, layout):
