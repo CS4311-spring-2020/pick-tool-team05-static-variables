@@ -35,9 +35,14 @@ def del_object(key, value, collection_name):
     @:param collection_name: A string specifying which collection to search in
 """
 
+
 def search_object(key, value, collection_name):
     if value == "event configuration":
         result = database[collection_name].find_one()
     else:
         result = database[collection_name].find_one({key: value})
     return result
+
+
+def update_object(key, value, collection_name):
+    print(database[collection_name].update_one(key, value))

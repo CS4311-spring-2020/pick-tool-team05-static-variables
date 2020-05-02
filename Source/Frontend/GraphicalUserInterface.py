@@ -247,13 +247,49 @@ class EventConfigurationFrame(GenericFrame):
     def __init__(self):
         super().__init__(QGridLayout(), 'Event Configuration')
         self.event_configuration = EventConfiguration()
+        self.name_form = QLineEdit()
+        self.description_form = QTextEdit()
+        self.start_form = QLineEdit()
+        self.end_form = QLineEdit()
+        self.root_form = QLineEdit()
+        self.red_form = QLineEdit()
+        self.white_form = QLineEdit()
+        self.blue_form = QLineEdit()
+        self.lead_label = QLabel()
+        self.ip_label = QLabel()
+        self.connections_label = QLabel()
         self.__initUI()
+
+        self.event_configuration.eventConfigurationSignal.connect(self.__loadInfo)
+
+    def __loadInfo(self):
+        print('hi')
+        self.name_form.setText(self.event_configuration.data.get("Event Name"))
+        self.description_form.setText(self.event_configuration.data.get("Description"))
+        self.start_form.setText(self.event_configuration.data.get("Event Start Time"))
+        self.end_form.setText(self.event_configuration.data.get("Event End Time"))
+        self.root_form.setText(self.event_configuration.data.get("Root Directory"))
+        self.red_form.setText(self.event_configuration.data.get("Red Team Folder"))
+        self.white_form.setText(self.event_configuration.data.get("White Team Folder"))
+        self.blue_form.setText(self.event_configuration.data.get("Blue Team Folder"))
+        self.lead_label.setText(self.event_configuration.data.get("Lead Status"))
+        self.ip_label.setText(self.event_configuration.data.get("Lead IP Address"))
+        self.connections_label.setText(self.event_configuration.data.get("Connections"))
+
+    def save_forms(self):
+        self.event_configuration.data["Event Name"] = self.name_form
+        self.event_configuration.data['Description'] = self.description_form
+        self.event_configuration.data['Event Start Time'] = self.start_form
+        self.event_configuration.data['Event End Time'] = self.end_form
+        self.event_configuration.data['Root Directory'] = self.root_form
+        self.event_configuration.data['Red Team Folder'] = self.red_form
+        self.event_configuration.data['White Team Folder'] = self.white_form
+        self.event_configuration.data['Blue Team Folder'] = self.blue_form
+        self.event_configuration.update()
 
     def __initUI(self):
         self.setFrameShape(QFrame.StyledPanel)
-        self.__loadInfo()
 
-    def __loadInfo(self):
         # Labels
         self.layout.addWidget(QLabel('Event Name:'), 1, 0)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
@@ -268,17 +304,19 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(QLabel('Connections:'), 12, 0)
 
         # Data
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Event Name"]), 1, 1)
-        self.layout.addWidget(QTextEdit(self.event_configuration.data.get["Description"]), 2, 1, 2, 1)
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Event Start Time"]), 4, 1)
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Event End Time"]), 5, 1)
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Root Directory"]), 6, 1)
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Red Team Folder"]), 7, 1)
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["White Team Folder"]), 8, 1)
-        self.layout.addWidget(QLineEdit(self.event_configuration.data.get["Blue Team Folder"]), 9, 1)
-        self.layout.addWidget(QLabel(self.event_configuration.data.get["Lead Status"]), 10, 1)
-        self.layout.addWidget(QLabel(self.event_configuration.data.get["Lead IP Address"]), 11, 1)
-        self.layout.addWidget(QLabel(self.event_configuration.data.get["Connections"]), 12, 1)
+        self.layout.addWidget(self.name_form, 1, 1)
+        self.layout.addWidget(self.description_form, 2, 1, 2, 1)
+        self.layout.addWidget(self.start_form, 4, 1)
+        self.layout.addWidget(self.end_form, 5, 1)
+        self.layout.addWidget(self.root_form, 6, 1)
+        self.layout.addWidget(self.red_form, 7, 1)
+        self.layout.addWidget(self.white_form, 8, 1)
+        self.layout.addWidget(self.blue_form, 9, 1)
+        self.layout.addWidget(self.lead_label, 10, 1)
+        self.layout.addWidget(self.ip_label, 11, 1)
+        self.layout.addWidget(self.connections_label, 12, 1)
+
+        self.__loadInfo()
 
 
 class VectorDatabaseFrame(GenericFrame):
