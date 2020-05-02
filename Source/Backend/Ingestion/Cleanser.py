@@ -2,6 +2,7 @@ import csv
 import os
 import re
 
+from Source.Backend.Ingestion.LogFile import LogFile
 
 class Cleanser:
 
@@ -34,6 +35,8 @@ class Cleanser:
                     for row in csv.reader(in_file):
                         if (any(field.strip() for field in row)) and self.is_ascii(str(row)):
                             writer.writerow(row)
+                            LogFile.cleansingStat = True
+
 
             print(filename + " finished cleansing")
 
