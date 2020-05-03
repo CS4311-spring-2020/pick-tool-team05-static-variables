@@ -50,7 +50,7 @@ class SplunkFacade:
             # Upload and index the file
             try:
                 current_index.upload(self.path + "\\" + filename)
-                print("uploaded file")
+                print(filename,"uploaded file")
                 #count += 1
             except Exception as e:
                 print("Failed to upload, error ", str(e))
