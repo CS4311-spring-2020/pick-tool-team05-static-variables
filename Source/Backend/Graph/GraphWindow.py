@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 
 from Source.Backend.Graph.Node import Node
 from Source.Backend.Graph.GraphicsView import GraphicsView
-from Source.Backend.Graph.NodeScene import Scene
+from Source.Backend.Graph.Scene import Scene
 from Source.Backend.Graph.NodeEdge import Edge
 
 
