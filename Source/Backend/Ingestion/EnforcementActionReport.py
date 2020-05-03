@@ -2,15 +2,15 @@
 import csv
 import os
 import path
+import re
 import datetime
+
 from Source.Backend.Ingestion.LogFile import LogFile
 from dateutil.parser import parse
+from dateparser.search import search_dates
 
 #know log file from ingestion
 #know the errors of the log file from error cless
-
-
-
 
 
 class EnforcementActionReport:
@@ -22,8 +22,6 @@ class EnforcementActionReport:
         print(self.errorList)
 
 
-
-
     def go_through_files(self, path):
         print("beginning to go through directory")
 
@@ -31,18 +29,20 @@ class EnforcementActionReport:
             file = path + "\\" + filename
             with open(file) as in_file:
                 for row in csv.reader(in_file):
-                    if self.validate_date(row):
-                        LogFile.validationStat = True
+                    b=True
+                    if self.has_date(str(row), b):
+                        #LogFile.validationStat = True
+                        print("in if stmt")
 
         print("finished going through directory")
 
 
-    def validate_date(self, row, b = False):
+    def has_date(self, row, fuzzy= False):
         try:
-            parse(row, b = b)
+            parse(row, fuzzy=fuzzy)
             return True
 
-        except Exception as e:
-            self.errorList.append(e)
-            LogFile.validationStat = False
+        except ValueError:
+            #self.errorList.append(e)
+            #LogFile.validationStat = False
             return False
