@@ -29,10 +29,10 @@ class EnforcementActionReport:
             file = path + "\\" + filename
             with open(file) as in_file:
                 for row in csv.reader(in_file):
-                    b=True
-                    if self.has_date(str(row), b):
+                    #b=True
+                    #if self.has_date(str(row), b):
                         #LogFile.validationStat = True
-                        print("in if stmt")
+                     #   print("in if stmt")
 
         print("finished going through directory")
 
@@ -46,3 +46,17 @@ class EnforcementActionReport:
             #self.errorList.append(e)
             #LogFile.validationStat = False
             return False
+
+    def check_file(self, file):
+        lineNum = 1
+        errorMsg = "Timestamp doesn't exist"
+        dateBool = False
+
+        for row in csv.reader(file):
+            b = True
+            dateBool =  self.has_date(str(row), b)
+            print("in if stmt")
+            if dateBool == False:
+                self.errorList.append(lineNum)
+                self.errorList.append(errorMsg)
+            lineNum += 1
