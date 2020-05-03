@@ -2,20 +2,19 @@ from Source.Backend.Data.SignificantLogEntry import SignificantLogEntry
 from Source.Backend.Data.NodeVisibility import NodeVisibility
 
 
-
 class Node:
-    def __init__(self, node_id, node_name, node_timestamp, node_description, log_creator, event_type, icon_type, source,):
-        self.nodeID = node_id
-        self.nodeName = node_name
-        self.nodeTimestamp = node_timestamp
-        self.nodeDescription = node_description
-        self.logCreator = log_creator
-        self.eventType = event_type
-        self.iconType = icon_type
-        self.source = source
+    def __init__(self, **kwargs):
+        self.nodeID = kwargs.get("key")
+        self.nodeName = kwargs.get("key")
+        self.nodeTimestamp = kwargs.get("key")
+        self.nodeDescription = kwargs.get("key")
+        self.logCreator = kwargs.get("key")
+        self.eventType = kwargs.get("key")
+        self.iconType = kwargs.get("key")
+        self.source = kwargs.get("key")
 
-        s = SignificantLogEntry("8","8","ll","","","")
-        n = NodeVisibility(True,True,True,True,True,True,True,True,True,True)
+        s = SignificantLogEntry("8", "8", "ll", "", "", "")
+        n = NodeVisibility(True, True, True, True, True, True, True, True, True, True)
         self.node = {
             "Node_ID": self.nodeID,
             "Node Name": self.nodeName,
@@ -27,5 +26,7 @@ class Node:
             "Icon Type": self.iconType,
             "Source": self.source,
             "Node Visibility": n.node_visibility_
-
         }
+
+    def getNode(self):
+        return self.node

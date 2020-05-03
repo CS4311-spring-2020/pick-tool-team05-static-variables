@@ -7,6 +7,8 @@ from Source.Backend.Graph.GraphicsView import GraphicsView
 from Source.Backend.Graph.Scene import Scene
 from Source.Backend.Graph.NodeEdge import Edge
 
+from Source.Backend.Graph.nwNode import nwNode
+
 
 class GraphWindow(QWidget):
     def __init__(self, vector_name="Undefined Vector", parent=None):
@@ -67,7 +69,8 @@ class GraphWindow(QWidget):
 
     def addNode(self):
         # passing the scene reference, the name of the node, inputs and outputs
-
+        node1 = nwNode(self.scene, **self.info1)
+        '''
         # inputs might represent different types of sockets
         node1 = Node(self.scene, inputs=[1], outputs=[1], **self.info1)
         node2 = Node(self.scene, inputs=[1], outputs=[1], **self.info2)
@@ -89,7 +92,7 @@ class GraphWindow(QWidget):
         edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], "something")
         edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[0], "something else")
         edge3 = Edge(self.scene, node5.outputs[0], node6.inputs[0], "something something else")
-
+        '''
     def loadStyleSheet(self, filename):
         print("Style Loading:", filename)
         file = QFile(filename)
