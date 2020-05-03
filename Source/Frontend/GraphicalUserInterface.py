@@ -3,7 +3,12 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
-                             QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget)
+                             QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem)
+
+
+from Source.Backend.Vector.VectorFacade import VectorFacade
+
+DEBUG = True
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 
@@ -559,11 +564,25 @@ class VectorFrame(GenericFrame):
 class NodeTableFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout(), 'Node Table Frame')
+        self.info1 = {"Node Visibility": "something0",
+                      "Node ID": "something1",
+                      "Node Name": "something2",
+                      "Node Time Stamp": "something3",
+                      "log_entry_reference": "something4",
+                      "log_creator": "something5",
+                      "event_type": "something6",
+                      "icon_type": "something7",
+                      "source": "something8",
+                      "Node Description": "something9 has to be very long because I am testing how the table will "
+                                          "handle it and make sure it doesn't crash "}
+
         self.table = QTableWidget()
+        #self.table.cellChanged().connect(self.c_current)
         self.initTable()
 
     # (TODO): Add way of getting column # based on nodes in DB, hard coded for now based on SRS 1.7
     # (TODO): Set columns to node attributes
+
     def initTable(self):
         self.table.setRowCount(4)
         self.table.setColumnCount(10)
@@ -579,16 +598,35 @@ class NodeTableFrame(GenericFrame):
         self.table.setColumnWidth(8, 60)
         self.table.verticalHeader().setVisible(False)
         self.table.horizontalHeader().setStretchLastSection(True)
+
+        # little example on how to add a node dictionary to the vector frame table
+        self.addNodes()
+
         self.layout.addWidget(self.table)
+
+    def addNodes(self):
+        loop = 1
+        rowCount = 1
+        colCount = 0
+
+        if loop == 1:
+            self.table.setColumnCount(len(self.info1))
+            self.table.setRowCount(rowCount)
+            self.table.insertRow(1)
+
+            for key in self.info1.keys():
+                item = QTableWidgetItem(self.info1[key])
+                self.table.setItem(1, colCount, item)
+                colCount += 1
+
+            loop = 2
 
 
 class GraphFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QHBoxLayout(), 'Graph Frame')
-        self.initImage()
+        super().__init__(QVBoxLayout(), 'Graph Frame')
+        self.graphInit()
 
-    def initImage(self):
-        picture = QLabel()
-        pixmap = QPixmap('../Backend/Resources/Images/story.png')
-        picture.setPixmap(pixmap)
-        self.layout.addWidget(picture)
+    def graphInit(self):
+        vector = VectorFacade("name", "description")
+        self.layout.addWidget(vector.graph)
