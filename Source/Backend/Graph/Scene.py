@@ -1,9 +1,7 @@
-from PyQt5.QtWidgets import QGraphicsScene
-
 from Source.Backend.Graph.GraphicsScene import GraphicsScene
 
 
-class Scene(GraphicsScene):
+class Scene:
     def __init__(self):
         self.nodes = []
         self.edges = []
@@ -27,3 +25,4 @@ class Scene(GraphicsScene):
 
     def removeEdge(self, edge):
         self.edges.remove(edge)
+
