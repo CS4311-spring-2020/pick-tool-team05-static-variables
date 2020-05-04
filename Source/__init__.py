@@ -15,12 +15,6 @@ if __name__ == '__main__':
                                                   "11:49 04/18/20 PM", 'usr/local/', "usr/local/red",
                                                   "usr/local/white", "usr/local/blue", "True", "127.0.0.1", "4")
 
-    # TODO: Refactor this into "ADD VECTOR" button
-    v = Vector()
-    v.data["Name"] = "Swag1"
-    v.data["Description"] = "TEST"
-    v.save()
-
     app = QApplication(sys.argv)
     g = MainWindow()
     sys.exit(app.exec_())

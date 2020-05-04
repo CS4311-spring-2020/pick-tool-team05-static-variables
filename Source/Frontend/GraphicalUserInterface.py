@@ -202,33 +202,33 @@ class GenericFrame(QFrame):
 class MainMenu(GenericWindow):
     def __init__(self):
         super().__init__(QVBoxLayout())
-        self.__tabs = QTabWidget()
-        self.__buttons = QToolBar("Buttons")
-        self.__frames = []
+        self.tabs = QTabWidget()
+        self.buttons = QToolBar("Buttons")
+        self.frames = []
 
-        self.__initUI()
+        self.initUI()
 
-    def __initUI(self):
+    def initUI(self):
         self.resize(900, 600)
-        self.__initTabs()
-        self.__initButtons()
+        self.initTabs()
+        self.initButtons()
 
-        self.layout.addWidget(self.__tabs)
-        self.layout.addWidget(self.__buttons)
+        self.layout.addWidget(self.tabs)
+        self.layout.addWidget(self.buttons)
 
         self.show()
 
-    def __initTabs(self):
-        self.__frames.append(EventConfigurationFrame())
-        self.__frames.append(VectorDatabaseFrame())
-        self.__frames.append(LogFileFrame())
+    def initTabs(self):
+        self.frames.append(EventConfigurationFrame())
+        self.frames.append(VectorDatabaseFrame())
+        self.frames.append(LogFileFrame())
 
-        for frame in self.__frames:
-            self.__tabs.addTab(frame, frame.frameName)
+        for frame in self.frames:
+            self.tabs.addTab(frame, frame.frameName)
 
-    def __initButtons(self):
-        self.__buttons.setMovable(False)
-        self.__buttons.setStyleSheet("""
+    def initButtons(self):
+        self.buttons.setMovable(False)
+        self.buttons.setStyleSheet("""
                     QToolBar {
                         spacing: 6px;
                         padding: 3px;
@@ -237,19 +237,18 @@ class MainMenu(GenericWindow):
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.__buttons.addWidget(spacer)
+        self.buttons.addWidget(spacer)
 
         b1 = QPushButton('OK')
-        self.__buttons.addWidget(b1)
-        b1.clicked.connect(self.__save_input)
+        self.buttons.addWidget(b1)
+        b1.clicked.connect(self.save_input)
 
         b2 = QPushButton('Cancel')
-        self.__buttons.addWidget(b2)
+        self.buttons.addWidget(b2)
         b2.clicked.connect(self.close)
 
-    def __save_input(self):
-        for f in self.__frames:
-            f.save_forms()
+    def save_input(self):
+        self.frames[0].save_forms()
         self.close()
 
 
@@ -331,25 +330,31 @@ class EventConfigurationFrame(GenericFrame):
 class VectorDatabaseFrame(GenericFrame):
     def __init__(self):
         super().__init__(QHBoxLayout(), 'Vector Database')
-        self.vectors = get_vector_list()
-        self.vectorInfo = VectorInformationFrame()
+        self.vectors = None
+        self.vector_info = VectorInformationFrame()
+        self.list = QListWidget()
+        self.dialog = None
 
         self.buttons = QToolBar('Buttons')
-        self.list = QListWidget()
 
-        self.initList()
-        self.initUI()
+        self.init_list()
+        self.init_frame()
 
-    def initUI(self):
+        self.list.itemClicked.connect(self.warning_dialog)
+        self.vector_info.save_changes.clicked.connect(lambda: self.list.currentItem()
+                                                      .setText(self.vector_info.currentVector.data.get("Name")))
+        self.list
+
+    def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
-        self.initButtons()
+        self.init_buttons()
 
         self.layout.addWidget(self.list)
-        self.layout.addWidget(self.vectorInfo)
+        self.layout.addWidget(self.vector_info)
         self.layout.addWidget(self.buttons)
         self.setMinimumSize(600, 400)
 
-    def initButtons(self):
+    def init_buttons(self):
         self.buttons.setOrientation(Qt.Vertical)
         self.buttons.setMovable(False)
         self.buttons.setStyleSheet("""
@@ -364,25 +369,57 @@ class VectorDatabaseFrame(GenericFrame):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.buttons.addWidget(spacer)
 
-        # (TODO): Create new vector, vector sends signal to update list, switch to new vector in list
         b1 = QPushButton('Add Vector')
         self.buttons.addWidget(b1)
+        b1.clicked.connect(self.add_vector)
 
         # (TODO): Open confirm window, if yes in confirm, delete vector object in database then refresh list
         b2 = QPushButton('Delete Vector')
         self.buttons.addWidget(b2)
         b2.clicked.connect(self.close)
 
-    def initList(self):
-        for vector in self.vectors:
-            self.list.addItem(vector.get("Name"))
+    def init_list(self):
+        self.vectors = get_vector_list()
 
-        self.list.setCurrentItem(self.list.itemAt(0, 0))
-        self.vectorInfo.update(self.list.currentItem())
-        self.list.itemClicked.connect(self.vectorInfo.update)
+        if self.vectors:
+            for vector in self.vectors:
+                self.list.addItem(vector.get("Name"))
+            self.list.setCurrentItem(self.list.itemAt(0, 0))
+            self.vector_info.update_frame(self.list.currentItem())
 
-    def save_forms(self):
-        print('saved')
+    def add_vector(self):
+        v = Vector()
+        self.vectors.append(v.data)
+
+        self.list.addItem(self.vectors[-1].get("Name"))
+        self.list.setCurrentItem(self.list.item(self.list.count() - 1))
+        self.vector_info.update_frame(self.list.currentItem())
+
+    def warning_dialog(self, vector):
+        if self.vector_info.save_changes.isEnabled():
+            self.dialog = GenericWindow(QGridLayout())
+            dialog_confirm = QPushButton("Continue")
+            dialog_cancel = QPushButton("Cancel")
+            self.dialog.layout.addWidget(
+                QLabel("Changes to current vector are pending.\nContinue without saving?")
+                    .setAlignment(Qt.AlignCenter), 0, 1)
+            self.dialog.layout.addWidget(dialog_confirm, 1, 0)
+            self.dialog.layout.addWidget(dialog_cancel, 1, 2)
+
+            dialog_confirm.clicked.connect(self.dialog_confirm_action)
+            dialog_cancel.clicked.connect(self.dialog_cancel_action)
+            self.dialog.show()
+        else:
+            self.vector_info.update_frame(vector)
+
+    def dialog_confirm_action(self):
+        self.vector_info.update_frame(self.list.currentItem())
+        self.dialog.close()
+
+    def dialog_cancel_action(self):
+        self.list.setCurrentItem(
+            self.list.findItems(self.vector_info.currentVector.data.get("Name"), Qt.MatchExactly)[0])
+        self.dialog.close()
 
 
 class VectorInformationFrame(GenericFrame):
@@ -393,35 +430,37 @@ class VectorInformationFrame(GenericFrame):
         self.description_form = QTextEdit()
         self.save_changes = QPushButton("Save Changes")
 
-        self.initFrame()
+        self.init_frame()
 
-    def initFrame(self):
+    def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
         self.layout.addWidget(QLabel('Name:'), 1, 0)
         self.layout.addWidget(self.name_form, 1, 1)
         self.layout.addWidget(QLabel('Description:'), 2, 0)
         self.layout.addWidget(self.description_form, 2, 1, 2, 1)
-        self.layout.addWidget(self.save_changes, 3, 0)
+        self.layout.addWidget(self.save_changes, 4, 0)
 
         self.save_changes.clicked.connect(self.update_vector)
-        self.name_form.textChanged.connect(self.toggle_save_disabled)
-        self.description_form.textChanged.connect(self.toggle_save_disabled)
+        self.name_form.textChanged.connect(lambda: self.save_changes.setDisabled(False))
+        self.description_form.textChanged.connect(lambda: self.save_changes.setDisabled(False))
+
         self.save_changes.setDisabled(True)
+        self.name_form.setDisabled(True)
+        self.description_form.setDisabled(True)
 
-    def toggle_save_disabled(self):
-        self.save_changes.setDisabled(False)
-
-    def update(self, vector):
+    def update_frame(self, vector):
         self.currentVector = Vector(None, vector.text())
         self.name_form.setText(self.currentVector.data.get("Name"))
         self.description_form.setText(self.currentVector.data.get("Description"))
         self.save_changes.setDisabled(True)
+        self.name_form.setDisabled(False)
+        self.description_form.setDisabled(False)
 
     def update_vector(self):
         self.currentVector.data["Name"] = self.name_form.text()
         self.currentVector.data["Description"] = self.description_form.toPlainText()
-        self.currentVector.update()
         self.save_changes.setDisabled(True)
+        self.currentVector.update()
 
 
 class LogFileFrame(GenericFrame):

@@ -13,27 +13,28 @@ class Vector(QObject):
             self.data = search_object("Name", name, "Vector")
         else:
             self.data = {
-                "Name": "",
+                "Name": "untitled",
                 "Description": "",
                 "Graph ID": "",
                 "Significant Log Entries": []
             }
+            self.add()
 
-        self.init_graph()
+    def add(self):
 
-    def init_graph(self):
-        print('hi')
-
-    def save(self):
         # Appends a number if vector with the same name exists
-        if search_object("Name", self.data.get("Name"), "Vector") is not None:
+        s = search_object("Name", self.data.get("Name"), "Vector")
+        while s is not None:
             if self.data.get("Name")[-1].isdigit():
                 self.data["Name"] = self.data.get("Name")[:-1] + str(int(self.data.get("Name")[-1]) + 1)
             else:
-                self.data["Name"] = self.data.get("Name") + "1"
+                self.data["Name"] = self.data.get("Name") + " 1"
+
+            s = search_object("Name", self.data.get("Name"), "Vector")
 
         add_object(self.data, "Vector")
         self.data = search_object("Name", self.data.get("Name"), "Vector")
 
     def update(self):
+        # TODO: Make sure to update graph name/description when vector is updated
         update_object(self.data.get("_id"), self.data, "Vector")
