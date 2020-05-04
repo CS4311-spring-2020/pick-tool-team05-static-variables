@@ -12,7 +12,8 @@ if __name__ == '__main__':
     #g = MainWindow()
 
     test2 = Cleanser()
-    test = SplunkFacade(test2.cpath)
-    test3 = EnforcementActionReport(test.path)
+
+    test3 = EnforcementActionReport(test2.cpath)
+    #test = SplunkFacade(test2.cpath)
 
     sys.exit(app.exec_())

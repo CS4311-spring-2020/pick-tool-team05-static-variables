@@ -35,18 +35,15 @@ class Cleanser:
                     for row in csv.reader(in_file):
                         if (any(field.strip() for field in row)) and self.is_ascii(str(row)):
                             writer.writerow(row)
-                            LogFile.cleansingStat = True
 
 
             print(filename + " finished cleansing")
+        print("finished cleansing")
 
     def is_ascii(self, s):
         return all(ord(c) < 128 for c in s)
 
 
 
-
-#c = Cleanser()
-#c.cleanse()
 
 

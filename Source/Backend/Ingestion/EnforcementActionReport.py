@@ -9,31 +9,44 @@ from Source.Backend.Ingestion.LogFile import LogFile
 from dateutil.parser import parse
 from dateparser.search import search_dates
 
-#know log file from ingestion
-#know the errors of the log file from error cless
+#know log file for ingestion
+#know the errors of the log file
 
 
 class EnforcementActionReport:
 
     def __init__(self, cpath):
         self.path = cpath
-        self.errorList = []
-        self.go_through_files(self.path)
-        print(self.errorList)
+        self.errors = []
+        self.log_file_list = []
+
+        #populate logFile obj
+        self.populate_LogFiles(cpath)
+
+        self.logs = self.log_file_list[:]
+
+        #print(self.log_file_list.name)
+        for log in self .log_file_list:
+            self.validate_file(log)
+            print("lets goooo", log.name)
+
+        for log in self.log_file_list:
+            print("mffff")
+            #print(self.validate_file(logs))
+
+            if log.getInvalidStat is False:
+                print("sfjkdbj")
+                log.setIngestionStat()
+                log.setValidationStat()
+                print(log.get_name)
+                print(log.getValidationStat)
 
 
-    def go_through_files(self, path):
+    def populate_LogFiles(self, path):
         print("beginning to go through directory")
-
         for filename in os.listdir(path):
-            file = path + "\\" + filename
-            with open(file) as in_file:
-                for row in csv.reader(in_file):
-                    b=True
-                    if self.has_date(str(row), b):
-                        #LogFile.validationStat = True
-                        print("has date")
-
+            filepath = path + "\\" + filename
+            self.log_file_list.append(LogFile(filename, filepath))
         print("finished going through directory")
 
 
@@ -43,20 +56,26 @@ class EnforcementActionReport:
             return True
 
         except ValueError:
-            #self.errorList.append(e)
-            #LogFile.validationStat = False
             return False
 
-    def check_file(self, file):
-        lineNum = 1
-        errorMsg = "Timestamp doesn't exist"
-        dateBool = False
-
-        for row in csv.reader(file):
+    def validate_file(self, logfile):
+        errorList = []
+        for row in open(logfile.get_path()):
+            lineNum = 1
             b = True
-            dateBool =  self.has_date(str(row), b)
-            print("in if stmt")
-            if dateBool == False:
-                self.errorList.append(lineNum)
-                self.errorList.append(errorMsg)
+            dateBool = self.has_date(str(row), b)
+            #print("reading")
+            if not dateBool:
+                errorMsg = "Invalid Timestamp/Timestamp doesn't exit"
+                #print(errorMsg)
+                if errorMsg:
+                    # errorList.append(filename)
+                    #print(errorMsg)
+                    errorList.append(lineNum)
+                    errorList.append(errorMsg)
+                    logfile.insert_errors(errorList)
+                    #logfile.setValidationStat()
+                    logfile.setInvalidStat()
+                    #print("in false")
             lineNum += 1
+        return logfile

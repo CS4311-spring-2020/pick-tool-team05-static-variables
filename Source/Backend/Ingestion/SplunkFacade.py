@@ -57,6 +57,7 @@ class SplunkFacade:
 
     def getLogEntries(self):
         #Create a job instance and query the first five events(log entries)
+        # | head 100
         job = self.service.jobs.create("search * | head 5")
         rr = results.ResultsReader(job.preview()) # returns a dictionary with the information inside Splunk
         log_entries = [] # Creates a list and just append the information with the right keys from Splunk
