@@ -52,3 +52,11 @@ def update_object(object_id, object_data, collection_name):
         "$set": object_data
     }
     print(database[collection_name].update_one(oid, query))
+
+
+def get_vector_list():
+    vector_list = []
+    for vector in database["Vector"].find({}):
+        vector_list.append(vector)
+
+    return vector_list
