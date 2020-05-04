@@ -1,42 +1,48 @@
 from bson import ObjectId
-from pymongo import MongoClient, collection
+
+from pymongo import MongoClient
+
+mongo_client = MongoClient("localhost", 27017, maxPoolSize=20)
+database = mongo_client["PICKDB"]
+
+""" 
+    Adds one full object into a collection in the DB 
+    @:param data: dic()/JSON object that will be stored
+    @:param collection_name: A string specifying which collection to search in
+"""
 
 
-class DBFacade():
-    def __init__(self, dbName=None, collectionName=None):
-        self.dbName = dbName
-        self.collectionName = collectionName
-        self.connection = MongoClient("localhost", 27017, maxPoolSize=20)
+def add_object(data, collection_name):
+    print(database[collection_name].insert_one(data))
 
-        self.db = self.connection[self.dbName]
-        self.collection = self.db[self.collectionName]
 
-    def add(self, data):
-        # Checking for duplicate data within collections
+"""
+    Deletes a full document with provided matching criteria
+    @:param key: A String specifying the attribute of the document that will be searched on to find the right doc
+    @:param value: The String data will be used to find a doc 
+    @:param collection_name: A string specifying which collection to search in
+"""
 
-        # Insert Data
-        rec_id1 = self.collection.insert_one(data)
-        print("Data inserted with record ids", rec_id1, " ")
 
-        # Printing the data inserted
-        cursor = self.collection.find()
+def del_object(key, value, collection_name):
+    print(database[collection_name].remove({key: value}))
 
-    # Updates data with a specified ID and the data its going to change it to,
-    # if a document already exists with that ID it will create a new doc
-    def update(self, doc_id, data):
-        document = collection.update_one({'_id': ObjectId(doc_id)}, {"$set": data}, upset=True)
-        return document.acknowledged
 
-    def get_single_data(self, doc_id):
-        data = collection.find_one({'_id': ObjectId(doc_id)})
-        return data
+"""
+    Searches for an object with provided mathcing criteria
+    @:param key: A String specifying the attribute of the document that will be searched on to find the right doc
+    @:param value: The String data will be used to find a doc 
+    @:param collection_name: A string specifying which collection to search in
+"""
 
-    # Retrieve all the objects inside the collection on a specified criteria
-    def get_multiple_data(self):
-        data = collection.find()
 
-    def delete(self, data):
-        pass
+def search_object(key, value, collection_name):
+    if value == "event configuration":
+        result = database[collection_name].find_one()
+    else:
+        result = database[collection_name].find_one({key: value})
+    return result
 
-    def find(self, data):
-        pass
+
+def update_object(key, value, collection_name):
+    print(database[collection_name].update_one(key, value))

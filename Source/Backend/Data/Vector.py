@@ -1,26 +1,43 @@
-from PyQt5.QtWidgets import QWidget
+from Source.Backend.Data.DBFacade import add
+from Source.Backend.Data.DBFacade import delete
+from Source.Backend.Data.DBFacade import search_n
+from Source.Backend.Data.Graph import Graph
 
-from Source.Backend.Data.SignificantLogEntry import SignificantLogEntry
 
+class Vector:
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+        g = Graph("or", 88, 88, "sg", "Node1", "Relationship 2")
 
-class Vector(QWidget):
-    def __init__(self, name=None, description=None):
-        super().__init__()
-        self.__name = name
-        self.__description = description
-        self.__associatedLogs = []
+        vector = {
+            "Name": self.name,
+            "Description": self.description,
+            "Graph": g.graph
+        }
 
-    def getName(self):
-        return self.__name
+        add("Vector", vector)       # adds vector when its created
 
-    def getDescription(self):
-        return self.__description
+    def get_name(self):
+        return self.name
 
-    def setName(self, name):
-        self.__name = name
+    def get_description(self):
+        return self.description
 
-    def setDescription(self, description):
-        self.__description = description
+    def set_name(self, name):
+        self.name = name
 
-    def getAssociatedLogCount(self):
-        return self.__associatedLogs.count(SignificantLogEntry)
+    def set_description(self, description):
+        self.description = description
+
+    """
+    Function to delete a full vector along its content in the Vector collection in the DB  with
+    specified search values
+    """
+
+    def delete(self, attribute, value):
+        delete("Vector", attribute, value)
+
+    # TODO: Pull object ot
+    def pull_objectv(self):
+        pass
