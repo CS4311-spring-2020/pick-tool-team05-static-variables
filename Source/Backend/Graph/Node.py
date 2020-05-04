@@ -49,11 +49,11 @@ class Node:
         self.grNode.setPos(x, y)
 
     # return coordinate position of a socket as a list for updating positions inside NodeEdge
-    def getSocketPosition(self, socket_y_position):
+    def getSocketPosition(self, socket_x_position, socket_y_position):
         if socket_y_position == TOP:
-            return [0, self.grNode.height/2]
+            return [socket_x_position, self.grNode.height/2]
         elif socket_y_position == BOTTOM:
-            return [0, -self.grNode.height/2]
+            return [socket_x_position, -self.grNode.height/2]
         else:
             pass
 

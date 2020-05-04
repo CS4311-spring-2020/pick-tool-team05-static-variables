@@ -91,7 +91,6 @@ class GraphicsNode(QGraphicsItem):
         )
 
     def initContent(self):
-
         self.grContent = QGraphicsProxyWidget(self)
 
         self.content.setGeometry(-self.innerRectangleSize + (self.edge_size * 2.5),
@@ -127,6 +126,5 @@ class GraphicsNode(QGraphicsItem):
 
         # Highlights selected node
         painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
-        #painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern))
         painter.setBrush(Qt.NoBrush)
         painter.drawPath(path_outline.simplified())

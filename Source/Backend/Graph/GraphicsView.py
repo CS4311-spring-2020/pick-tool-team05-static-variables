@@ -2,6 +2,11 @@ from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+from Source.Backend.Graph.GraphicNodeSocket import GraphicsSocket
+
+DEFAULT_MODE = 1
+DRAG_MODE = 2
+
 
 class GraphicsView(QGraphicsView):
     def __init__(self, grScene, parent=None):
@@ -12,6 +17,9 @@ class GraphicsView(QGraphicsView):
 
         # setting scene in view
         self.setScene(self.grScene)
+
+        # mode
+        self.mode = DEFAULT_MODE
 
         # Settings for zooming in wheel event
         self.zoomInFactor = 1.25
@@ -72,16 +80,51 @@ class GraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.NoDrag)
 
     def leftMouseButtonPress(self, event):
+
+        item = self.getItemAtClicked(event)
+
+        self.last_left_click_scene_pos = self.mapToScene(event.pos())
+
+        # store position of last left click
+        if type(item) is GraphicsSocket:
+            if self.mode == DEFAULT_MODE:
+                self.mode = DRAG_MODE
+                self.edgeDragStart(item)
+                return
+
+        if self.mode == DRAG_MODE:
+            res = self.edgeDragEnd(item)
+            if res: return
+
         return super().mousePressEvent(event)
 
     def leftMouseButtonRelease(self, event):
         return super().mouseReleaseEvent(event)
 
     def rightMouseButtonPress(self, event):
+        item = self.getItemAtClicked(event)
+        print(item)
+
         return super().mouseMoveEvent(event)
 
     def rightMouseButtonRelease(self, event):
         return super().mouseReleaseEvent(event)
+
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+
+    def getItemAtClicked(self, event):
+        pos = event.pos()
+        obj = self.itemAt(pos)
+        return obj
+
+    def edgeDragStart(self, item):
+        print("In edge drag start")
+        pass
+
+    def edgeDragEnd(self,item):
+        print("IN Edge Drag End")
+        pass
 
     # Implementing zooming in and zooming out with the middle scroll button on a mouse
     def wheelEvent(self, event):

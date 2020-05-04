@@ -19,7 +19,7 @@ class Socket:
         # create graphical sockets
         self.grSocket = GraphicsSocket(self.node.grNode)
 
-        self.grSocket.setPos(*self.node.getSocketPosition(socket_y_pos))
+        self.grSocket.setPos(*self.node.getSocketPosition(socket_x_pos, socket_y_pos))
 
         self.edge = None
 
@@ -30,7 +30,7 @@ class Socket:
     def getSocketPosition(self):
         if DEBUG: print(" GSP: ", self.socket_x_pos, self.socket_y_pos, "node: ", self.node)
 
-        result = self.node.getSocketPosition(self.socket_y_pos)
+        result = self.node.getSocketPosition(self.socket_x_pos, self.socket_y_pos)
 
         if DEBUG: print("  result: ", result)
         return result
