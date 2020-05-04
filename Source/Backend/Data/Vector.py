@@ -1,43 +1,39 @@
-from Source.Backend.Data.DBFacade import add
-from Source.Backend.Data.DBFacade import delete
-from Source.Backend.Data.DBFacade import search_n
-from Source.Backend.Data.Graph import Graph
+from PyQt5.QtCore import QObject, pyqtSignal
+from Source.Backend.Data.DBFacade import search_object, add_object, update_object
 
 
-class Vector:
-    def __init__(self, name, description):
-        self.name = name
-        self.description = description
-        g = Graph("or", 88, 88, "sg", "Node1", "Relationship 2")
+class Vector(QObject):
+    def __init__(self, _id=None, name=None):
+        super().__init__()
+        self.signal = pyqtSignal()
 
-        vector = {
-            "Name": self.name,
-            "Description": self.description,
-            "Graph": g.graph
-        }
+        if _id is not None:
+            self.data = search_object("_id", _id, "Vector")
+        elif name is not None:
+            self.data = search_object("Name", name, "Vector")
+        else:
+            self.data = {
+                "Name": "",
+                "Description": "",
+                "Graph ID": "",
+                "Significant Log Entries": []
+            }
 
-        add("Vector", vector)       # adds vector when its created
+        self.init_graph()
 
-    def get_name(self):
-        return self.name
+    def init_graph(self):
+        print('hi')
 
-    def get_description(self):
-        return self.description
+    def save(self):
+        # Appends a number if vector with the same name exists
+        if search_object("Name", self.data.get("Name"), "Vector") is not None:
+            if self.data.get("Name")[-1].isdigit():
+                self.data["Name"] = self.data.get("Name")[:-1] + str(int(self.data.get("Name")[-1]) + 1)
+            else:
+                self.data["Name"] = self.data.get("Name") + "1"
 
-    def set_name(self, name):
-        self.name = name
+        add_object(self.data, "Vector")
+        self.data = search_object("Name", self.data.get("Name"), "Vector")
 
-    def set_description(self, description):
-        self.description = description
-
-    """
-    Function to delete a full vector along its content in the Vector collection in the DB  with
-    specified search values
-    """
-
-    def delete(self, attribute, value):
-        delete("Vector", attribute, value)
-
-    # TODO: Pull object ot
-    def pull_objectv(self):
-        pass
+    def update(self):
+        update_object(self.data.get("_id"), self.data, "Vector")

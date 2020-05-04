@@ -34,5 +34,5 @@ class EventConfiguration(QObject):
             self.data = s
 
     def update(self):
-        update_object(self.data.get("_id"), self.data)
+        update_object(self.data.get("_id"), self.data, "EventConfiguration")
         self.eventConfigurationSignal.emit()
