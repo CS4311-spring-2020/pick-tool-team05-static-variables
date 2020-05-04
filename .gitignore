@@ -7,3 +7,4 @@ Source/Backend/__pycache__
 Source/Backend/Data/__pycache__
 Source/Backend/Ingestion/__pycache__
 Source/Backend/Vector/__pycache__
+Source/Backend/Graph/__pycache__
