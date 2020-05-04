@@ -11,7 +11,7 @@ from Source.Backend.Vector.VectorFacade import VectorFacade
 DEBUG = True
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
-from Source.Backend.Data.DBFacade import get_vector_list
+from Source.Backend.Data.DBFacade import get_vector_list, del_object
 from Source.Backend.Data.Vector import Vector
 
 
@@ -340,7 +340,7 @@ class VectorDatabaseFrame(GenericFrame):
         self.init_list()
         self.init_frame()
 
-        self.list.itemClicked.connect(self.warning_dialog)
+        self.list.itemClicked.connect(self.unsaved_dialog)
         self.vector_info.save_changes.clicked.connect(lambda: self.list.currentItem()
                                                       .setText(self.vector_info.currentVector.data.get("Name")))
         self.list
@@ -373,10 +373,9 @@ class VectorDatabaseFrame(GenericFrame):
         self.buttons.addWidget(b1)
         b1.clicked.connect(self.add_vector)
 
-        # (TODO): Open confirm window, if yes in confirm, delete vector object in database then refresh list
         b2 = QPushButton('Delete Vector')
         self.buttons.addWidget(b2)
-        b2.clicked.connect(self.close)
+        b2.clicked.connect(self.delete_vector_dialog)
 
     def init_list(self):
         self.vectors = get_vector_list()
@@ -395,28 +394,53 @@ class VectorDatabaseFrame(GenericFrame):
         self.list.setCurrentItem(self.list.item(self.list.count() - 1))
         self.vector_info.update_frame(self.list.currentItem())
 
-    def warning_dialog(self, vector):
+    def delete_vector_dialog(self):
+        self.dialog = GenericWindow(QGridLayout())
+        dialog_delete = QPushButton("Delete")
+        dialog_cancel = QPushButton("Cancel")
+
+        self.dialog.layout.addWidget(
+            QLabel("Delete current vector?"), 0, 1
+        )
+        self.dialog.layout.addWidget(dialog_delete, 1, 0)
+        self.dialog.layout.addWidget(dialog_cancel, 1, 2)
+
+        dialog_delete.clicked.connect(self.dialog_confirm_delete)
+        dialog_cancel.clicked.connect(self.dialog_cancel)
+        self.dialog.show()
+
+    def unsaved_dialog(self, vector):
         if self.vector_info.save_changes.isEnabled():
             self.dialog = GenericWindow(QGridLayout())
             dialog_confirm = QPushButton("Continue")
             dialog_cancel = QPushButton("Cancel")
+
             self.dialog.layout.addWidget(
-                QLabel("Changes to current vector are pending.\nContinue without saving?")
-                    .setAlignment(Qt.AlignCenter), 0, 1)
+                QLabel("Changes to current vector are pending.\nContinue without saving?"), 0, 1
+            )
             self.dialog.layout.addWidget(dialog_confirm, 1, 0)
             self.dialog.layout.addWidget(dialog_cancel, 1, 2)
 
-            dialog_confirm.clicked.connect(self.dialog_confirm_action)
-            dialog_cancel.clicked.connect(self.dialog_cancel_action)
+            dialog_confirm.clicked.connect(self.dialog_confirm_change)
+            dialog_cancel.clicked.connect(self.dialog_cancel)
             self.dialog.show()
         else:
             self.vector_info.update_frame(vector)
 
-    def dialog_confirm_action(self):
+    def dialog_confirm_change(self):
         self.vector_info.update_frame(self.list.currentItem())
         self.dialog.close()
 
-    def dialog_cancel_action(self):
+    def dialog_confirm_delete(self):
+        del_object("Name", self.list.takeItem(self.list.currentRow()).text(), "Vector")
+        if self.list.count() > 0:
+            self.list.setCurrentItem(self.list.itemAt(0, 0))
+            self.vector_info.update_frame(self.list.currentItem())
+        else:
+            self.vector_info.reset_frame()
+        self.dialog.close()
+
+    def dialog_cancel(self):
         self.list.setCurrentItem(
             self.list.findItems(self.vector_info.currentVector.data.get("Name"), Qt.MatchExactly)[0])
         self.dialog.close()
@@ -448,6 +472,14 @@ class VectorInformationFrame(GenericFrame):
         self.name_form.setDisabled(True)
         self.description_form.setDisabled(True)
 
+    def reset_frame(self):
+        self.currentVector = None
+        self.name_form.setText("")
+        self.description_form.setText("")
+        self.save_changes.setDisabled(True)
+        self.name_form.setDisabled(True)
+        self.description_form.setDisabled(True)
+
     def update_frame(self, vector):
         self.currentVector = Vector(None, vector.text())
         self.name_form.setText(self.currentVector.data.get("Name"))
@@ -461,6 +493,8 @@ class VectorInformationFrame(GenericFrame):
         self.currentVector.data["Description"] = self.description_form.toPlainText()
         self.save_changes.setDisabled(True)
         self.currentVector.update()
+
+
 
 
 class LogFileFrame(GenericFrame):
