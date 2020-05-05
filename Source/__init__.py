@@ -1,9 +1,9 @@
 import sys
 import subprocess
-import psutil
 from PyQt5.QtWidgets import QApplication
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
+from Source.Backend.Data.Vector import Vector
 from Source.Frontend.GraphicalUserInterface import MainWindow
 
 
