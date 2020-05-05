@@ -16,9 +16,9 @@ class Socket:
         self.socket_y_pos = socket_y_pos
 
         if DEBUG: print("Socket: -- creating with: ", self.socket_x_pos, self.socket_y_pos, self.node)
+
         # create graphical sockets
         self.grSocket = GraphicsSocket(self)
-
         self.grSocket.setPos(*self.node.getSocketPosition(socket_x_pos, socket_y_pos))
 
         self.edge = None

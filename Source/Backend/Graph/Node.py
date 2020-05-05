@@ -12,7 +12,7 @@ class Node:
         # saves individual information of a node
         self.content_info = kwargs
 
-        self.title = kwargs.pop('name')
+        #self.title = kwargs.pop('name')
 
         # create a widget for contents of a nodes and add itself to node graphics
         self.content = NodeContentWidget(self)
