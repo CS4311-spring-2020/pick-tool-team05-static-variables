@@ -4,8 +4,9 @@ from PyQt5.QtCore import *
 
 
 class GraphicsSocket(QGraphicsItem):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, socket):
+        self.socket = socket
+        super().__init__(socket.node.grNode)
 
         # settings
         self.radius = 6.0
