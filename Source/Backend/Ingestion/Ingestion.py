@@ -6,9 +6,8 @@ import re
 
 from Source.Backend.Ingestion.SplunkFacade import SplunkFacade
 
-#know validation parameters from event config
+
 #know log file directories from even config
-#validate log files from event config
 #ingest files from splunk & cleanser
 #attempt to scan for changes from splunk facade
 
@@ -18,9 +17,6 @@ class ingestion:
         self.teamDir = []
         self.get_team_directories()
         self.entriesToStore = []
-
-    def validation(self):
-        pass
 
 
     def get_team_directories(self):

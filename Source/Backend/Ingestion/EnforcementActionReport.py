@@ -27,6 +27,8 @@ class EnforcementActionReport:
         #populate logFile obj
         self.populate_LogFiles(cpath)
         self.log_file_list = self.validate_all_files(self.log_file_list)
+        self.force_validate(self.log_file_list)
+
 
 
 
@@ -74,7 +76,7 @@ class EnforcementActionReport:
         return logfile
 
     def validate_all_files(self, loglist):
-        for log in self.log_file_list:
+        for log in loglist:
             #print("mffff")
             self.validate_file(log)
 
@@ -85,3 +87,15 @@ class EnforcementActionReport:
                 print("is valid ", log.name, log.getValidationStat())
                 log.setIngestionStat()
         return loglist
+
+    def force_validate(self, list):
+        print("force validate chosen")
+        for log in list:
+            if log.getValidationStat() is False:
+                log.makeValid()
+
+#def searchValid(filename):
+    #list = EnforcementActionReport.log_file_list[:]
+    #for log in list:
+     #   if filename == log.name and log.getValidationStat is True:
+      #      return True

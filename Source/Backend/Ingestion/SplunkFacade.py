@@ -32,6 +32,8 @@ class SplunkFacade:
         self.upload()
 
         self.logList = []
+        self.logList = self.getLogEntries()
+        print(self.logList)
         #self.get_log_entries()
 
     def get_log_entries(self):
@@ -41,12 +43,14 @@ class SplunkFacade:
         return self.logList
 
 
+
     def upload(self):
 
         # Retrieve the index for the data
         current_index = self.service.indexes["main"] # indexes are like folders inside Splunk, you can create new indexes with a command not found here, this is to get an index already existing
         for filename in os.listdir(self.path):
             # Upload and index the file
+            #if searchValid(filename):
             try:
                 current_index.upload(self.path + "\\" + filename)
                 #current_index.upload(logfile.get_path())
@@ -54,15 +58,17 @@ class SplunkFacade:
             except Exception as e:
                 print("Failed to upload, error ", str(e))
         print("done uploading")
+
+
     def getLogEntries(self):
-        #Create a job instance and query the first five events(log entries)
+        #Create a job instance and query the first ten events(log entries)
         # | head 100
-        job = self.service.jobs.create("search * | head 50")
+        job = self.service.jobs.create("search * | head 15")
         rr = results.ResultsReader(job.preview()) # returns a dictionary with the information inside Splunk
         log_entries = [] # Creates a list and just append the information with the right keys from Splunk
         for entry in rr:
-            log_entries.append([entry['_serial'], entry['_raw'], entry['_time'], entry['source']])
-
+            #log_entries.append([entry['_serial'], entry['_raw'], entry['_time'], entry['source']])
+            log_entries.append([entry['_raw'], entry['_time']])
         return log_entries
 
 
