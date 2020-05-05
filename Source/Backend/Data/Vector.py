@@ -18,10 +18,10 @@ class Vector(QObject):
                 "Graph ID": "",
                 "Significant Log Entries": []
             }
+            # self.create_graph()
             self.add()
 
     def add(self):
-
         # Appends a number if vector with the same name exists
         s = search_object("Name", self.data.get("Name"), "Vector")
         while s is not None:
@@ -29,7 +29,6 @@ class Vector(QObject):
                 self.data["Name"] = self.data.get("Name")[:-1] + str(int(self.data.get("Name")[-1]) + 1)
             else:
                 self.data["Name"] = self.data.get("Name") + " 1"
-
             s = search_object("Name", self.data.get("Name"), "Vector")
 
         add_object(self.data, "Vector")
@@ -38,3 +37,8 @@ class Vector(QObject):
     def update(self):
         # TODO: Make sure to update graph name/description when vector is updated
         update_object(self.data.get("_id"), self.data, "Vector")
+
+    # def create_graph(self):
+    #     # TODO: Create graph with name/description of vector, store Graph ID in vector "GRAPH ID" attribute
+    #     g = Graph(self.data.get("Name"), self.data.get("Description"))
+    #     self.data["Graph ID"] = g.data.get("_id")

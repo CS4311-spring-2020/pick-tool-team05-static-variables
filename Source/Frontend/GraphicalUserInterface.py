@@ -8,8 +8,6 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
 
 from Source.Backend.Vector.VectorFacade import VectorFacade
 
-DEBUG = True
-
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Backend.Data.DBFacade import get_vector_list, del_object
 from Source.Backend.Data.Vector import Vector
@@ -25,24 +23,26 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.r = self.frameGeometry()
-        self.p = QDesktopWidget().availableGeometry().center()
         self.layout = QHBoxLayout()
         self.menuBar = self.menuBar()
         self.toolBar = self.addToolBar('Toolbar')
         self.vectors = VectorFrame()
         # self.general = TablesFrame()
 
-        self.initUI()
+        self.init_UI()
 
-    def initUI(self):
+    def init_UI(self):
         # Centers window to provide consistent launch of app
         self.statusBar().showMessage('Ready')
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+
         self.resize(1900, 1030)
-        self.r.moveCenter(self.p)
-        self.move(self.r.topLeft())
+
+        frame = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        frame.moveCenter(center_point)
+        self.move(frame.topLeft())
 
         self.__setFileMenu(self.menuBar.addMenu('&File'))
         self.__setViewMenu(self.menuBar.addMenu('&View'))
@@ -206,19 +206,19 @@ class MainMenu(GenericWindow):
         self.buttons = QToolBar("Buttons")
         self.frames = []
 
-        self.initUI()
+        self.init_UI()
 
-    def initUI(self):
+    def init_UI(self):
         self.resize(900, 600)
-        self.initTabs()
-        self.initButtons()
+        self.init_tabs()
+        self.init_buttons()
 
         self.layout.addWidget(self.tabs)
         self.layout.addWidget(self.buttons)
 
         self.show()
 
-    def initTabs(self):
+    def init_tabs(self):
         self.frames.append(EventConfigurationFrame())
         self.frames.append(VectorDatabaseFrame())
         self.frames.append(LogFileFrame())
@@ -226,7 +226,7 @@ class MainMenu(GenericWindow):
         for frame in self.frames:
             self.tabs.addTab(frame, frame.frameName)
 
-    def initButtons(self):
+    def init_buttons(self):
         self.buttons.setMovable(False)
         self.buttons.setStyleSheet("""
                     QToolBar {
@@ -267,11 +267,11 @@ class EventConfigurationFrame(GenericFrame):
         self.lead_label = QLabel()
         self.ip_label = QLabel()
         self.connections_label = QLabel()
-        self.__initUI()
+        self.init_frame()
 
-        self.event_configuration.eventConfigurationSignal.connect(self.__loadInfo)
+        self.event_configuration.eventConfigurationSignal.connect(self.load)
 
-    def __loadInfo(self):
+    def load(self):
         self.name_form.setText(self.event_configuration.data.get("Event Name"))
         self.description_form.setText(self.event_configuration.data.get("Description"))
         self.start_form.setText(self.event_configuration.data.get("Event Start Time"))
@@ -295,7 +295,7 @@ class EventConfigurationFrame(GenericFrame):
         self.event_configuration.data['Blue Team Folder'] = self.blue_form.text()
         self.event_configuration.update()
 
-    def __initUI(self):
+    def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
 
         # Labels
@@ -324,7 +324,7 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(self.ip_label, 11, 1)
         self.layout.addWidget(self.connections_label, 12, 1)
 
-        self.__loadInfo()
+        self.load()
 
 
 class VectorDatabaseFrame(GenericFrame):
@@ -493,8 +493,6 @@ class VectorInformationFrame(GenericFrame):
         self.currentVector.data["Description"] = self.description_form.toPlainText()
         self.save_changes.setDisabled(True)
         self.currentVector.update()
-
-
 
 
 class LogFileFrame(GenericFrame):
