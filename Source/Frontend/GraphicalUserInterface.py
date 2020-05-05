@@ -467,8 +467,9 @@ class VectorInformationFrame(GenericFrame):
         self.name_form.setDisabled(True)
         self.description_form.setDisabled(True)
 
-    def update_frame(self, vector):
-        self.currentVector = Vector(None, vector.text())
+    def update_frame(self, vector=None):
+        if vector is not None:
+            self.currentVector = Vector(None, vector.text())
         self.name_form.setText(self.currentVector.data.get("Name"))
         self.description_form.setText(self.currentVector.data.get("Description"))
         self.save_changes.setDisabled(True)
@@ -480,6 +481,7 @@ class VectorInformationFrame(GenericFrame):
         self.currentVector.data["Description"] = self.description_form.toPlainText()
         self.save_changes.setDisabled(True)
         self.currentVector.update()
+        self.update_frame()
 
 
 class LogFileFrame(GenericFrame):
