@@ -6,19 +6,14 @@ class LogFile:
         self.path = path
         self.errors = []
         self.cleansingStat = True
-        self.validationStat = False
+        self.validationStat = True
         self.ingestionStat = False
         self.acknowledgementStat = False
-        self.invalidStat = False
-
 
 
 # Class  functions to change the status of the attributes of any log file
     def setCleansingStat(self):
         self.cleansingStat = False
-
-    def setValidationStat(self):
-        self.validationStat = True
 
     def setIngestionStat(self):
         self.ingestionStat = True
@@ -26,9 +21,6 @@ class LogFile:
     def setInvalidStat(self):
         self.invalidStat = True
 
-    def getAcknowledgementStatus(self):
-        if self.cleansingStat and self.validationStat and self.ingestionStat:
-            self.acknowledgementStat = True
 
 # Getters for all the Log File attributes
     def get_path(self):
@@ -43,11 +35,21 @@ class LogFile:
     def getValidationStat(self):
         return self.validationStat
 
+    def makeInvalid(self):
+        self.validationStat = False
+
+    def isInvalid(self):
+        self.validationStat is False
+
+    def isValid(self):
+        self.validationStat is True
+
     def getIngestionStat(self):
         return self.ingestionStat
 
-    def getInvalidStat(self):
-        return self.invalidStat
+    def getAcknowledgementStatus(self):
+        if self.cleansingStat and self.validationStat and self.ingestionStat:
+            self.acknowledgementStat = True
 
     def insert_errors(self, e):
         self.errors.append(e)

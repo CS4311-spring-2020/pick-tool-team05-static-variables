@@ -2,6 +2,8 @@ import os
 from splunklib import results
 import splunklib.client as client
 
+from Source.Backend.Ingestion.EnforcementActionReport import EnforcementActionReport
+
 
 # I have not had time to implement everything discussed in the SDD in Splunk.
 # I still use this a lot for examples https://dev.splunk.com/enterprise/docs/python/sdk-python/howtousesplunkpython
@@ -30,7 +32,7 @@ class SplunkFacade:
         self.upload()
 
         self.logList = []
-        self.get_log_entries()
+        #self.get_log_entries()
 
     def get_log_entries(self):
         for items in self.getLogEntries():
@@ -43,22 +45,19 @@ class SplunkFacade:
 
         # Retrieve the index for the data
         current_index = self.service.indexes["main"] # indexes are like folders inside Splunk, you can create new indexes with a command not found here, this is to get an index already existing
-        #count = 1
-
-
         for filename in os.listdir(self.path):
             # Upload and index the file
             try:
                 current_index.upload(self.path + "\\" + filename)
+                #current_index.upload(logfile.get_path())
                 print(filename,"uploaded file")
-                #count += 1
             except Exception as e:
                 print("Failed to upload, error ", str(e))
-
+        print("done uploading")
     def getLogEntries(self):
         #Create a job instance and query the first five events(log entries)
         # | head 100
-        job = self.service.jobs.create("search * | head 5")
+        job = self.service.jobs.create("search * | head 50")
         rr = results.ResultsReader(job.preview()) # returns a dictionary with the information inside Splunk
         log_entries = [] # Creates a list and just append the information with the right keys from Splunk
         for entry in rr:

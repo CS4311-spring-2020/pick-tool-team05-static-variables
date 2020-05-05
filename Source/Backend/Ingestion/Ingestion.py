@@ -11,9 +11,6 @@ from Source.Backend.Ingestion.SplunkFacade import SplunkFacade
 #validate log files from event config
 #ingest files from splunk & cleanser
 #attempt to scan for changes from splunk facade
-#know log file format
-
-
 
 class ingestion:
     def __init__(self):
@@ -40,8 +37,7 @@ class ingestion:
         entriesToStore = SplunkFacade.get_log_entries()
         return entriesToStore
 
-    def knowFormat(self):
-        pass
+
 
 
     def total_files(self, path):
