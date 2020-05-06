@@ -4,6 +4,7 @@ class LogFile:
     def __init__(self, name, path):       # Constructor of a Log File requires a name and sets flags to false
         self.name = name
         self.path = path
+        #self.objectID = objectID
         self.errors = []
         self.cleansingStat = True
         self.validationStat = True
@@ -12,6 +13,9 @@ class LogFile:
 
 
 # Class  functions to change the status of the attributes of any log file
+    #def set_objectid(self, objectID):
+    #    self.objectID = objectID
+
     def setCleansingStat(self):
         self.cleansingStat = False
 
@@ -23,6 +27,9 @@ class LogFile:
 
 
 # Getters for all the Log File attributes
+    #def get_objectID(self):
+    #    return self.objectID
+
     def get_path(self):
         return self.path
 

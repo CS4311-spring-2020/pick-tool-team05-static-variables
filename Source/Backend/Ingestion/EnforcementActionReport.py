@@ -6,6 +6,7 @@ import re
 import datetime
 
 from Source.Backend.Ingestion.LogFile import LogFile
+from Source.Backend.Data.DBFacade import add_object, search_object, update_object
 
 from dateutil.parser import parse
 from dateparser.search import search_dates
@@ -29,15 +30,13 @@ class EnforcementActionReport:
         self.log_file_list = self.validate_all_files(self.log_file_list)
         self.force_validate(self.log_file_list)
 
-
-
-
-
+        print(self.log_file_list)
 
 ###############################################################
 
     def populate_LogFiles(self, path):
         #print("beginning to go through directory")
+        #objID = self.get_objectID()
         for filename in os.listdir(path):
             filepath = path + "\\" + filename
             self.log_file_list.append(LogFile(filename, filepath))

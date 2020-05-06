@@ -3,6 +3,7 @@ from splunklib import results
 import splunklib.client as client
 
 from Source.Backend.Ingestion.EnforcementActionReport import EnforcementActionReport
+from Source.Backend.Data.DBFacade import add_object, search_object, update_object
 
 
 # I have not had time to implement everything discussed in the SDD in Splunk.
@@ -68,7 +69,8 @@ class SplunkFacade:
         log_entries = [] # Creates a list and just append the information with the right keys from Splunk
         for entry in rr:
             #log_entries.append([entry['_serial'], entry['_raw'], entry['_time'], entry['source']])
-            log_entries.append([entry['_raw'], entry['_time']])
+            log_entries.append([entry['_raw'], entry['_time'], entry['source']])
         return log_entries
+
 
 
