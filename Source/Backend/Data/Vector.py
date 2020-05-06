@@ -21,7 +21,7 @@ class Vector:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        self.graph.addNode(**self.kwargs)
+        # self.graph.addNode(**self.kwargs)
 
 
         if DEBUG: print("Name of vector: ", self.name, " and description: ", self.description)
@@ -45,7 +45,21 @@ class Vector:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        self.graph.addNode(**self.kwargs)
+        # self.graph.addNode(**self.kwargs)
+
+        self.kwargs = {"Node Visibility": "something completely different",
+                      "Node ID": "something completely different",
+                      "Node Name": "something completely different",
+                      "Node Time Stamp": "something completely different",
+                      "log_entry_reference": "something completely different",
+                      "log_creator": "something completely different",
+                      "event_type": "something completely different",
+                      "icon_type": "something completely different",
+                      "source": "something completely different",
+                      "Node Description": "something9 has to be very long because I am testing how the table will "
+                                          "handle it and make sure it doesn't crash "}
+
+        # self.graph.addNode(**self.kwargs)
 
     def get_name(self):
         return self.name

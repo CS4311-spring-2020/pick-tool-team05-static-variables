@@ -123,6 +123,17 @@ class GraphicsView(QGraphicsView):
     def rightMouseButtonRelease(self, event):
         return super().mouseReleaseEvent(event)
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
+            print("In key press event.")
+            self.grScene.saveImage()
+        elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
+            self.grScene.scene.loadFromFile("graph.json.txt")
+        elif event.key() == Qt.Key_T and event.modifiers() & Qt.ControlModifier:
+            self.grScene.scene.saveToFile("graph.json.txt")
+        else:
+            super().keyPressEvent(event)
+
     def mouseMoveEvent(self, event):
         # continually feed coordinate position for the "dragging edge" to get drawn
         if self.mode == DRAG_MODE:

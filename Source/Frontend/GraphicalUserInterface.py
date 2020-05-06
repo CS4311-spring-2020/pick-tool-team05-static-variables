@@ -8,8 +8,6 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
 
 from Source.Backend.Data.Vector import Vector
 
-DEBUG = True
-
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 
 
@@ -511,7 +509,7 @@ class VectorFrame(GenericFrame):
         self.__selected = -1
 
         # (TODO): Access vectors from vector table, hardcoded for now
-        self.vectors = ["DDoS", "Vector 2", "Reverse Shell"]
+        self.vectors = ["DDoS"]
 
         self.__initUI()
 
