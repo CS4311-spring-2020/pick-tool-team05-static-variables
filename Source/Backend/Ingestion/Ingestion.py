@@ -22,9 +22,6 @@ class ingestion:
         self.get_team_directories()
         self.entriesToStore = []
 
-    def validation(self):
-        pass
-
 
     def get_team_directories(self):
         for dir in self.getDirectories():
