@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         splitV.addWidget(self.vectors)
         splitV.addWidget(NodeTableFrame())
         splitV.setStretchFactor(1, 1)
-        splitV.setSizes([300, 280])
+        splitV.setSizes([600, 900])
 
         self.layout.addWidget(splitV)
         self.setCentralWidget(QWidget(self))
