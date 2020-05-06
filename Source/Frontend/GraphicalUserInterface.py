@@ -8,8 +8,6 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
 
 from Source.Backend.Vector.VectorFacade import VectorFacade
 
-DEBUG = True
-
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Backend.Data.DBFacade import get_vector_list, del_object
 from Source.Backend.Data.Vector import Vector
@@ -25,34 +23,33 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.r = self.frameGeometry()
-        self.p = QDesktopWidget().availableGeometry().center()
         self.layout = QHBoxLayout()
-        self.menuBar = self.menuBar()
-        self.toolBar = self.addToolBar('Toolbar')
+        self.tool_bar = self.addToolBar('Toolbar')
         self.vectors = VectorFrame()
-        # self.general = TablesFrame()
+        self.main_menu = None
 
-        self.initUI()
+        self.init_UI()
 
-    def initUI(self):
+    def init_UI(self):
         # Centers window to provide consistent launch of app
         self.statusBar().showMessage('Ready')
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
-        self.resize(1900, 1030)
-        self.r.moveCenter(self.p)
-        self.move(self.r.topLeft())
 
-        self.__setFileMenu(self.menuBar.addMenu('&File'))
-        self.__setViewMenu(self.menuBar.addMenu('&View'))
-        self.__initToolBar()
+        self.resize(1900, 1030)
+
+        frame = self.frameGeometry()
+        center_point = QDesktopWidget().availableGeometry().center()
+        frame.moveCenter(center_point)
+        self.move(frame.topLeft())
+
+        self.init_toolbar()
 
         splitV = QSplitter(Qt.Vertical)
         splitV.addWidget(self.vectors)
         splitV.addWidget(NodeTableFrame())
         splitV.setStretchFactor(1, 1)
-        splitV.setSizes([300, 280])
+        splitV.setSizes([600, 900])
 
         self.layout.addWidget(splitV)
         self.setCentralWidget(QWidget(self))
@@ -60,74 +57,64 @@ class MainWindow(QMainWindow):
 
         self.show()
 
-    def __setFileMenu(self, file_menu):
-        # (TODO): Add triggers
-        project = QAction('&Event Information', self)
-        project.setStatusTip('Event Information')
-        file_menu.addAction(project)
-        project.triggered.connect(self.__createMainMenu)
-
-        file_menu.addSeparator()
-
-        exit_act = QAction('&Exit', self)
-        exit_act.setShortcut('Ctrl+Q')
-        exit_act.setStatusTip('Exit application')
-        exit_act.triggered.connect(QApplication.quit)
-        file_menu.addAction(exit_act)
-
-    def __setViewMenu(self, view_menu):
-        graph_orientation = QMenu('&Graph Orientation', self)
-        timeline = QMenu('Timeline Interval', self)
-
-        # (TODO): Add triggers
-        orientation_h = QAction('&Horizontal', self)
-        orientation_h.setStatusTip('Position graph horizontally')
-        orientation_h.setCheckable(True)
-
-        # (TODO): Add triggers
-        orientation_v = QAction('&Vertical', self)
-        orientation_v.setStatusTip('Position graph vertically')
-        orientation_v.setCheckable(True)
-
-        # (TODO): Add triggers
-        seconds_i = QAction('&Seconds', self)
-        seconds_i.setStatusTip('Set timeline interval to seconds')
-        seconds_i.setCheckable(True)
-
-        # (TODO): Add triggers
-        minutes_i = QAction('&Minutes', self)
-        minutes_i.setStatusTip('Set timeline interval to minutes')
-        minutes_i.setCheckable(True)
-
-        # (TODO): Add triggers
-        hours_i = QAction('&Hours', self)
-        hours_i.setStatusTip('Set timeline interval to hours')
-        hours_i.setCheckable(True)
-
-        # (TODO): Add triggers
-        days_i = QAction('&Days', self)
-        days_i.setStatusTip('Set timeline interval to hours')
-        days_i.setCheckable(True)
-
-        graph_orientation.addAction(orientation_h)
-        graph_orientation.addAction(orientation_v)
-        timeline.addAction(seconds_i)
-        timeline.addAction(minutes_i)
-        timeline.addAction(hours_i)
-        timeline.addAction(days_i)
-        view_menu.addMenu(graph_orientation)
-        view_menu.addMenu(timeline)
+    # def __setViewMenu(self, view_menu):
+    #     graph_orientation = QMenu('&Graph Orientation', self)
+    #     timeline = QMenu('Timeline Interval', self)
+    #
+    #     # (TODO): Add triggers
+    #     orientation_h = QAction('&Horizontal', self)
+    #     orientation_h.setStatusTip('Position graph horizontally')
+    #     orientation_h.setCheckable(True)
+    #
+    #     # (TODO): Add triggers
+    #     orientation_v = QAction('&Vertical', self)
+    #     orientation_v.setStatusTip('Position graph vertically')
+    #     orientation_v.setCheckable(True)
+    #
+    #     # (TODO): Add triggers
+    #     seconds_i = QAction('&Seconds', self)
+    #     seconds_i.setStatusTip('Set timeline interval to seconds')
+    #     seconds_i.setCheckable(True)
+    #
+    #     # (TODO): Add triggers
+    #     minutes_i = QAction('&Minutes', self)
+    #     minutes_i.setStatusTip('Set timeline interval to minutes')
+    #     minutes_i.setCheckable(True)
+    #
+    #     # (TODO): Add triggers
+    #     hours_i = QAction('&Hours', self)
+    #     hours_i.setStatusTip('Set timeline interval to hours')
+    #     hours_i.setCheckable(True)
+    #
+    #     # (TODO): Add triggers
+    #     days_i = QAction('&Days', self)
+    #     days_i.setStatusTip('Set timeline interval to hours')
+    #     days_i.setCheckable(True)
+    #
+    #     graph_orientation.addAction(orientation_h)
+    #     graph_orientation.addAction(orientation_v)
+    #     timeline.addAction(seconds_i)
+    #     timeline.addAction(minutes_i)
+    #     timeline.addAction(hours_i)
+    #     timeline.addAction(days_i)
+    #     view_menu.addMenu(graph_orientation)
+    #     view_menu.addMenu(timeline)
 
     # (TODO): Add more buttons according to future developments
-    def __initToolBar(self):
-        self.toolBar.setMovable(False)
-        self.toolBar.setIconSize(QSize(20, 20))
-        self.toolBar.setStyleSheet("""
+    def init_toolbar(self):
+        self.tool_bar.setMovable(False)
+        self.tool_bar.setIconSize(QSize(20, 20))
+        self.tool_bar.setStyleSheet("""
             QToolBar {
                 spacing: 6px;
                 padding: 3px;
             }
         """)
+
+        main_menu = QAction(QIcon('../Source/Backend/Resources/Images/changes.png'), "Main Menu", self)
+        main_menu.setStatusTip("Main Menu")
+        self.tool_bar.addAction(main_menu)
+        main_menu.triggered.connect(self.create_menu)
 
         # (TODO): Add triggers, reimplement
         # undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
@@ -160,18 +147,18 @@ class MainWindow(QMainWindow):
         # self.toolBar.addAction(changes)
 
         # Buttons after this are set to the right side
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.toolBar.addWidget(spacer)
+        # spacer = QWidget()
+        # spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # self.toolBar.addWidget(spacer)
 
         # (TODO): Add triggers
-        push_act = QAction(QIcon('Resources/Images/export.png'), '&Export Graph', self)
-        push_act.setShortcut('Ctrl+Shift+X')
-        push_act.setStatusTip('Export Graph')
-        self.toolBar.addAction(push_act)
+        # push_act = QAction(QIcon('Resources/Images/export.png'), '&Export Graph', self)
+        # push_act.setShortcut('Ctrl+Shift+X')
+        # push_act.setStatusTip('Export Graph')
+        # self.toolBar.addAction(push_act)
 
-    def __createMainMenu(self):
-        self.mainMenu = MainMenu()
+    def create_menu(self):
+        self.main_menu = MainMenu()
 
 ########################################################################################################################
 
@@ -206,19 +193,19 @@ class MainMenu(GenericWindow):
         self.buttons = QToolBar("Buttons")
         self.frames = []
 
-        self.initUI()
+        self.init_UI()
 
-    def initUI(self):
+    def init_UI(self):
         self.resize(900, 600)
-        self.initTabs()
-        self.initButtons()
+        self.init_tabs()
+        self.init_buttons()
 
         self.layout.addWidget(self.tabs)
         self.layout.addWidget(self.buttons)
 
         self.show()
 
-    def initTabs(self):
+    def init_tabs(self):
         self.frames.append(EventConfigurationFrame())
         self.frames.append(VectorDatabaseFrame())
         self.frames.append(LogFileFrame())
@@ -226,7 +213,7 @@ class MainMenu(GenericWindow):
         for frame in self.frames:
             self.tabs.addTab(frame, frame.frameName)
 
-    def initButtons(self):
+    def init_buttons(self):
         self.buttons.setMovable(False)
         self.buttons.setStyleSheet("""
                     QToolBar {
@@ -267,11 +254,11 @@ class EventConfigurationFrame(GenericFrame):
         self.lead_label = QLabel()
         self.ip_label = QLabel()
         self.connections_label = QLabel()
-        self.__initUI()
+        self.init_frame()
 
-        self.event_configuration.eventConfigurationSignal.connect(self.__loadInfo)
+        self.event_configuration.eventConfigurationSignal.connect(self.load)
 
-    def __loadInfo(self):
+    def load(self):
         self.name_form.setText(self.event_configuration.data.get("Event Name"))
         self.description_form.setText(self.event_configuration.data.get("Description"))
         self.start_form.setText(self.event_configuration.data.get("Event Start Time"))
@@ -295,7 +282,7 @@ class EventConfigurationFrame(GenericFrame):
         self.event_configuration.data['Blue Team Folder'] = self.blue_form.text()
         self.event_configuration.update()
 
-    def __initUI(self):
+    def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
 
         # Labels
@@ -324,7 +311,7 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(self.ip_label, 11, 1)
         self.layout.addWidget(self.connections_label, 12, 1)
 
-        self.__loadInfo()
+        self.load()
 
 
 class VectorDatabaseFrame(GenericFrame):
@@ -480,8 +467,9 @@ class VectorInformationFrame(GenericFrame):
         self.name_form.setDisabled(True)
         self.description_form.setDisabled(True)
 
-    def update_frame(self, vector):
-        self.currentVector = Vector(None, vector.text())
+    def update_frame(self, vector=None):
+        if vector is not None:
+            self.currentVector = Vector(None, vector.text())
         self.name_form.setText(self.currentVector.data.get("Name"))
         self.description_form.setText(self.currentVector.data.get("Description"))
         self.save_changes.setDisabled(True)
@@ -493,8 +481,7 @@ class VectorInformationFrame(GenericFrame):
         self.currentVector.data["Description"] = self.description_form.toPlainText()
         self.save_changes.setDisabled(True)
         self.currentVector.update()
-
-
+        self.update_frame()
 
 
 class LogFileFrame(GenericFrame):
