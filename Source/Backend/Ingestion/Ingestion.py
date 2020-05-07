@@ -24,7 +24,7 @@ class Ingestion:
         self.populate_LogFiles(self.path)
         self.cleanse_LogFiles(self.log_file_list)
         self.validate_all_files(self.log_file_list)
-        self.force_validate(self.log_file_list)
+        #self.force_validate(self.log_file_list)
 
         self.upload_logfiles_to_splunk(self.log_file_list)
 
@@ -87,5 +87,6 @@ class Ingestion:
     def upload_logfiles_to_splunk(self, logfiles):
         #SplunkFacade().service
         for log in logfiles:
-            SplunkFacade().upload(log)
+            if log.data.get("Validation_Flag") is not False:
+                SplunkFacade().upload(log)
 
