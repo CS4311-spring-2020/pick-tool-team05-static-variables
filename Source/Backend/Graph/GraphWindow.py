@@ -75,13 +75,13 @@ class GraphWindow(QWidget):
         # passing the scene reference, the name of the node, inputs and outputs
 
         # inputs might represent different types of sockets
-        node1 = Node(self.scene, inputs=[1], outputs=[1], **self.info1)
-        node2 = Node(self.scene, inputs=[1], outputs=[1], **self.info2)
-        node3 = Node(self.scene, inputs=[1], outputs=[1], **self.info3)
+        node1 = Node(self.scene, **self.info1)
+        node2 = Node(self.scene, **self.info2)
+        node3 = Node(self.scene, **self.info3)
 
-        node4 = Node(self.scene, inputs=[1], outputs=[1], **self.info1)
-        node5 = Node(self.scene, inputs=[1], outputs=[1], **self.info2)
-        node6 = Node(self.scene, inputs=[1], outputs=[1], **self.info3)
+        node4 = Node(self.scene, **self.info1)
+        node5 = Node(self.scene, **self.info2)
+        node6 = Node(self.scene, **self.info3)
 
         # set where node is supposed to be drawn from the start
         node1.setPos(-450, -250)

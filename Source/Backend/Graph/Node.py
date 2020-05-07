@@ -5,7 +5,7 @@ from Source.Backend.Graph.Serializable import Serializable
 
 
 class Node(Serializable):
-    def __init__(self, scene, inputs=[], outputs=[], **kwargs):
+    def __init__(self, scene, **kwargs):
         super().__init__()
 
         self.scene = scene
@@ -27,19 +27,9 @@ class Node(Serializable):
 
         self.socket_spacing = 1
 
-        self.inputs = []
-        self.outputs = []
-
         # once node is instantiated sockets are created
-        # create sockets for input and outputs
-
-        for item in inputs:
-            socket = Socket(node=self,  socket_y_pos=TOP)
-            self.inputs.append(socket)
-
-        for item in outputs:
-            socket = Socket(node=self, socket_y_pos=BOTTOM)
-            self.outputs.append(socket)
+        self.inputs = [Socket(node=self,  socket_y_pos=TOP)]
+        self.outputs = [Socket(node=self, socket_y_pos=BOTTOM)]
 
     def __str__(self):
         return "<Node: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])

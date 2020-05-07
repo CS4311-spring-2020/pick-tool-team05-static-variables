@@ -125,8 +125,6 @@ class GraphicsView(QGraphicsView):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-            self.grScene.scene.loadFromFile("graph.json.txt")
-        elif event.key() == Qt.Key_T and event.modifiers() & Qt.ControlModifier:
             self.grScene.scene.saveToFile("graph.json.txt")
         else:
             super().keyPressEvent(event)
