@@ -22,12 +22,16 @@ class Vector(QObject):
             self.add()
 
     def add(self):
+        # self.create_graph()
         self.check_duplicate()
         add_object(self.data, "Vector")
         self.data = search_object("Name", self.data.get("Name"), "Vector")
 
     def update(self):
-        # TODO: Make sure to update graph name/description when vector is updated
+        # g = search_object("_id", self.data.get("Graph ID"), "Graph")
+        # g.data["Name"] = self.data.get("Name")
+        # same thing for description
+        # g.update()
         self.check_duplicate()
         update_object(self.data.get("_id"), self.data, "Vector")
 
