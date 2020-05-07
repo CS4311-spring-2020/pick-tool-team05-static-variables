@@ -703,7 +703,14 @@ class GraphFrame(GenericFrame):
     def __init__(self):
         super().__init__(QVBoxLayout(), 'Graph Frame')
         self.graphInit()
+        self.saveImage()
+        print("In gui after saveImage")
 
     def graphInit(self):
-        vector = VectorFacade("name", "description")
-        self.layout.addWidget(vector.graph)
+        self.vector = VectorFacade("name", "description")
+        self.layout.addWidget(self.vector.graph)
+
+    def saveImage(self):
+        e = QPixmap(self.vector.graph.grab(self.vector.graph.rect()))
+        pix = QPixmap.toImage(e)
+        pix.save("capture.jpg", "JPG")
