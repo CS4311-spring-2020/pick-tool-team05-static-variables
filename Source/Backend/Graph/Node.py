@@ -1,18 +1,21 @@
 from Source.Backend.Graph.GraphicNode import GraphicsNode
 from Source.Backend.Graph.NodeContentWidget import NodeContentWidget
 from Source.Backend.Graph.NodeSocket import *
+from Source.Backend.Graph.Serializable import Serializable
 
-DEBUG = False
 
-
-class Node:
+class Node(Serializable):
     def __init__(self, scene, inputs=[], outputs=[], **kwargs):
+        super().__init__()
+
         self.scene = scene
 
         # saves individual information of a node
         self.content_info = kwargs
 
-        self.title = kwargs.pop('name')
+        #self.title = kwargs.pop('name')
+        kwargs.pop("Node Visibility")
+        kwargs.pop("icon_type")
 
         # create a widget for contents of a nodes and add itself to node graphics
         self.content = NodeContentWidget(self)
@@ -49,18 +52,35 @@ class Node:
         self.grNode.setPos(x, y)
 
     # return coordinate position of a socket as a list for updating positions inside NodeEdge
-    def getSocketPosition(self, socket_y_position):
+    def getSocketPosition(self, socket_x_position, socket_y_position):
         if socket_y_position == TOP:
-            return [0, self.grNode.height/2]
+            return [socket_x_position, self.grNode.height/2]
         elif socket_y_position == BOTTOM:
-            return [0, -self.grNode.height/2]
+            return [socket_x_position, -self.grNode.height/2]
         else:
             pass
 
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:
             if socket.hasEdge():
-                if DEBUG: print("updating")
+
                 socket.edge.updatePositions()
             else:
-                if DEBUG: print("no operation")
+                pass
+
+    def serialize(self):
+        inputs, outputs = [], []
+        for socket in self.inputs: inputs.append(socket.serialize())
+        for socket in self.outputs: outputs.append(socket.serialize())
+        print("  In serialize function inside of node")
+        res = {
+            "id": id(self),
+            "name": self.content_info.get("Node Name"),
+            "pos x": self.grNode.scenePos().x(),
+            "pos y": self.grNode.scenePos().y(),
+            "parent": inputs,
+            "child": outputs,
+            "content": self.content.serialize()
+        }
+        print(res)
+        return res

@@ -1,12 +1,13 @@
 from Source.Backend.Graph.GraphicEdge import *
+from Source.Backend.Graph.Serializable import Serializable
 
 EDGE_TYPE_DIRECT = 1
 
-DEBUG = False
 
-
-class Edge:
+class Edge(Serializable):
     def __init__(self, scene, start_socket, end_socket, label):
+        super().__init__()
+
         self.scene = scene
 
         self.label = label
@@ -21,8 +22,6 @@ class Edge:
         self.grEdge = GraphicsEdgeDirect(self)
 
         self.updatePositions()
-
-        if DEBUG: print("Edge: ", self.grEdge.posSource, "to", self.grEdge.posDestination)
 
         self.scene.addEdge(self)
 
@@ -45,9 +44,7 @@ class Edge:
             self.grEdge.setDestination(*end_pos)
         else:
             self.grEdge.setDestination(*source_pos)
-            if DEBUG:
-                print(" SS:", self.start_socket)
-                print(" ES:", self.end_socket)
+
         self.grEdge.update()
 
     def remove_from_sockets(self):
@@ -64,3 +61,13 @@ class Edge:
         self.scene.grScene.removeItem(self.grEdge)
         self.grEdge = None
         self.scene.removeEdge(self)
+
+    def serialize(self):
+        return {
+            "id": id(self),
+            "label": self.label,
+            "start": self.start_socket.id,
+            "end": self.end_socket.id
+        }
+
+

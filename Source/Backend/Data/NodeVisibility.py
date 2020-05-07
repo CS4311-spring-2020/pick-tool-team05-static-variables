@@ -1,7 +1,5 @@
 
-
-
-class NodeVisibility():
+class NodeVisibility:
 
     def __init__(self, node_id_visibility, node_name_visibility, node_timestamp_visibility, node_description_visibility,
                  log_entry_reference_visibility, log_creator_visibility, event_type_visibility, icon_visibility,

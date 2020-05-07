@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem)
 
 
-from Source.Backend.Vector.VectorFacade import VectorFacade
+from Source.Backend.Data.VectorFacade import VectorFacade
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Backend.Data.DBFacade import get_vector_list, del_object

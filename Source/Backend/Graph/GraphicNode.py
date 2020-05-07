@@ -14,8 +14,8 @@ class GraphicsNode(QGraphicsItem):
 
         # settings
 
-        self._title_color = Qt.black
-        self._title_font = QFont("Times New Roman", 12)
+        # self._title_color = Qt.black
+        # self._title_font = QFont("Times New Roman", 12)
 
         self.radius = 150
         self.innerRectangleSize = self.radius * math.sin(45)
@@ -36,8 +36,8 @@ class GraphicsNode(QGraphicsItem):
         self._brush_background = QBrush(QColor("#E3212121"))
 
         # init title
-        self.initTitle()
-        self.title = self.node.title
+        # self.initTitle()
+        # self.title = self.node.title
 
         """---------------------------Not Sure if I will be using something similar to this--------------------------"""
 
@@ -56,6 +56,7 @@ class GraphicsNode(QGraphicsItem):
         super().mouseMoveEvent(event)
         self.node.updateConnectedEdges()
 
+    '''
     @property
     def title(self): return self._title
 
@@ -63,6 +64,7 @@ class GraphicsNode(QGraphicsItem):
     def title(self, value):
         self._title = value
         self.title_item.setPlainText(self._title)
+    '''
 
     # Give selectable and movable ability to the bounds given to the node
     def initUI(self):
@@ -75,7 +77,7 @@ class GraphicsNode(QGraphicsItem):
                       -self.innerRectangleSize + self.edge_size,
                       (self.innerRectangleSize * 2) - (self.edge_size * 2),
                       (self.innerRectangleSize * 2) - (self.edge_size * 2)).normalized()
-
+    '''
     def initTitle(self):
         self.title_item = QGraphicsTextItem(self)
         self.title_item.setDefaultTextColor(self._title_color)
@@ -89,9 +91,8 @@ class GraphicsNode(QGraphicsItem):
             - 2
             * self._padding
         )
-
+    '''
     def initContent(self):
-
         self.grContent = QGraphicsProxyWidget(self)
 
         self.content.setGeometry(-self.innerRectangleSize + (self.edge_size * 2.5),
@@ -127,6 +128,5 @@ class GraphicsNode(QGraphicsItem):
 
         # Highlights selected node
         painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
-        #painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern))
         painter.setBrush(Qt.NoBrush)
         painter.drawPath(path_outline.simplified())

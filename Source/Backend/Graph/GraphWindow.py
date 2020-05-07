@@ -1,6 +1,4 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 
 from Source.Backend.Graph.Node import Node
 from Source.Backend.Graph.GraphicsView import GraphicsView
@@ -9,39 +7,48 @@ from Source.Backend.Graph.NodeEdge import Edge
 
 
 class GraphWindow(QWidget):
-    def __init__(self, vector_name="Undefined Vector", parent=None):
-        vector = vector_name
+    def __init__(self, graph_name=None, parent=None):
+        self.data = {
+            "Graph Name": graph_name,
+            "Graph Description": ""
+        }
         super().__init__(parent)
 
-        self.styleSheet_filename = 'qss/nodestyle.qss'
-        self.loadStyleSheet(self.styleSheet_filename)
-
-        self.info1 = {"name": "something1",
-                      "time_stamp": "something2",
-                      "description": "something3",
+        self.info1 = {"Node Visibility": "something0",
+                      "Node ID": "something1",
+                      "Node Name": "something2 info 1",
+                      "Node Time Stamp": "something3",
                       "log_entry_reference": "something4",
                       "log_creator": "something5",
                       "event_type": "something6",
                       "icon_type": "something7",
-                      "source": "something8"}
+                      "source": "something8",
+                      "Node Description": "something9 has to be very long because I am testing how the table will "
+                                          "handle it and make sure it doesn't crash "}
 
-        self.info2 = {"name": "info2",
-                      "time_stamp": "info2",
-                      "description": "info2",
-                      "log_entry_reference": "info2",
-                      "log_creator": "info2",
-                      "event_type": "info2",
-                      "icon_type": "info2",
-                      "source": "info2"}
+        self.info2 = {"Node Visibility": "something0",
+                      "Node ID": "something1",
+                      "Node Name": "something2 info 2",
+                      "Node Time Stamp": "something3",
+                      "log_entry_reference": "something4",
+                      "log_creator": "something5",
+                      "event_type": "something6",
+                      "icon_type": "something7",
+                      "source": "something8",
+                      "Node Description": "something9 has to be very long because I am testing how the table will "
+                                          "handle it and make sure it doesn't crash "}
 
-        self.info3 = {"name": "info3",
-                      "time_stamp": "info3",
-                      "description": "info3",
-                      "log_entry_reference": "info3",
-                      "log_creator": "info3",
-                      "event_type": "info3",
-                      "icon_type": "info3",
-                      "source": "info3"}
+        self.info3 = {"Node Visibility": "something0",
+                      "Node ID": "something1",
+                      "Node Name": "something2 info 3",
+                      "Node Time Stamp": "something3",
+                      "log_entry_reference": "something4",
+                      "log_creator": "something5",
+                      "event_type": "something6",
+                      "icon_type": "something7",
+                      "source": "something8",
+                      "Node Description": "something9 has to be very long because I am testing how the table will "
+                                          "handle it and make sure it doesn't crash "}
 
         self.initUI()
 
@@ -55,7 +62,6 @@ class GraphWindow(QWidget):
         # create graphics scene
         self.scene = Scene()
 
-        # create a node
         self.addNode()
 
         # create graphics view
@@ -90,9 +96,10 @@ class GraphWindow(QWidget):
         edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[0], "something else")
         edge3 = Edge(self.scene, node5.outputs[0], node6.inputs[0], "something something else")
 
-    def loadStyleSheet(self, filename):
-        print("Style Loading:", filename)
-        file = QFile(filename)
-        file.open(QFile.ReadOnly | QFile.Text)
-        stylesheet = file.readAll()
-        QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf8'))
+'''
+    def addNode(self, **kwargs):
+        if kwargs is not None:
+            Node(self.scene, inputs=[1], outputs=[1], **kwargs)
+        else:
+            pass
+'''
