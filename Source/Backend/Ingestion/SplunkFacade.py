@@ -57,7 +57,8 @@ class SplunkFacade:
         try:
             #current_index.upload(self.path + "\\" + filename)
             current_index.upload(logfile.data.get("Filepath"))
-            print(logfile.data.get("Filename"),"uploaded file")
+            logfile.data["Ingestion_Flag"] = True
+            print(logfile.data.get("Filename"),"uploaded file, ingestion stat now ", logfile.data.get("Ingestion_Flag"))
             #count += 1
         except Exception as e:
             print("Failed to upload, error ", str(e))
