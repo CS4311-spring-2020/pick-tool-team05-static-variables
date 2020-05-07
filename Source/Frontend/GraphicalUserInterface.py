@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidg
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem)
 
 
-from Source.Backend.Data.Vector import Vector
+from Source.Backend.Data.VectorFacade import VectorFacade
 
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 
@@ -626,5 +626,5 @@ class GraphFrame(GenericFrame):
         self.graphInit()
 
     def graphInit(self):
-        vector = Vector("name", "description")
+        vector = VectorFacade("name", "description")
         self.layout.addWidget(vector.graph)
