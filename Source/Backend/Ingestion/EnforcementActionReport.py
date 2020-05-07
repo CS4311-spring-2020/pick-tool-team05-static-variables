@@ -15,26 +15,8 @@ from dateparser.search import search_dates
 
 class EnforcementActionReport:
 
-    def __init__(self, cpath):
-        self.path = cpath
-        self.errorList = []
-        self.go_through_files(self.path)
-        print(self.errorList)
-
-
-    def go_through_files(self, path):
-        print("beginning to go through directory")
-
-        for filename in os.listdir(path):
-            file = path + "\\" + filename
-            with open(file) as in_file:
-                for row in csv.reader(in_file):
-                    b=True
-                    if self.has_date(str(row), b):
-                        #LogFile.validationStat = True
-                        print("has date")
-
-        print("finished going through directory")
+    def __init__(self):
+        testing = []
 
 
     def has_date(self, row, fuzzy= False):
@@ -43,20 +25,21 @@ class EnforcementActionReport:
             return True
 
         except ValueError:
-            #self.errorList.append(e)
-            #LogFile.validationStat = False
             return False
 
     def check_file(self, file):
-        lineNum = 1
-        errorMsg = "Timestamp doesn't exist"
-        dateBool = False
-
-        for row in csv.reader(file):
+        errorList = []
+        for row in open(file.data.get("Filepath")):
+            lineNum = 1
             b = True
             dateBool =  self.has_date(str(row), b)
-            print("in if stmt")
             if dateBool == False:
-                self.errorList.append(lineNum)
-                self.errorList.append(errorMsg)
+                errorMsg = "Timestamp doesn't exist"
+                if errorMsg:
+                    errorList.append(lineNum)
+                    file.data["Validation_Flag"] = False
+                else:
+                    file.data["Validation_Flag"] = True
             lineNum += 1
+
+        return errorList
