@@ -27,19 +27,21 @@ class EnforcementActionReport:
         except ValueError:
             return False
 
-    def check_file(self, file):
+    def check_file(self, logfile):
         errorList = []
-        for row in open(file.data.get("Filepath")):
+        for row in open(logfile.data.get("Filepath")):
             lineNum = 1
             b = True
             dateBool =  self.has_date(str(row), b)
             if dateBool == False:
-                errorMsg = "Timestamp doesn't exist"
+                errorMsg = "no time"
                 if errorMsg:
                     errorList.append(lineNum)
-                    file.data["Validation_Flag"] = False
-                else:
-                    file.data["Validation_Flag"] = True
+                    logfile.data["Validation_Flag"] = False
+
             lineNum += 1
+
+        if errorList == []:
+            logfile.data["Validation_Flag"] = True
 
         return errorList
