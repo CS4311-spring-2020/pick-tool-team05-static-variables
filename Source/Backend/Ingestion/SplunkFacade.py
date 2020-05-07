@@ -11,9 +11,9 @@ import json
 # I still use this a lot for examples https://dev.splunk.com/enterprise/docs/python/sdk-python/howtousesplunkpython
 # Dr.Roach also sent out email regarding Splunk, it might also be helpful
 class SplunkFacade:
-    def __init__(self, cpath):
+    def __init__(self):
         #cleansed
-        self.path = cpath
+        #self.path = cpath
         #self.path = Cleanser.cpath
         print("connecting to splunk")
         # Constants created with log-in information
@@ -31,10 +31,12 @@ class SplunkFacade:
             #username=USERNAME,
             #password=PASSWORD)
 
-        self.upload()
+        #self.upload()
 
-        self.logList = []
-        self.get_log_entries()
+        #self.logList = []
+        #self.list2 = self.getLogEntries()
+        #print(self.list2)
+        #self.get_log_entries()
 
     def get_log_entries(self):
         for items in self.getLogEntries():
@@ -43,21 +45,22 @@ class SplunkFacade:
         return self.logList
 
 
-    def upload(self):
-
+    def upload(self, logfile):
+        #self.service
         # Retrieve the index for the data
         current_index = self.service.indexes["main"] # indexes are like folders inside Splunk, you can create new indexes with a command not found here, this is to get an index already existing
         #count = 1
 
 
-        for filename in os.listdir(self.path):
+        #for filename in os.listdir(self.path):
             # Upload and index the file
-            try:
-                current_index.upload(self.path + "\\" + filename)
-                print(filename,"uploaded file")
-                #count += 1
-            except Exception as e:
-                print("Failed to upload, error ", str(e))
+        try:
+            #current_index.upload(self.path + "\\" + filename)
+            current_index.upload(logfile.data.get("Filepath"))
+            print(logfile.data.get("Filename"),"uploaded file")
+            #count += 1
+        except Exception as e:
+            print("Failed to upload, error ", str(e))
 
     def getLogEntries(self):
         #Create a job instance and query the first five events(log entries)

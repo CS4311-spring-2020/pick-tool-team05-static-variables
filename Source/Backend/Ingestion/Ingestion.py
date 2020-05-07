@@ -22,10 +22,11 @@ class Ingestion:
         self.path = path
         self.log_file_list = []
         self.populate_LogFiles(self.path)
-
-
         self.cleanse_LogFiles(self.log_file_list)
         self.validate_all_files(self.log_file_list)
+        self.force_validate(self.log_file_list)
+
+        self.upload_logfiles_to_splunk(self.log_file_list)
 
 
         #self.test()
@@ -76,7 +77,15 @@ class Ingestion:
                 print("is valid ", log.data.get("Filename"), log.data.get("Validation_Flag"))
                 log.data["Validation_Flag"] = True
 
-    #def force_validate(self, lofile):
+    def force_validate(self, logfile):
+        print("force validating...")
+        for log in logfile:
+            if log.data.get("Validation_Flag") == False:
+                log.data["Validation_Flag"] = True
+            print(log.data.get("Validation_Flag"))
 
-
+    def upload_logfiles_to_splunk(self, logfiles):
+        #SplunkFacade().service
+        for log in logfiles:
+            SplunkFacade().upload(log)
 
