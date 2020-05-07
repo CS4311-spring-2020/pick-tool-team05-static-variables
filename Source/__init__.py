@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication
 from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Backend.Data.Vector import Vector
 from Source.Frontend.GraphicalUserInterface import MainWindow
+from Source.Backend.Ingestion.Ingestion import Ingestion
 
 
 if __name__ == '__main__':
@@ -16,5 +17,8 @@ if __name__ == '__main__':
                                                   "usr/local/white", "usr/local/blue", "True", "127.0.0.1", "4")
 
     app = QApplication(sys.argv)
-    g = MainWindow()
+    #g = MainWindow()
+
+    test = Ingestion("C:\\Users\\yamel\\Desktop\\splunk\\tests\\Uncleansed")
+
     sys.exit(app.exec_())

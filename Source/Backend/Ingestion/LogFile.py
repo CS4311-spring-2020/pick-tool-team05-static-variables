@@ -19,7 +19,7 @@ class LogFile(QObject):
                 self.data = s
             else:
                 self.data = {
-                    "Filename": filepath.split('/'[-1]),
+                    "Filename": filepath.split('/')[-1],
                     "Filepath": filepath,
                     "Cleanse_Flag": False,
                     "Validation_Flag": False,
@@ -36,9 +36,3 @@ class LogFile(QObject):
     def update(self):
         update_object(self.data.get("_id"), self.data, "LogFile")
 
-# Class function that will force validate, changing all the log file attributes to true
-    def setAcknowledgementStatus(self):
-        if self.cleansingStat and self.validationStat and self.ingestionStat:
-            return True
-        else:
-            return False
