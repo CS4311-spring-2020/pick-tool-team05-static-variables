@@ -1,5 +1,6 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 from Source.Backend.Data.DBFacade import search_object, add_object, update_object
+from Source.Backend.Data.Graph import Graph
 
 
 class Vector(QObject):
@@ -18,11 +19,13 @@ class Vector(QObject):
                 "Graph ID": "",
                 "Significant Log Entries": []
             }
-            # self.create_graph()
+
             self.add()
 
     def add(self):
-        # self.create_graph()
+        print("in the add function inside vector class before create graph")
+        self.create_graph()
+        print("in the add function inside vector class after create graph")
         self.check_duplicate()
         add_object(self.data, "Vector")
         self.data = search_object("Name", self.data.get("Name"), "Vector")
@@ -47,7 +50,7 @@ class Vector(QObject):
 
             s = search_object("Name", self.data.get("Name"), "Vector")
 
-    # def create_graph(self):
-    #     # TODO: Create graph with name/description of vector, store Graph ID in vector "GRAPH ID" attribute
-    #     g = Graph(self.data.get("Name"), self.data.get("Description"))
-    #     self.data["Graph ID"] = g.data.get("_id")
+    def create_graph(self):
+        g = Graph(self.data.get("Name"), self.data.get("Description"))
+        print(g.data.get("_id"))
+        self.data["Graph ID"] = g.data.get("_id")

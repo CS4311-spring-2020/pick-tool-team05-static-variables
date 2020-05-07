@@ -18,9 +18,6 @@ class Scene(Serializable):
         self.scene_width = 6400
         self.scene_height = 6400
 
-        print(id(self))
-        print(self.getSid())
-
         self.initUI()
 
     def initUI(self):
@@ -61,7 +58,6 @@ class Scene(Serializable):
             "nodes": nodes,
             "edges": edges
         }
-
 
     def saveImage(self):
         items = self.nodes + self.edges

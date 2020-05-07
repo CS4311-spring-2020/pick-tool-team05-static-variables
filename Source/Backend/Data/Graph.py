@@ -1,26 +1,31 @@
-from Source.Backend.Data.Node import Node
-from Source.Backend.Data.Relationship import Relationship
+from PyQt5.QtCore import QObject, pyqtSignal
+from Source.Backend.Data.DBFacade import search_object, add_object, update_object
 
 
-class Graph:
+class Graph(QObject):
+    def __init__(self, _id=None, name=None, description=None, export_format=None, orientation=None, interval_units=None,
+                 interval=None, position_of_nodes=None, position_of_relationships=None):
+        super().__init__()
+        print("in Graph after parent constructor")
+        self.signal = pyqtSignal()
 
-    def __init__(self, export_format, orientation, interval_units, interval, position_of_nodes,
-                 position_of_relationships):
-        self.exportFormat = export_format
-        self.orientation = orientation
-        self.interval_units = interval_units
-        self.interval = interval
-        self.positionOfNodes = position_of_nodes
-        self.positionOfRelationships = position_of_relationships
-
-        self.n = Node(1, 2, 3, 4, 5, 5, 6, 7)
-        self.r = Relationship(1, 2, 3)
-
-        self.graph = {
-            "Export Format": self.exportFormat,
-            "Orientation": self.orientation,
-            "Interval Units": self.interval_units,
-            "Interval": self.interval,
-            "Position of Nodes": [self.n.node],
-            "Position of Relationships": [self.r.relationships]
+        print(" in Graph creating dictionary")
+        self.data = {
+            "Name": name,
+            "Description": description,
+            "Export Format": export_format,
+            "Orientation": orientation,
+            "Interval Units": interval_units,
+            "Interval": interval,
+            "Nodes": [],
+            "Relationships": []
         }
+        self.add()
+
+    def add(self):
+        print("  in Graph inside add function")
+        add_object(self.data, "Graph")
+        print("   in Graph inside add function after adding")
+        self.data = search_object("Name", self.data.get("Name"), "Graph")
+        print("    in Graph inside add function after searching for name")
+
