@@ -95,3 +95,5 @@ class Ingestion:
         entries = SplunkFacade().get_log_entries(uname, pswd)
         for e in entries:
             print(e)
+
+        return entries
