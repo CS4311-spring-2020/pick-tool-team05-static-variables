@@ -1,14 +1,16 @@
 from Source.Backend.Graph.GraphWindow import GraphWindow
 
 
-
-
 class VectorFacade:
     def __init__(self, name=None, description=None):
-        self.name = name
-        self.description = description
+        self.data = {
+            "Name": name,
+            "Description": description,
+            "nodes": []
+        }
 
-        self.graph = GraphWindow(self.name)
+        self.graph = GraphWindow(self.data.get("Name"), self.data.get("Description"))
+
         self.kwargs = {"Node Visibility": "something0",
                       "Node ID": "something1",
                       "Node Name": "something2",
@@ -21,13 +23,7 @@ class VectorFacade:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        # self.graph.addNode(**self.kwargs)
-
-        self.vector = {
-            "Name": self.name,
-            "Description": self.description,
-            "Graph": self.graph
-        }
+        self.graph.addNode(**self.kwargs)
 
         self.kwargs = {"Node Visibility": "something else",
                       "Node ID": "something else",
@@ -41,7 +37,7 @@ class VectorFacade:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        # self.graph.addNode(**self.kwargs)
+        self.graph.addNode(**self.kwargs)
 
         self.kwargs = {"Node Visibility": "something completely different",
                       "Node ID": "something completely different",
@@ -55,20 +51,6 @@ class VectorFacade:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        # self.graph.addNode(**self.kwargs)
+        self.graph.addNode(**self.kwargs)
 
-    def get_name(self):
-        return self.name
-
-    def get_description(self):
-        return self.description
-
-    def set_name(self, name):
-        self.name = name
-
-    def set_description(self, description):
-        self.description = description
-
-    def getVector(self):
-        return self.vector
 
