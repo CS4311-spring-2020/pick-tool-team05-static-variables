@@ -23,17 +23,15 @@ class Vector(QObject):
             self.add()
 
     def add(self):
-        print("in the add function inside vector class before create graph")
         self.create_graph()
-        print("in the add function inside vector class after create graph")
         self.check_duplicate()
         add_object(self.data, "Vector")
         self.data = search_object("Name", self.data.get("Name"), "Vector")
 
     def update(self):
-        # g = search_object("_id", self.data.get("Graph ID"), "Graph")
+        g = search_object("_id", self.data.get("Graph ID"), "Graph")
         # g.data["Name"] = self.data.get("Name")
-        # same thing for description
+        # g.data["Description"] = self.data.get("Description")
         # g.update()
         self.check_duplicate()
         update_object(self.data.get("_id"), self.data, "Vector")
@@ -52,5 +50,4 @@ class Vector(QObject):
 
     def create_graph(self):
         g = Graph(self.data.get("Name"), self.data.get("Description"))
-        print(g.data.get("_id"))
         self.data["Graph ID"] = g.data.get("_id")

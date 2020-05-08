@@ -703,8 +703,8 @@ class GraphFrame(GenericFrame):
     def __init__(self):
         super().__init__(QVBoxLayout(), 'Graph Frame')
         self.graphInit()
-        self.saveImage()
-        print("In gui after saveImage")
+        # self.saveImage()
+        # print("In gui after saveImage")
 
     def graphInit(self):
         self.vector = VectorFacade("name", "description")
