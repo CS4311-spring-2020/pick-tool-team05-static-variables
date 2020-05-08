@@ -1,6 +1,8 @@
 from Source.Backend.Graph.GraphWindow import GraphWindow
 
 
+
+
 class VectorFacade:
     def __init__(self, name=None, description=None):
         self.name = name
@@ -19,7 +21,7 @@ class VectorFacade:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        self.graph.addNode(**self.kwargs)
+        # self.graph.addNode(**self.kwargs)
 
         self.vector = {
             "Name": self.name,
@@ -39,7 +41,7 @@ class VectorFacade:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        self.graph.addNode(**self.kwargs)
+        # self.graph.addNode(**self.kwargs)
 
         self.kwargs = {"Node Visibility": "something completely different",
                       "Node ID": "something completely different",
@@ -53,7 +55,7 @@ class VectorFacade:
                       "Node Description": "something9 has to be very long because I am testing how the table will "
                                           "handle it and make sure it doesn't crash "}
 
-        self.graph.addNode(**self.kwargs)
+        # self.graph.addNode(**self.kwargs)
 
     def get_name(self):
         return self.name
