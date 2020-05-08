@@ -13,10 +13,6 @@ class GraphicsNode(QGraphicsItem):
         self.content = self.node.content
 
         # settings
-
-        # self._title_color = Qt.black
-        # self._title_font = QFont("Times New Roman", 12)
-
         self.radius = 150
         self.innerRectangleSize = self.radius * math.sin(45)
         self.edge_size = 10.0
@@ -35,17 +31,6 @@ class GraphicsNode(QGraphicsItem):
         self._brush_title = QBrush(QColor("#FF515151"))
         self._brush_background = QBrush(QColor("#E3212121"))
 
-        # init title
-        # self.initTitle()
-        # self.title = self.node.title
-
-        """---------------------------Not Sure if I will be using something similar to this--------------------------"""
-
-        # init sockets
-        self.initSockets()
-
-        """----------------------------------------------------------------------------------------------------------"""
-
         # init content
         self.initContent()
 
@@ -55,16 +40,6 @@ class GraphicsNode(QGraphicsItem):
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
         self.node.updateConnectedEdges()
-
-    '''
-    @property
-    def title(self): return self._title
-
-    @title.setter
-    def title(self, value):
-        self._title = value
-        self.title_item.setPlainText(self._title)
-    '''
 
     # Give selectable and movable ability to the bounds given to the node
     def initUI(self):
@@ -77,21 +52,7 @@ class GraphicsNode(QGraphicsItem):
                       -self.innerRectangleSize + self.edge_size,
                       (self.innerRectangleSize * 2) - (self.edge_size * 2),
                       (self.innerRectangleSize * 2) - (self.edge_size * 2)).normalized()
-    '''
-    def initTitle(self):
-        self.title_item = QGraphicsTextItem(self)
-        self.title_item.setDefaultTextColor(self._title_color)
-        self.title_item.setFont(self._title_font)
 
-        # sets padding to the title offset from the left
-        self.title_item.setPos(-self.innerRectangleSize + (self.edge_size * 3.8) + self._padding,
-                               -self.innerRectangleSize - 4.0)
-        self.title_item.setTextWidth(
-            self.width
-            - 2
-            * self._padding
-        )
-    '''
     def initContent(self):
         self.grContent = QGraphicsProxyWidget(self)
 
@@ -102,26 +63,7 @@ class GraphicsNode(QGraphicsItem):
 
         self.grContent.setWidget(self.content)
 
-    def initSockets(self):
-        pass
-
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
-        '''
-        # calculates size of body of the node and paints it the background content
-        path_content = QPainterPath()
-        path_content.setFillRule(Qt.WindingFill)
-        path_content.addRoundedRect(
-            QRectF(-self.innerRectangleSize + (self.edge_size * 2),
-                   -self.innerRectangleSize + (self.edge_size * 2),
-                   (self.innerRectangleSize * 2) - (self.edge_size * 4),
-                   (self.innerRectangleSize * 2) - (self.edge_size * 4)),
-            self.edge_size, self.edge_size)
-
-        painter.setPen(Qt.NoPen)
-        painter.setBrush(self._brush_background)
-        painter.drawPath(path_content.simplified())
-        '''
-
         # outline
         path_outline = QPainterPath()
         path_outline.addEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)

@@ -7,8 +7,6 @@ The edge is drawn under the socket. Overwrites original QGraphics paint method. 
 update path.
 """
 
-DEBUG = False
-
 
 class GraphicsEdge(QGraphicsPathItem):
     def __init__(self, edge, parent=None):
@@ -64,7 +62,6 @@ class GraphicsEdge(QGraphicsPathItem):
 
 class GraphicsEdgeDirect(GraphicsEdge):
     def updatePath(self):
-        if DEBUG: print("in:", self)
 
         path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
         path.lineTo(self.posDestination[0], self.posDestination[1])

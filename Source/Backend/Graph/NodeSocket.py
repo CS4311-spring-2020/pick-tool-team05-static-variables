@@ -5,8 +5,6 @@ from Source.Backend.Graph.Serializable import Serializable
 TOP = 1
 BOTTOM = 2
 
-DEBUG = False
-
 
 class Socket(Serializable):
     # passing the parent node in order to added to the scene, and index to keep track of position
@@ -16,8 +14,6 @@ class Socket(Serializable):
         self.node = node
         self.socket_x_pos = socket_x_pos
         self.socket_y_pos = socket_y_pos
-
-        if DEBUG: print("Socket: -- creating with: ", self.socket_x_pos, self.socket_y_pos, self.node)
 
         # create graphical sockets
         self.grSocket = GraphicsSocket(self)

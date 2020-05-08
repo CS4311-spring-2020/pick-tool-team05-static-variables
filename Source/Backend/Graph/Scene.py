@@ -1,5 +1,3 @@
-from functools import reduce
-
 from Source.Backend.Graph.GraphicsScene import GraphicsScene
 from Source.Backend.Graph.Serializable import Serializable
 

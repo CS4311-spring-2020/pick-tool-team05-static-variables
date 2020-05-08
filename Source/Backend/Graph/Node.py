@@ -13,9 +13,11 @@ class Node(Serializable):
         # saves individual information of a node
         self.content_info = kwargs
 
-        #self.title = kwargs.pop('name')
-        kwargs.pop("Node Visibility")
-        kwargs.pop("icon_type")
+        if self.content_info.get("Node Visibility") is not None:
+            kwargs.pop("Node Visibility")
+            kwargs.pop("icon_type")
+        else:
+            pass
 
         # create a widget for contents of a nodes and add itself to node graphics
         self.content = NodeContentWidget(self)
@@ -53,7 +55,6 @@ class Node(Serializable):
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:
             if socket.hasEdge():
-
                 socket.edge.updatePositions()
             else:
                 pass
@@ -62,8 +63,8 @@ class Node(Serializable):
         inputs, outputs = [], []
         for socket in self.inputs: inputs.append(socket.serialize())
         for socket in self.outputs: outputs.append(socket.serialize())
-        print("  In serialize function inside of node")
-        res = {
+
+        return {
             "id": id(self),
             "name": self.content_info.get("Node Name"),
             "pos x": self.grNode.scenePos().x(),
@@ -72,5 +73,3 @@ class Node(Serializable):
             "child": outputs,
             "content": self.content.serialize()
         }
-        print(res)
-        return res
