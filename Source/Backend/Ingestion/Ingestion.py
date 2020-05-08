@@ -26,7 +26,7 @@ class Ingestion:
         self.validate_all_files(self.log_file_list)
         #self.force_validate(self.log_file_list)
 
-        self.upload_logfiles_to_splunk(self.log_file_list)
+        self.entries = self.upload_logfiles_to_splunk(self.log_file_list)
 
 
         #self.test()
