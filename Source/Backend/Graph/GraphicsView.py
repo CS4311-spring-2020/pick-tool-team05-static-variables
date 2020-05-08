@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtWidgets import QGraphicsView, QMenu
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+from Source.Backend.Graph.GraphicNode import GraphicsNode
 from Source.Backend.Graph.GraphicNodeSocket import GraphicsSocket
 from Source.Backend.Graph.NodeEdge import Edge
 
@@ -114,11 +115,27 @@ class GraphicsView(QGraphicsView):
         return super().mouseReleaseEvent(event)
 
     def rightMouseButtonPress(self, event):
-        # Debugging purposes
-        item = self.getItemAtClicked(event)
-        if DEBUG: print(item)
 
-        return super().mouseMoveEvent(event)
+        """
+        If right clicked over node give two options edit information
+        (pop up a window with node information that can be edited) or delete node
+        """
+        contextMenu = QMenu(self)
+
+        item = self.getItemAtClicked(event)
+        if type(item) is GraphicsNode:
+            remAct = contextMenu.addAction("Remove")
+            editAct = contextMenu.addAction("Edit")
+
+            action = contextMenu.exec_(self.mapToGlobal(event.pos()))
+            if action == editAct:
+                # TODO: add pop up window with node information to be edited
+                print("Here open window with node attributes to be edited")
+            elif action == remAct:
+                # TODO: delete all information and relationships attached to the socket
+                print("Here add all the code necessary to delete node and edges")
+            else:
+                super().mousePressEvent(event)
 
     def rightMouseButtonRelease(self, event):
         return super().mouseReleaseEvent(event)
@@ -155,7 +172,7 @@ class GraphicsView(QGraphicsView):
         self.dragEdge = Edge(self.grScene.scene, item.socket, None, "None")
         if DEBUG: print("after dragedge")
 
-    def edgeDragEnd(self,item):
+    def edgeDragEnd(self, item):
         if DEBUG: print("IN Edge Drag End")
         self.mode = DEFAULT_MODE
 
