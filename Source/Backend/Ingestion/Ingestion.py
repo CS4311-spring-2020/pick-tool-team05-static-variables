@@ -85,13 +85,14 @@ class Ingestion:
     def upload_logfiles_to_splunk(self, logfiles):
         #SplunkFacade().service
         uname, pswd = SplunkFacade().get_credentials()
-        print(uname, pswd)
+        #print(uname, pswd)
         for log in logfiles:
             if log.data.get("Validation_Flag") is not False:
                 SplunkFacade().upload(log, uname, pswd)
+                log.data["Acknowledgement_Flag"] = True
 
         entries = SplunkFacade().get_log_entries(uname, pswd)
-        for e in entries:
-            print(e)
+        #for e in entries:
+        #    print(e)
 
         return entries

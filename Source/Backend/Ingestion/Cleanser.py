@@ -7,15 +7,16 @@ from Source.Backend.Ingestion.LogFile import LogFile
 class Cleanser:
 
     def __init__(self):
+        temp = []
         #dir example
-        self.path = "C:\\Users\\yamel\\Desktop\\splunk\\tests"
+        #self.path = "C:\\Users\\yamel\\Desktop\\splunk\\tests"
         #self.path = logfile.data.get("Filepath")
-        self.cpath = self.path + "\\Cleansed"
-        self.upath = self.path
+        #self.cpath = self.path + "\\Cleansed"
+        #self.upath = self.path
 
         #creates cleansed dir if not in path
-        if not os.path.exists(self.cpath):
-            os.mkdir(self.cpath)
+        #if not os.path.exists(self.cpath):
+         #   os.mkdir(self.cpath)
 
     #gets rid of blank space & need to implement to get rid of non ascii
     def cleanse(self, logfile):
