@@ -60,6 +60,7 @@ class Ingestion:
         for log in loglist:
             Cleanser().cleanse(log)
             log.data["Cleanse_Flag"] = True
+            print("Cleansing status: ", log.data.get("Cleanse_Flag"))
         print("finished cleansing")
 
     def validate_all_files(self, loglist):
@@ -71,9 +72,11 @@ class Ingestion:
 
                 print("Invalid, ", log.data.get("Filename"), " Error Line(s): ", errorLine[0],
                       " Error Message: Missing Timestamp/Invalid Timestamp ")
+                print("Validation status is: ", log.data.get("Validation_Flag"))
             else:
-                print("is valid ", log.data.get("Filename"), log.data.get("Validation_Flag"))
+                print("is valid ", log.data.get("Filename"),"validation status: ", log.data.get("Validation_Flag"))
                 log.data["Validation_Flag"] = True
+
 
     def force_validate(self, logfile):
         print("force validating...")
@@ -90,6 +93,7 @@ class Ingestion:
             if log.data.get("Validation_Flag") is not False:
                 SplunkFacade().upload(log, uname, pswd)
                 log.data["Acknowledgement_Flag"] = True
+                print("Ingestion status: ",log.data.get("Ingestion_Flag"), "Acknowlegement status: ", log.data.get("Acknowledgement_Flag"))
 
         entries = SplunkFacade().get_log_entries(uname, pswd)
         #for e in entries:
