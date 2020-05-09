@@ -5,8 +5,8 @@ from PyQt5.QtCore import *
 
 class GraphicsSocket(QGraphicsItem):
     def __init__(self, socket):
-        self.socket = socket
         super().__init__(socket.node.grNode)
+        self.socket = socket
 
         # settings
         self.radius = 6.0
@@ -22,7 +22,6 @@ class GraphicsSocket(QGraphicsItem):
 
         # painting circle
         painter.setPen(self._pen)
-
         painter.drawEllipse(-self.radius, -self.radius, self.radius * 2, self.radius * 2)
 
     def boundingRect(self):

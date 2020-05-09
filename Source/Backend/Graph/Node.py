@@ -1,6 +1,6 @@
 from Source.Backend.Graph.GraphicNode import GraphicsNode
 from Source.Backend.Graph.NodeContentWidget import NodeContentWidget
-from Source.Backend.Graph.NodeSocket import *
+from Source.Backend.Graph.Socket import *
 from Source.Backend.Graph.Serializable import Serializable
 
 
@@ -33,12 +33,9 @@ class Node(Serializable):
         self.inputs = [Socket(node=self,  socket_y_pos=TOP)]
         self.outputs = [Socket(node=self, socket_y_pos=BOTTOM)]
 
-    def __str__(self):
-        return "<Node: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
-
     @property
     def pos(self):
-        return self.getNode.pos()
+        return self.grNode.pos()
 
     def setPos(self, x, y):
         self.grNode.setPos(x, y)

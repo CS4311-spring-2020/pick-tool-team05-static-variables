@@ -33,9 +33,6 @@ class GraphWindow(QWidget):
         self.view = GraphicsView(self.scene.grScene, self)
         self.layout.addWidget(self.view)
 
-    def __str__(self):
-        return "<Graph Window: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
-
     def addNode(self, **kwargs):
         if kwargs is not None:
             Node(self.scene, **kwargs)

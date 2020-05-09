@@ -35,9 +35,6 @@ class GraphicsEdge(QGraphicsPathItem):
         # sets drawing behind anything else drawn
         self.setZValue(-1)
 
-    def __str__(self):
-        return "<Graphic Edge: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
-
     def setSource(self, x, y):
         self.posSource = [x, y]
 
@@ -62,7 +59,6 @@ class GraphicsEdge(QGraphicsPathItem):
 
 class GraphicsEdgeDirect(GraphicsEdge):
     def updatePath(self):
-
         path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
         path.lineTo(self.posDestination[0], self.posDestination[1])
         self.setPath(path)

@@ -17,12 +17,9 @@ class Socket(Serializable):
 
         # create graphical sockets
         self.grSocket = GraphicsSocket(self)
-        self.grSocket.setPos(*self.node.getSocketPosition(socket_x_pos, socket_y_pos))
+        self.grSocket.setPos(*self.getSocketPosition())
 
         self.edge = None
-
-    def __str__(self):
-        return "<Edge: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
 
     # return coordinate: index,position
     def getSocketPosition(self):
@@ -35,10 +32,8 @@ class Socket(Serializable):
         return self.edge is not None
 
     def serialize(self):
-
         return {
             "id": id(self),
             "socket_x_pos": self.socket_x_pos,
             "socket_y_pos": self.socket_y_pos
         }
-
