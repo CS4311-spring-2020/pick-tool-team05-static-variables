@@ -1,6 +1,6 @@
 import psutil
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import Qt, QSize, pyqtSignal
+from PyQt5.QtCore import Qt, QSize, pyqtSignal, QObject
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
                              QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem)
@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         self.tool_bar = self.addToolBar('Toolbar')
         self.vectors = VectorFrame()
         self.main_menu = None
+        self.w = None
 
         self.init_UI()
 
@@ -111,10 +112,10 @@ class MainWindow(QMainWindow):
             }
         """)
 
-        main_menu = QAction(QIcon('../Source/Backend/Resources/Images/changes.png'), "Main Menu", self)
-        main_menu.setStatusTip("Main Menu")
-        self.tool_bar.addAction(main_menu)
-        main_menu.triggered.connect(self.create_menu)
+        event_menu = QAction(QIcon('../Source/Backend/Resources/Images/settings.png'), "Event Menu", self)
+        event_menu.setStatusTip("Event Menu")
+        self.tool_bar.addAction(event_menu)
+        event_menu.triggered.connect(self.create_event_menu)
 
         # (TODO): Add triggers, reimplement
         # undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
@@ -157,8 +158,11 @@ class MainWindow(QMainWindow):
         # push_act.setStatusTip('Export Graph')
         # self.toolBar.addAction(push_act)
 
-    def create_menu(self):
-        self.main_menu = MainMenu()
+    def create_event_menu(self):
+        self.w = GenericWindow(QVBoxLayout())
+        e = EventConfigurationFrame(self.w)
+        self.w.layout.addWidget(e)
+        self.w.show()
 
 ########################################################################################################################
 
@@ -166,19 +170,22 @@ class MainWindow(QMainWindow):
 class GenericWindow(QWidget):
     def __init__(self, layout):
         super().__init__()
+        self.setWindowTitle('PMR Insight Collective Knowledge')
+        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+
+        self.resize(900, 600)
         self.r = self.frameGeometry()
         self.p = QDesktopWidget().availableGeometry().center()
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
+
         self.layout = layout
         self.setLayout(self.layout)
-        self.setWindowTitle('PMR Insight Collective Knowledge')
-        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
 
 
 class GenericFrame(QFrame):
-    def __init__(self, layout, name):
-        super().__init__()
+    def __init__(self, layout, name, parent):
+        super().__init__(parent=parent)
         self.layout = layout
         self.frameName = name
         self.setLayout(self.layout)
@@ -186,62 +193,9 @@ class GenericFrame(QFrame):
 ########################################################################################################################
 
 
-class MainMenu(GenericWindow):
-    def __init__(self):
-        super().__init__(QVBoxLayout())
-        self.tabs = QTabWidget()
-        self.buttons = QToolBar("Buttons")
-        self.frames = []
-
-        self.init_UI()
-
-    def init_UI(self):
-        self.resize(900, 600)
-        self.init_tabs()
-        self.init_buttons()
-
-        self.layout.addWidget(self.tabs)
-        self.layout.addWidget(self.buttons)
-
-        self.show()
-
-    def init_tabs(self):
-        self.frames.append(EventConfigurationFrame())
-        self.frames.append(VectorDatabaseFrame())
-        self.frames.append(LogFileFrame())
-
-        for frame in self.frames:
-            self.tabs.addTab(frame, frame.frameName)
-
-    def init_buttons(self):
-        self.buttons.setMovable(False)
-        self.buttons.setStyleSheet("""
-                    QToolBar {
-                        spacing: 6px;
-                        padding: 3px;
-                    }
-                """)
-
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.buttons.addWidget(spacer)
-
-        b1 = QPushButton('OK')
-        self.buttons.addWidget(b1)
-        b1.clicked.connect(self.save_input)
-
-        b2 = QPushButton('Cancel')
-        self.buttons.addWidget(b2)
-        b2.clicked.connect(self.close)
-
-    def save_input(self):
-        self.frames[0].save_forms()
-        self.close()
-
-
 class EventConfigurationFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QGridLayout(), 'Event Configuration')
+    def __init__(self, parent):
+        super().__init__(QGridLayout(), 'Event Configuration', parent)
         self.event_configuration = EventConfiguration()
         self.name_form = QLineEdit()
         self.description_form = QTextEdit()
@@ -254,8 +208,23 @@ class EventConfigurationFrame(GenericFrame):
         self.lead_label = QLabel()
         self.ip_label = QLabel()
         self.connections_label = QLabel()
-        self.init_frame()
 
+        self.save_button = QPushButton('Save')
+        self.save_button.clicked.connect(self.save_forms)
+
+        self.close_button = QPushButton('Close')
+        self.close_button.clicked.connect(self.warning_dialog)
+
+        self.name_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.description_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.start_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.end_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.root_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.red_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.white_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.blue_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+
+        self.init_frame()
         self.event_configuration.eventConfigurationSignal.connect(self.load)
 
     def load(self):
@@ -271,6 +240,8 @@ class EventConfigurationFrame(GenericFrame):
         self.ip_label.setText(self.event_configuration.data.get("Lead IP Address"))
         self.connections_label.setText(self.event_configuration.data.get("Connections"))
 
+        self.save_button.setDisabled(True)
+
     def save_forms(self):
         self.event_configuration.data['Event Name'] = self.name_form.text()
         self.event_configuration.data['Description'] = self.description_form.toPlainText()
@@ -281,6 +252,7 @@ class EventConfigurationFrame(GenericFrame):
         self.event_configuration.data['White Team Folder'] = self.white_form.text()
         self.event_configuration.data['Blue Team Folder'] = self.blue_form.text()
         self.event_configuration.update()
+        self.load()
 
     def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
@@ -311,7 +283,28 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(self.ip_label, 11, 1)
         self.layout.addWidget(self.connections_label, 12, 1)
 
+        # Buttons
+        self.layout.addWidget(self.close_button, 13, 0)
+        self.layout.addWidget(self.save_button, 14, 0)
+
         self.load()
+
+    def warning_dialog(self):
+        if self.save_button.isEnabled():
+            dialog = GenericWindow(QGridLayout())
+            dialog_confirm = QPushButton("Continue")
+            dialog_cancel = QPushButton("Cancel")
+
+            self.dialog.layout.addWidget(
+                QLabel("Changes to event configuration are pending.\n Close without saving?"), 0, 1
+            )
+            self.dialog.addWidget(dialog_confirm, 1, 0)
+            self.dialog.addWidget(dialog_confirm, 1, 2)
+
+            dialog_confirm.clicked.connect(self.close)
+            dialog_cancel.clicked.connect(dialog.close)
+        else:
+            self.parentWidget().close()
 
 
 class VectorDatabaseFrame(GenericFrame):
@@ -582,8 +575,8 @@ class LogFileInformationFrame(GenericFrame):
 
 
 class VectorFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Vector Frame')
+    def __init__(self, parent=None):
+        super().__init__(QHBoxLayout(), 'Vector Frame', parent=parent)
         self.tabs = QTabWidget()
         self.__selected = -1
 
@@ -611,7 +604,7 @@ class VectorFrame(GenericFrame):
 
         splitter.setStretchFactor(1, 1)
         splitter.setSizes([900, 600])
-        t = GenericFrame(QHBoxLayout(), 'vector tab')
+        t = GenericFrame(QHBoxLayout(), 'vector tab', self)
         t.layout.addWidget(splitter)
 
         # (TODO): Refactor when vectors are pulled from event config
@@ -639,8 +632,8 @@ class VectorFrame(GenericFrame):
 
 
 class NodeTableFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Node Table Frame')
+    def __init__(self, parent=None):
+        super().__init__(QHBoxLayout(), 'Node Table Frame', parent=parent)
         self.info1 = {"Node Visibility": "something0",
                       "Node ID": "something1",
                       "Node Name": "something2",
@@ -700,8 +693,8 @@ class NodeTableFrame(GenericFrame):
 
 
 class GraphFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QVBoxLayout(), 'Graph Frame')
+    def __init__(self, parent=None):
+        super().__init__(QVBoxLayout(), 'Graph Frame', parent=parent)
         self.graphInit()
 
     def graphInit(self):
