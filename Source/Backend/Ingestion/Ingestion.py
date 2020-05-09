@@ -14,7 +14,6 @@ from Source.Backend.Ingestion.SplunkFacade import SplunkFacade
 #ingest files from splunk & cleanser
 
 
-
 class Ingestion:
     #def __init__(self, path):
         #self.path = path
@@ -26,11 +25,10 @@ class Ingestion:
         self.validate_all_files(self.log_file_list)
         #self.force_validate(self.log_file_list)
 
-        self.upload_logfiles_to_splunk(self.log_file_list)
+        self.entries = self.upload_logfiles_to_splunk(self.log_file_list)
 
 
         #self.test()
-
 
 
     def test(self):
@@ -86,7 +84,14 @@ class Ingestion:
 
     def upload_logfiles_to_splunk(self, logfiles):
         #SplunkFacade().service
+        uname, pswd = SplunkFacade().get_credentials()
+        print(uname, pswd)
         for log in logfiles:
             if log.data.get("Validation_Flag") is not False:
-                SplunkFacade().upload(log)
+                SplunkFacade().upload(log, uname, pswd)
 
+        entries = SplunkFacade().get_log_entries(uname, pswd)
+        for e in entries:
+            print(e)
+
+        return entries

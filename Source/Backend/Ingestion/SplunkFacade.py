@@ -12,48 +12,38 @@ import json
 # Dr.Roach also sent out email regarding Splunk, it might also be helpful
 class SplunkFacade:
     def __init__(self):
-        #cleansed
-        #self.path = cpath
-        #self.path = Cleanser.cpath
-        print("connecting to splunk")
+
         # Constants created with log-in information
-        HOST = "localhost"
-        PORT = 8089
+        self.HOST = "localhost"
+        self.PORT = 8089
         #USERNAME = "Minikitteh"
         #PASSWORD = "Mini111~@"
-
-        # Create a Service instance and log in
-        self.service = client.connect(
-            host=HOST,
-            port=PORT,
-            username = (input("input username: ")),
-            password = (input("input password: ")))
-            #username=USERNAME,
-            #password=PASSWORD)
-
-        #self.upload()
 
         #self.logList = []
         #self.list2 = self.getLogEntries()
         #print(self.list2)
         #self.get_log_entries()
 
-    def get_log_entries(self):
+    def get_credentials(self):
+        username = (input("input username: "))
+        password = (input("input password: "))
+        return username, password
+
+
+    def get_log_entries_testing(self):
         for items in self.getLogEntries():
             self.logList.append(items)
         print(self.logList)
         return self.logList
 
 
-    def upload(self, logfile):
+    def upload(self, logfile, uname, passwrd):
         #self.service
         # Retrieve the index for the data
-        current_index = self.service.indexes["main"] # indexes are like folders inside Splunk, you can create new indexes with a command not found here, this is to get an index already existing
-        #count = 1
-
-
+        serv = client.connect(host=self.HOST,port=self.PORT, username=uname,password=passwrd)
+        current_index = serv.indexes["main"] # indexes are like folders inside Splunk, you can create new indexes with a command not found here, this is to get an index already existing
+        #current_index = self.service.indexes["test_index"]
         #for filename in os.listdir(self.path):
-            # Upload and index the file
         try:
             #current_index.upload(self.path + "\\" + filename)
             current_index.upload(logfile.data.get("Filepath"))
@@ -63,13 +53,15 @@ class SplunkFacade:
         except Exception as e:
             print("Failed to upload, error ", str(e))
 
-    def getLogEntries(self):
+    def get_log_entries(self, uname, passwrd):
+        serv = client.connect(host=self.HOST,port=self.PORT, username=uname,password=passwrd)
         #Create a job instance and query the first five events(log entries)
-        job = self.service.jobs.create("search * | head 5")
+        job = serv.jobs.create("search * | head 20")
         rr = results.ResultsReader(job.preview()) # returns a dictionary with the information inside Splunk
         log_entries = [] # Creates a list and just append the information with the right keys from Splunk
         for entry in rr:
-            log_entries.append([entry['_serial'], entry['_raw'], entry['_time'], entry['source']])
+            #print(entry)
+            log_entries.append([entry['_raw'], entry['_time'], entry['source']])
 
         return log_entries
 
