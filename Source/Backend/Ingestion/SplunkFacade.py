@@ -30,11 +30,11 @@ class SplunkFacade:
         return username, password
 
 
-    def get_log_entries_testing(self):
-        for items in self.getLogEntries():
-            self.logList.append(items)
-        print(self.logList)
-        return self.logList
+    #def get_log_entries_testing(self):
+        #for items in self.getLogEntries():
+         #   self.logList.append(items)
+        #print(self.logList)
+        #return self.logList
 
 
     def upload(self, logfile, uname, passwrd):
