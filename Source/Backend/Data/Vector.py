@@ -31,9 +31,11 @@ class Vector(QObject):
         self.check_duplicate()
         update_object(self.data.get("_id"), self.data, "Vector")
 
+    # TODO:Fix bug where updating only the description triggers appending a number
     def check_duplicate(self):
         # Appends a number if vector with the same name exists
         s = search_object("Name", self.data.get("Name"), "Vector")
+
         while s is not None:
             if self.data.get("Name").split(' ')[-1].isdigit():
                 new = self.data.get("Name").rsplit(' ', 1)
@@ -42,6 +44,7 @@ class Vector(QObject):
                 self.data["Name"] = self.data.get("Name") + " 1"
 
             s = search_object("Name", self.data.get("Name"), "Vector")
+
 
     # def create_graph(self):
     #     # TODO: Create graph with name/description of vector, store Graph ID in vector "GRAPH ID" attribute

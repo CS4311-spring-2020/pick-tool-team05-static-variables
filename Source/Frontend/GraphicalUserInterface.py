@@ -26,8 +26,8 @@ class MainWindow(QMainWindow):
         self.layout = QHBoxLayout()
         self.tool_bar = self.addToolBar('Toolbar')
         self.vectors = VectorFrame()
-        self.main_menu = None
-        self.w = None
+        self.event_menu = None
+        self.vector_menu = None
 
         self.init_UI()
 
@@ -117,6 +117,11 @@ class MainWindow(QMainWindow):
         self.tool_bar.addAction(event_menu)
         event_menu.triggered.connect(self.create_event_menu)
 
+        vector_menu = QAction(QIcon('../Source/Backend/Resources/Images/vectors.png'), "Vector Database", self)
+        vector_menu.setStatusTip("Vector Database")
+        self.tool_bar.addAction(vector_menu)
+        vector_menu.triggered.connect(self.create_vector_menu)
+
         # (TODO): Add triggers, reimplement
         # undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
         # undo_act.setShortcut('Ctrl+Z')
@@ -159,10 +164,16 @@ class MainWindow(QMainWindow):
         # self.toolBar.addAction(push_act)
 
     def create_event_menu(self):
-        self.w = GenericWindow(QVBoxLayout())
-        e = EventConfigurationFrame(self.w)
-        self.w.layout.addWidget(e)
-        self.w.show()
+        self.event_menu = GenericWindow(QVBoxLayout())
+        e = EventConfigurationFrame(self.event_menu)
+        self.event_menu.layout.addWidget(e)
+        self.event_menu.show()
+
+    def create_vector_menu(self):
+        self.vector_menu = GenericWindow(QVBoxLayout())
+        v = VectorDatabaseFrame(self.vector_menu)
+        self.vector_menu.layout.addWidget(v)
+        self.vector_menu.show()
 
 ########################################################################################################################
 
@@ -173,7 +184,6 @@ class GenericWindow(QWidget):
         self.setWindowTitle('PMR Insight Collective Knowledge')
         self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
 
-        self.resize(900, 600)
         self.r = self.frameGeometry()
         self.p = QDesktopWidget().availableGeometry().center()
         self.r.moveCenter(self.p)
@@ -208,6 +218,7 @@ class EventConfigurationFrame(GenericFrame):
         self.lead_label = QLabel()
         self.ip_label = QLabel()
         self.connections_label = QLabel()
+        self.dialog = None
 
         self.save_button = QPushButton('Save')
         self.save_button.clicked.connect(self.save_forms)
@@ -284,32 +295,37 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(self.connections_label, 12, 1)
 
         # Buttons
-        self.layout.addWidget(self.close_button, 13, 0)
-        self.layout.addWidget(self.save_button, 14, 0)
+        self.layout.addWidget(self.save_button, 13, 0)
+        self.layout.addWidget(self.close_button, 14, 0)
 
         self.load()
 
     def warning_dialog(self):
         if self.save_button.isEnabled():
-            dialog = GenericWindow(QGridLayout())
+            self.dialog = GenericWindow(QGridLayout())
             dialog_confirm = QPushButton("Continue")
             dialog_cancel = QPushButton("Cancel")
 
             self.dialog.layout.addWidget(
                 QLabel("Changes to event configuration are pending.\n Close without saving?"), 0, 1
             )
-            self.dialog.addWidget(dialog_confirm, 1, 0)
-            self.dialog.addWidget(dialog_confirm, 1, 2)
+            self.dialog.layout.addWidget(dialog_confirm, 1, 0)
+            self.dialog.layout.addWidget(dialog_cancel, 1, 2)
 
-            dialog_confirm.clicked.connect(self.close)
-            dialog_cancel.clicked.connect(dialog.close)
+            self.dialog.show()
+            dialog_confirm.clicked.connect(self.dialog_confirm)
+            dialog_cancel.clicked.connect(self.dialog.close)
         else:
             self.parentWidget().close()
 
+    def dialog_confirm(self):
+        self.dialog.close()
+        self.parentWidget().close()
+
 
 class VectorDatabaseFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Vector Database')
+    def __init__(self, parent):
+        super().__init__(QHBoxLayout(), 'Vector Database', parent)
         self.vectors = None
         self.vector_info = VectorInformationFrame()
         self.list = QListWidget()
@@ -323,7 +339,6 @@ class VectorDatabaseFrame(GenericFrame):
         self.list.itemClicked.connect(self.unsaved_dialog)
         self.vector_info.save_changes.clicked.connect(lambda: self.list.currentItem()
                                                       .setText(self.vector_info.currentVector.data.get("Name")))
-        self.list
 
     def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
@@ -356,6 +371,14 @@ class VectorDatabaseFrame(GenericFrame):
         b2 = QPushButton('Delete Vector')
         self.buttons.addWidget(b2)
         b2.clicked.connect(self.delete_vector_dialog)
+
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.buttons.addWidget(spacer)
+
+        b3 = QPushButton('Close')
+        self.buttons.addWidget(b3)
+        b3.clicked.connect(self.check_status)
 
     def init_list(self):
         self.vectors = get_vector_list()
@@ -425,10 +448,16 @@ class VectorDatabaseFrame(GenericFrame):
             self.list.findItems(self.vector_info.currentVector.data.get("Name"), Qt.MatchExactly)[0])
         self.dialog.close()
 
+    def check_status(self):
+        if not self.vector_info.save_changes.isEnabled():
+            self.parentWidget().close()
+        else:
+            self.unsaved_dialog(self.vector_info.currentVector)
+
 
 class VectorInformationFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QGridLayout(), 'Vector Information')
+        super().__init__(QGridLayout(), 'Vector Information', None)
         self.currentVector = None
         self.name_form = QLineEdit()
         self.description_form = QTextEdit()
