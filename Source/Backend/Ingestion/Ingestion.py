@@ -14,7 +14,6 @@ from Source.Backend.Ingestion.SplunkFacade import SplunkFacade
 #ingest files from splunk & cleanser
 
 
-
 class Ingestion:
     #def __init__(self, path):
         #self.path = path
@@ -30,7 +29,6 @@ class Ingestion:
 
 
         #self.test()
-
 
 
     def test(self):

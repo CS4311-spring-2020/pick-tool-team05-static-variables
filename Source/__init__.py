@@ -16,9 +16,12 @@ if __name__ == '__main__':
                                                   "11:49 04/18/20 PM", 'usr/local/', "usr/local/red",
                                                   "usr/local/white", "usr/local/blue", "True", "127.0.0.1", "4")
 
+    #event_configuration = EventConfiguration("SQL Attack", "This is an SQL attack", "12:49 04/18/20 PM",
+    #                                         "11:49 04/18/20 PM", 'usr/local/', "C:\\Users\\yamel\\Desktop\\splunk\\tests\\Uncleansed",
+    #                                         "usr/local/white", "usr/local/blue", "True", "127.0.0.1", "4")
     app = QApplication(sys.argv)
     #g = MainWindow()
 
     test = Ingestion("C:\\Users\\yamel\\Desktop\\splunk\\tests\\Uncleansed")
-
+    #test = Ingestion(event_configuration.data.get("Red Team Folder"))
     sys.exit(app.exec_())
