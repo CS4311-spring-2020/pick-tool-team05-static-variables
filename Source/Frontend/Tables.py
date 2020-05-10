@@ -1,3 +1,4 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFrame, QTableWidget, QVBoxLayout, QAbstractScrollArea, QTableWidgetItem, QPushButton, \
     QToolBar, QLineEdit, QComboBox, QCheckBox
 
@@ -145,7 +146,6 @@ class LogEntryTable(QFrame):
 
     # (TODO): Add way of getting # of rows from log entries in DB
     def updateTable(self):
-
         # (TODO): Actually feed in data from log files
         for i in range(0, 4):
             self.table.insertRow(i)
@@ -167,34 +167,3 @@ class LogEntryTable(QFrame):
             Host: Blue, Source: Red, Sourcetype: .txt, 
             Content: We did a thing.
             """))
-
-
-class NodeTable(QFrame):
-    def __init__(self):
-        super().__init__()
-        self.layout = QVBoxLayout()
-        self.table = QTableWidget()
-        self.main()
-
-    def main(self):
-        self.setLayout(self.layout)
-        self.initTable()
-
-    # (TODO): Add way of getting column # based on nodes in DB, hard coded for now based on SRS 1.7
-    # (TODO): Set columns to node attributes
-    def initTable(self):
-        self.table.setRowCount(4)
-        self.table.setColumnCount(10)
-        self.table.setHorizontalHeaderLabels(['Node\nVisibility', 'Node ID', 'Node\nName', 'Node\nTimestamp',
-                                              'Log Entry\nReference', 'Log\nCreator', 'Event\nType', 'Icon\nType',
-                                              'Source', 'Node\nDescription'])
-        self.table.setColumnWidth(0, 60)
-        self.table.setColumnWidth(1, 70)
-        self.table.setColumnWidth(4, 70)
-        self.table.setColumnWidth(5, 60)
-        self.table.setColumnWidth(6, 60)
-        self.table.setColumnWidth(7, 60)
-        self.table.setColumnWidth(8, 60)
-        self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setStretchLastSection(True)
-        self.layout.addWidget(self.table)
