@@ -1,9 +1,6 @@
-from functools import reduce
-
 from Source.Backend.Graph.GraphicsScene import GraphicsScene
 from Source.Backend.Graph.Serializable import Serializable
-from PyQt5.QtGui import *
-import operator
+
 
 import json
 
@@ -58,13 +55,3 @@ class Scene(Serializable):
             "nodes": nodes,
             "edges": edges
         }
-
-    def saveImage(self):
-        items = self.nodes + self.edges
-
-        totalRec = reduce(operator.or_, (i.sceneBoundingRect() for i in items))
-
-        pix = QPixmap(totalRec.width(), totalRec.height())
-        painter = QPainter(pix)
-        self.grScene.render(painter, totalRec)
-        pix.save("capture.jpg", "JPG")

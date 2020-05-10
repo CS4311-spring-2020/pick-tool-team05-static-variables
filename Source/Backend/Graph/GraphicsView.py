@@ -1,14 +1,13 @@
-from PyQt5.QtWidgets import QGraphicsView
+from PyQt5.QtWidgets import QGraphicsView, QMenu
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
+from Source.Backend.Graph.GraphicNode import GraphicsNode
 from Source.Backend.Graph.GraphicNodeSocket import GraphicsSocket
 from Source.Backend.Graph.NodeEdge import Edge
 
 DEFAULT_MODE = 1
 DRAG_MODE = 2
-
-DEBUG = False
 
 
 class GraphicsView(QGraphicsView):
@@ -66,7 +65,6 @@ class GraphicsView(QGraphicsView):
             super().mouseReleaseEvent(event)
 
     def middleMouseButtonPress(self, event):
-        if DEBUG: print("MMB pressed")
         releaseEvent = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), event.screenPos(),
                                    Qt.LeftButton, Qt.NoButton, event.modifiers())
         super().mouseReleaseEvent(releaseEvent)
@@ -76,16 +74,13 @@ class GraphicsView(QGraphicsView):
         super().mousePressEvent(fakeEvent)
 
     def middleMouseButtonRelease(self, event):
-        if DEBUG: print("MMB release")
         fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(), Qt.LeftButton, event.buttons() &
                                 -Qt.LeftButton, event.modifiers())
         super().mouseReleaseEvent(fakeEvent)
         self.setDragMode(QGraphicsView.NoDrag)
 
     def leftMouseButtonPress(self, event):
-
         item = self.getItemAtClicked(event)
-
         self.last_left_click_scene_pos = self.mapToScene(event.pos())
 
         # store position of last left click
@@ -102,7 +97,6 @@ class GraphicsView(QGraphicsView):
         return super().mousePressEvent(event)
 
     def leftMouseButtonRelease(self, event):
-
         # get item that which was clicked and released on
         item = self.getItemAtClicked(event)
 
@@ -114,22 +108,33 @@ class GraphicsView(QGraphicsView):
         return super().mouseReleaseEvent(event)
 
     def rightMouseButtonPress(self, event):
-        # Debugging purposes
-        item = self.getItemAtClicked(event)
-        if DEBUG: print(item)
 
-        return super().mouseMoveEvent(event)
+        """
+        If right clicked over node give two options edit information
+        (pop up a window with node information that can be edited) or delete node
+        """
+        contextMenu = QMenu(self)
+
+        item = self.getItemAtClicked(event)
+        if type(item) is GraphicsNode:
+            remAct = contextMenu.addAction("Remove")
+            editAct = contextMenu.addAction("Edit")
+
+            action = contextMenu.exec_(self.mapToGlobal(event.pos()))
+            if action == editAct:
+                # TODO: add pop up window with node information to be edited
+                print("Here open window with node attributes to be edited")
+            elif action == remAct:
+                # TODO: delete all information and relationships attached to the socket
+                print("Here add all the code necessary to delete node and edges")
+            else:
+                super().mousePressEvent(event)
 
     def rightMouseButtonRelease(self, event):
         return super().mouseReleaseEvent(event)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-            print("In key press event.")
-            self.grScene.saveImage()
-        elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
-            self.grScene.scene.loadFromFile("graph.json.txt")
-        elif event.key() == Qt.Key_T and event.modifiers() & Qt.ControlModifier:
             self.grScene.scene.saveToFile("graph.json.txt")
         else:
             super().keyPressEvent(event)
@@ -137,9 +142,7 @@ class GraphicsView(QGraphicsView):
     def mouseMoveEvent(self, event):
         # continually feed coordinate position for the "dragging edge" to get drawn
         if self.mode == DRAG_MODE:
-            if DEBUG: print("GraphicsView::MouseEvent: DragMode: ", DRAG_MODE)
             pos = self.mapToScene(event.pos())
-            if DEBUG: print("GraphicsView::MouseEvent: Pos: ", pos)
             self.dragEdge.grEdge.setDestination(pos.x(), pos.y())
             self.dragEdge.grEdge.update()
         super().mouseMoveEvent(event)
@@ -150,18 +153,13 @@ class GraphicsView(QGraphicsView):
         return obj
 
     def edgeDragStart(self, item):
-        if DEBUG: print("In edge drag start")
+
         self.previousEdge = item.socket.edge
         self.last_start_socket = item.socket
 
-        if DEBUG: print("GraphicsView::EdgeDragStart: previousedge: ", item.socket.edge,
-                        " last stat socket: ", self.last_start_socket)
-
         self.dragEdge = Edge(self.grScene.scene, item.socket, None, "None")
-        if DEBUG: print("after dragedge")
 
-    def edgeDragEnd(self,item):
-        if DEBUG: print("IN Edge Drag End")
+    def edgeDragEnd(self, item):
         self.mode = DEFAULT_MODE
 
         if type(item) is GraphicsSocket:

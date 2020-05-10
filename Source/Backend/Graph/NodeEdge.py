@@ -28,9 +28,6 @@ class Edge(Serializable):
         # adding graphical edge to the scene itself
         self.scene.grScene.addItem(self.grEdge)
 
-        def __str__(self):
-            return "<Edge: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
-
         # update position receive coordinate point in a list [x,y]
     def updatePositions(self):
         source_pos = self.start_socket.getSocketPosition()

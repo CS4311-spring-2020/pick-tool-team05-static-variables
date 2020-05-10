@@ -5,8 +5,8 @@ from Source.Backend.Graph.Serializable import Serializable
 # widget that will be extend to all corners that displays Qlabels and Qline edits with the information from the node
 class NodeContentWidget(QWidget, Serializable):
     def __init__(self, node, parent=None):
-        self.node_info = node.content_info
         super().__init__(parent)
+        self.node_info = node.content_info
 
         self.initUI()
 

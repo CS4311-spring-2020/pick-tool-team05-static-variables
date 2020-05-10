@@ -1,74 +1,53 @@
 from Source.Backend.Graph.GraphWindow import GraphWindow
 
 
-
-
 class VectorFacade:
     def __init__(self, name=None, description=None):
-        self.name = name
-        self.description = description
-
-        self.graph = GraphWindow(self.name)
-        self.kwargs = {"Node Visibility": "something0",
-                      "Node ID": "something1",
-                      "Node Name": "something2",
-                      "Node Time Stamp": "something3",
-                      "log_entry_reference": "something4",
-                      "log_creator": "something5",
-                      "event_type": "something6",
-                      "icon_type": "something7",
-                      "source": "something8",
-                      "Node Description": "something9 has to be very long because I am testing how the table will "
-                                          "handle it and make sure it doesn't crash "}
-
-        # self.graph.addNode(**self.kwargs)
-
-        self.vector = {
-            "Name": self.name,
-            "Description": self.description,
-            "Graph": self.graph
+        self.data = {
+            "Name": name,
+            "Description": description,
+            "nodes": []
         }
 
-        self.kwargs = {"Node Visibility": "something else",
-                      "Node ID": "something else",
-                      "Node Name": "something else",
-                      "Node Time Stamp": "something else",
-                      "log_entry_reference": "something else",
-                      "log_creator": "something else",
-                      "event_type": "something else",
-                      "icon_type": "something else",
-                      "source": "something else",
-                      "Node Description": "something9 has to be very long because I am testing how the table will "
-                                          "handle it and make sure it doesn't crash "}
+        self.graph = GraphWindow(self.data.get("Name"), self.data.get("Description"))
 
-        # self.graph.addNode(**self.kwargs)
+        self.kwargs = {"Node Visibility": "Node1",
+                      "Node ID": "Node1",
+                      "Node Name": "Node1",
+                      "Node Time Stamp": "Node1",
+                      "log_entry_reference": "Node1",
+                      "log_creator": "Node1",
+                      "event_type": "Node1",
+                      "icon_type": "Node1",
+                      "source": "Node1",
+                      "Node Description": "Node1"}
 
-        self.kwargs = {"Node Visibility": "something completely different",
-                      "Node ID": "something completely different",
-                      "Node Name": "something completely different",
-                      "Node Time Stamp": "something completely different",
-                      "log_entry_reference": "something completely different",
-                      "log_creator": "something completely different",
-                      "event_type": "something completely different",
-                      "icon_type": "something completely different",
-                      "source": "something completely different",
-                      "Node Description": "something9 has to be very long because I am testing how the table will "
-                                          "handle it and make sure it doesn't crash "}
+        self.graph.addNode(**self.kwargs)
 
-        # self.graph.addNode(**self.kwargs)
+        self.kwargs = {"Node Visibility": "node2",
+                      "Node ID": "node2",
+                      "Node Name": "node2",
+                      "Node Time Stamp": "node2",
+                      "log_entry_reference": "node2",
+                      "log_creator": "node2",
+                      "event_type": "node2",
+                      "icon_type": "node2",
+                      "source": "node2",
+                      "Node Description": "node2"}
 
-    def get_name(self):
-        return self.name
+        self.graph.addNode(**self.kwargs)
 
-    def get_description(self):
-        return self.description
+        self.kwargs = {"Node Visibility": "Node3",
+                      "Node ID": "Node3",
+                      "Node Name": "Node3",
+                      "Node Time Stamp": "Node3",
+                      "log_entry_reference": "Node3",
+                      "log_creator": "Node3",
+                      "event_type": "Node3",
+                      "icon_type": "Node3",
+                      "source": "Node3",
+                      "Node Description": "Node3"}
 
-    def set_name(self, name):
-        self.name = name
+        self.graph.addNode(**self.kwargs)
 
-    def set_description(self, description):
-        self.description = description
-
-    def getVector(self):
-        return self.vector
 

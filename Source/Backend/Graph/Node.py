@@ -1,11 +1,11 @@
 from Source.Backend.Graph.GraphicNode import GraphicsNode
 from Source.Backend.Graph.NodeContentWidget import NodeContentWidget
-from Source.Backend.Graph.NodeSocket import *
+from Source.Backend.Graph.Socket import *
 from Source.Backend.Graph.Serializable import Serializable
 
 
 class Node(Serializable):
-    def __init__(self, scene, inputs=[], outputs=[], **kwargs):
+    def __init__(self, scene, **kwargs):
         super().__init__()
 
         self.scene = scene
@@ -13,9 +13,11 @@ class Node(Serializable):
         # saves individual information of a node
         self.content_info = kwargs
 
-        #self.title = kwargs.pop('name')
-        kwargs.pop("Node Visibility")
-        kwargs.pop("icon_type")
+        if self.content_info.get("Node Visibility") is not None:
+            kwargs.pop("Node Visibility")
+            kwargs.pop("icon_type")
+        else:
+            pass
 
         # create a widget for contents of a nodes and add itself to node graphics
         self.content = NodeContentWidget(self)
@@ -27,26 +29,13 @@ class Node(Serializable):
 
         self.socket_spacing = 1
 
-        self.inputs = []
-        self.outputs = []
-
         # once node is instantiated sockets are created
-        # create sockets for input and outputs
-
-        for item in inputs:
-            socket = Socket(node=self,  socket_y_pos=TOP)
-            self.inputs.append(socket)
-
-        for item in outputs:
-            socket = Socket(node=self, socket_y_pos=BOTTOM)
-            self.outputs.append(socket)
-
-    def __str__(self):
-        return "<Node: %s...%s>" % (hex(id(self))[2:5], hex(id(self))[:3])
+        self.inputs = [Socket(node=self,  socket_y_pos=TOP)]
+        self.outputs = [Socket(node=self, socket_y_pos=BOTTOM)]
 
     @property
     def pos(self):
-        return self.getNode.pos()
+        return self.grNode.pos()
 
     def setPos(self, x, y):
         self.grNode.setPos(x, y)
@@ -63,7 +52,6 @@ class Node(Serializable):
     def updateConnectedEdges(self):
         for socket in self.inputs + self.outputs:
             if socket.hasEdge():
-
                 socket.edge.updatePositions()
             else:
                 pass
@@ -72,8 +60,8 @@ class Node(Serializable):
         inputs, outputs = [], []
         for socket in self.inputs: inputs.append(socket.serialize())
         for socket in self.outputs: outputs.append(socket.serialize())
-        print("  In serialize function inside of node")
-        res = {
+
+        return {
             "id": id(self),
             "name": self.content_info.get("Node Name"),
             "pos x": self.grNode.scenePos().x(),
@@ -82,5 +70,3 @@ class Node(Serializable):
             "child": outputs,
             "content": self.content.serialize()
         }
-        print(res)
-        return res
