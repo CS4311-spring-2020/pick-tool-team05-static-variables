@@ -49,5 +49,3 @@ class VectorFacade:
                       "Node Description": "Node3"}
 
         self.graph.addNode(**self.kwargs)
-
-

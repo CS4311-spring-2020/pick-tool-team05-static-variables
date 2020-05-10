@@ -3,6 +3,8 @@ import csv
 import os
 import re
 from dateutil.parser import parse
+
+from Source.Backend.Data.EventConfiguration import EventConfiguration
 from Source.Backend.Ingestion.LogFile import LogFile
 from Source.Backend.Ingestion.Cleanser import Cleanser
 from Source.Backend.Ingestion.EnforcementActionReport import EnforcementActionReport
@@ -14,9 +16,15 @@ from Source.Backend.Ingestion.SplunkFacade import SplunkFacade
 #ingest files from splunk & cleanser
 
 
+
 class Ingestion:
     #def __init__(self, path):
         #self.path = path
+
+    @staticmethod
+    def init_thread():
+        Ingestion(EventConfiguration().data.get("Red Team Folder"))
+
     def __init__(self, path):
         self.path = path
         self.log_file_list = []
@@ -26,10 +34,7 @@ class Ingestion:
         #self.force_validate(self.log_file_list)
 
         self.entries = self.upload_logfiles_to_splunk(self.log_file_list)
-
-
         #self.test()
-
 
     def test(self):
         for log in self.log_file_list:

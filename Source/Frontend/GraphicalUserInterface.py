@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
                 proc.kill()
 
     def __init__(self):
+        print("TEST")
         super().__init__()
         self.layout = QHBoxLayout()
         self.tool_bar = self.addToolBar('Toolbar')

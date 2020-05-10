@@ -70,12 +70,9 @@ def update_object(object_id, object_data, collection_name):
 
 
 def get_vector_list():
-    if mongo_client['PICKDB']['Vector'].count_documents({}) == 0 :
-        print("There are no vectors in the Vector collection")
-    else:
-        vector_list = []
-        for vector in database["Vector"].find({}):
-            vector_list.append(vector)
+    vector_list = []
+    for vector in database["Vector"].find({}):
+        vector_list.append(vector)
 
     return vector_list
 

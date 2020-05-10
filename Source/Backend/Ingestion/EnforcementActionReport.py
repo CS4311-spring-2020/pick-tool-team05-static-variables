@@ -1,13 +1,4 @@
-
-import csv
-import os
-import path
-import re
-import datetime
-
-from Source.Backend.Ingestion.LogFile import LogFile
 from dateutil.parser import parse
-from dateparser.search import search_dates
 
 #know log file from ingestion
 #know the errors of the log file from error cless
@@ -32,7 +23,7 @@ class EnforcementActionReport:
         for row in open(logfile.data.get("Filepath")):
             lineNum = 1
             b = True
-            dateBool =  self.has_date(str(row), b)
+            dateBool = self.has_date(str(row), b)
             if dateBool == False:
                 errorMsg = "no time"
                 if errorMsg:
