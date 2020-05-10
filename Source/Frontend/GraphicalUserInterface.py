@@ -3,7 +3,7 @@ from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt, QSize, pyqtSignal
 from PyQt5.QtWidgets import (QMainWindow, QHBoxLayout, QVBoxLayout, QDesktopWidget, QSplitter, QSizePolicy, QFrame,
                              QTabWidget, QTableWidget, QAction, QMenu, QApplication, QPushButton, QLineEdit, QWidget,
-                             QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem)
+                             QLabel, QTextEdit, QGridLayout, QToolBar, QListWidget, QTableWidgetItem, QDialog)
 
 
 from Source.Backend.Data.VectorFacade import VectorFacade
@@ -26,7 +26,8 @@ class MainWindow(QMainWindow):
         self.layout = QHBoxLayout()
         self.tool_bar = self.addToolBar('Toolbar')
         self.vectors = VectorFrame()
-        self.main_menu = None
+        self.event_menu = None
+        self.vector_menu = None
 
         self.init_UI()
 
@@ -111,10 +112,15 @@ class MainWindow(QMainWindow):
             }
         """)
 
-        main_menu = QAction(QIcon('../Source/Backend/Resources/Images/changes.png'), "Main Menu", self)
-        main_menu.setStatusTip("Main Menu")
-        self.tool_bar.addAction(main_menu)
-        main_menu.triggered.connect(self.create_menu)
+        event_menu = QAction(QIcon('../Source/Backend/Resources/Images/settings.png'), "Event Menu", self)
+        event_menu.setStatusTip("Event Menu")
+        self.tool_bar.addAction(event_menu)
+        event_menu.triggered.connect(self.create_event_menu)
+
+        vector_menu = QAction(QIcon('../Source/Backend/Resources/Images/vectors.png'), "Vector Database", self)
+        vector_menu.setStatusTip("Vector Database")
+        self.tool_bar.addAction(vector_menu)
+        vector_menu.triggered.connect(self.create_vector_menu)
 
         # (TODO): Add triggers, reimplement
         # undo_act = QAction(QIcon('Resources/Images/undo.png'), '&Undo', self)
@@ -157,28 +163,41 @@ class MainWindow(QMainWindow):
         # push_act.setStatusTip('Export Graph')
         # self.toolBar.addAction(push_act)
 
-    def create_menu(self):
-        self.main_menu = MainMenu()
+    def create_event_menu(self):
+        self.event_menu = GenericWindow(QVBoxLayout(), self)
+        e = EventConfigurationFrame(self.event_menu)
+        self.event_menu.layout.addWidget(e)
+        self.event_menu.show()
+
+    def create_vector_menu(self):
+        self.vector_menu = GenericWindow(QVBoxLayout(), self)
+        v = VectorDatabaseFrame(self.vector_menu)
+        self.vector_menu.layout.addWidget(v)
+        self.vector_menu.show()
 
 ########################################################################################################################
 
 
-class GenericWindow(QWidget):
-    def __init__(self, layout):
-        super().__init__()
+class GenericWindow(QDialog):
+    def __init__(self, layout, parent=None):
+        super().__init__(parent=parent)
+        self.setWindowTitle('PMR Insight Collective Knowledge')
+        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+
         self.r = self.frameGeometry()
         self.p = QDesktopWidget().availableGeometry().center()
         self.r.moveCenter(self.p)
         self.move(self.r.topLeft())
+
         self.layout = layout
         self.setLayout(self.layout)
-        self.setWindowTitle('PMR Insight Collective Knowledge')
-        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+        self.setWindowModality(Qt.ApplicationModal)
+        self.setFocus()
 
 
 class GenericFrame(QFrame):
-    def __init__(self, layout, name):
-        super().__init__()
+    def __init__(self, layout, name, parent):
+        super().__init__(parent=parent)
         self.layout = layout
         self.frameName = name
         self.setLayout(self.layout)
@@ -186,62 +205,9 @@ class GenericFrame(QFrame):
 ########################################################################################################################
 
 
-class MainMenu(GenericWindow):
-    def __init__(self):
-        super().__init__(QVBoxLayout())
-        self.tabs = QTabWidget()
-        self.buttons = QToolBar("Buttons")
-        self.frames = []
-
-        self.init_UI()
-
-    def init_UI(self):
-        self.resize(900, 600)
-        self.init_tabs()
-        self.init_buttons()
-
-        self.layout.addWidget(self.tabs)
-        self.layout.addWidget(self.buttons)
-
-        self.show()
-
-    def init_tabs(self):
-        self.frames.append(EventConfigurationFrame())
-        self.frames.append(VectorDatabaseFrame())
-        self.frames.append(LogFileFrame())
-
-        for frame in self.frames:
-            self.tabs.addTab(frame, frame.frameName)
-
-    def init_buttons(self):
-        self.buttons.setMovable(False)
-        self.buttons.setStyleSheet("""
-                    QToolBar {
-                        spacing: 6px;
-                        padding: 3px;
-                    }
-                """)
-
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.buttons.addWidget(spacer)
-
-        b1 = QPushButton('OK')
-        self.buttons.addWidget(b1)
-        b1.clicked.connect(self.save_input)
-
-        b2 = QPushButton('Cancel')
-        self.buttons.addWidget(b2)
-        b2.clicked.connect(self.close)
-
-    def save_input(self):
-        self.frames[0].save_forms()
-        self.close()
-
-
 class EventConfigurationFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QGridLayout(), 'Event Configuration')
+    def __init__(self, parent):
+        super().__init__(QGridLayout(), 'Event Configuration', parent)
         self.event_configuration = EventConfiguration()
         self.name_form = QLineEdit()
         self.description_form = QTextEdit()
@@ -254,8 +220,24 @@ class EventConfigurationFrame(GenericFrame):
         self.lead_label = QLabel()
         self.ip_label = QLabel()
         self.connections_label = QLabel()
-        self.init_frame()
+        self.dialog = None
 
+        self.save_button = QPushButton('Save')
+        self.save_button.clicked.connect(self.save_forms)
+
+        self.close_button = QPushButton('Close')
+        self.close_button.clicked.connect(self.warning_dialog)
+
+        self.name_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.description_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.start_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.end_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.root_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.red_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.white_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+        self.blue_form.textChanged.connect(lambda: self.save_button.setDisabled(False))
+
+        self.init_frame()
         self.event_configuration.eventConfigurationSignal.connect(self.load)
 
     def load(self):
@@ -271,6 +253,8 @@ class EventConfigurationFrame(GenericFrame):
         self.ip_label.setText(self.event_configuration.data.get("Lead IP Address"))
         self.connections_label.setText(self.event_configuration.data.get("Connections"))
 
+        self.save_button.setDisabled(True)
+
     def save_forms(self):
         self.event_configuration.data['Event Name'] = self.name_form.text()
         self.event_configuration.data['Description'] = self.description_form.toPlainText()
@@ -281,6 +265,7 @@ class EventConfigurationFrame(GenericFrame):
         self.event_configuration.data['White Team Folder'] = self.white_form.text()
         self.event_configuration.data['Blue Team Folder'] = self.blue_form.text()
         self.event_configuration.update()
+        self.load()
 
     def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
@@ -311,12 +296,38 @@ class EventConfigurationFrame(GenericFrame):
         self.layout.addWidget(self.ip_label, 11, 1)
         self.layout.addWidget(self.connections_label, 12, 1)
 
+        # Buttons
+        self.layout.addWidget(self.save_button, 13, 0)
+        self.layout.addWidget(self.close_button, 14, 0)
+
         self.load()
+
+    def warning_dialog(self):
+        if self.save_button.isEnabled():
+            self.dialog = GenericWindow(QGridLayout(), self)
+            dialog_confirm = QPushButton("Continue")
+            dialog_cancel = QPushButton("Cancel")
+
+            self.dialog.layout.addWidget(
+                QLabel("Changes to event configuration are pending.\n Close without saving?"), 0, 1
+            )
+            self.dialog.layout.addWidget(dialog_confirm, 1, 0)
+            self.dialog.layout.addWidget(dialog_cancel, 1, 2)
+
+            self.dialog.show()
+            dialog_confirm.clicked.connect(self.dialog_confirm)
+            dialog_cancel.clicked.connect(self.dialog.close)
+        else:
+            self.parentWidget().close()
+
+    def dialog_confirm(self):
+        self.dialog.close()
+        self.parentWidget().close()
 
 
 class VectorDatabaseFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Vector Database')
+    def __init__(self, parent):
+        super().__init__(QHBoxLayout(), 'Vector Database', parent)
         self.vectors = None
         self.vector_info = VectorInformationFrame()
         self.list = QListWidget()
@@ -330,7 +341,6 @@ class VectorDatabaseFrame(GenericFrame):
         self.list.itemClicked.connect(self.unsaved_dialog)
         self.vector_info.save_changes.clicked.connect(lambda: self.list.currentItem()
                                                       .setText(self.vector_info.currentVector.data.get("Name")))
-        self.list
 
     def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
@@ -364,6 +374,14 @@ class VectorDatabaseFrame(GenericFrame):
         self.buttons.addWidget(b2)
         b2.clicked.connect(self.delete_vector_dialog)
 
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.buttons.addWidget(spacer)
+
+        b3 = QPushButton('Close')
+        self.buttons.addWidget(b3)
+        b3.clicked.connect(self.check_status)
+
     def init_list(self):
         self.vectors = get_vector_list()
 
@@ -396,9 +414,9 @@ class VectorDatabaseFrame(GenericFrame):
         dialog_cancel.clicked.connect(self.dialog_cancel)
         self.dialog.show()
 
-    def unsaved_dialog(self, vector):
+    def unsaved_dialog(self, vector, closeParent=None):
         if self.vector_info.save_changes.isEnabled():
-            self.dialog = GenericWindow(QGridLayout())
+            self.dialog = GenericWindow(QGridLayout(), self)
             dialog_confirm = QPushButton("Continue")
             dialog_cancel = QPushButton("Cancel")
 
@@ -408,11 +426,19 @@ class VectorDatabaseFrame(GenericFrame):
             self.dialog.layout.addWidget(dialog_confirm, 1, 0)
             self.dialog.layout.addWidget(dialog_cancel, 1, 2)
 
-            dialog_confirm.clicked.connect(self.dialog_confirm_change)
+            if closeParent is not None:
+                dialog_confirm.clicked.connect(self.dialog_confirm_exit)
+            else:
+                dialog_confirm.clicked.connect(self.dialog_confirm_change)
+
             dialog_cancel.clicked.connect(self.dialog_cancel)
             self.dialog.show()
         else:
             self.vector_info.update_frame(vector)
+
+    def dialog_confirm_exit(self):
+        self.dialog.close()
+        self.parentWidget().close()
 
     def dialog_confirm_change(self):
         self.vector_info.update_frame(self.list.currentItem())
@@ -432,10 +458,16 @@ class VectorDatabaseFrame(GenericFrame):
             self.list.findItems(self.vector_info.currentVector.data.get("Name"), Qt.MatchExactly)[0])
         self.dialog.close()
 
+    def check_status(self):
+        if not self.vector_info.save_changes.isEnabled():
+            self.parentWidget().close()
+        else:
+            self.unsaved_dialog(self.vector_info.currentVector, True)
+
 
 class VectorInformationFrame(GenericFrame):
     def __init__(self):
-        super().__init__(QGridLayout(), 'Vector Information')
+        super().__init__(QGridLayout(), 'Vector Information', None)
         self.currentVector = None
         self.name_form = QLineEdit()
         self.description_form = QTextEdit()
@@ -484,163 +516,154 @@ class VectorInformationFrame(GenericFrame):
         self.update_frame()
 
 
-class LogFileFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Log Files')
-        self.__logFiles = {"Readme.txt": "Readme.txt",
-                           "20193019_101559.jpg": "20193019_101559.jpg",
-                           "20190220_161043.log": "20190220_161043.log"}
-        self.__buttons = QToolBar('Buttons')
-        self.__list = QListWidget()
-        self.__logFileInfo = LogFileInformationFrame()
-
-        self.__initFrame()
-
-    def __initFrame(self):
-        self.setFrameShape(QFrame.StyledPanel)
-        self.__initList()
-        self.__initButtons()
-
-        self.layout.addWidget(self.__list)
-        self.layout.addWidget(self.__logFileInfo)
-        self.layout.addWidget(self.__buttons)
-        self.setMinimumSize(600, 400)
-
-    def __initList(self):
-        for f in self.__logFiles:
-            self.__list.addItem(f)
-
-        self.__list.setCurrentItem(self.__list.itemAt(0, 0))
-        self.__logFileInfo.update(self.__list.itemAt(0, 0))
-        self.__list.itemClicked.connect(self.__logFileInfo.update)
-        self.__list.setMaximumWidth(200)
-
-    def __initButtons(self):
-        self.__buttons.setOrientation(Qt.Vertical)
-        self.__buttons.setMovable(False)
-        self.__buttons.setStyleSheet("""
-                    QToolBar {
-                        spacing: 6px;
-                        padding: 3px;
-                    }
-                """)
-
-        # Buttons after this are set to the right side
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.__buttons.addWidget(spacer)
-
-        # (TODO): Add triggers
-        b1 = QPushButton('Accept File...')
-        self.__buttons.addWidget(b1)
-
-        # (TODO): Add triggers
-        b2 = QPushButton('Reject File...')
-        self.__buttons.addWidget(b2)
-
-    def save_forms(self):
-        print('saved')
-
-
-class LogFileInformationFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QGridLayout(), 'Log File Information')
-        self.__currentLog = None
-        self.__initFrame()
-
-    def __initFrame(self):
-        self.setFrameShape(QFrame.StyledPanel)
-
-    def __loadInfo(self):
-        # (TODO): Add after action report for file and status
-        self.layout.addWidget(QLabel('Name:'), 1, 0)
-        self.layout.addWidget(QLabel('Cleansing Status:'), 2, 0)
-        self.layout.addWidget(QLabel('Validation Status:'), 3, 0)
-        self.layout.addWidget(QLabel('Ingestion Status:'), 4, 0)
-        self.layout.addWidget(QLabel('Acknowledgement Status:'), 5, 0)
-        self.layout.addWidget(QLabel('Enforcement Action Report'), 6, 1, Qt.AlignCenter)
-
-        spacer = QLabel()
-        self.layout.addWidget(spacer, 6, 2)
-
-        self.layout.addWidget(QLabel(self.__currentLog), 1, 1, Qt.AlignLeft)
-        self.layout.addWidget(QLabel('Cleansed'), 2, 1)
-        self.layout.addWidget(QLabel('Validated'), 3, 1)
-        self.layout.addWidget(QLabel('Ingested'), 4, 1)
-        self.layout.addWidget(QLabel('Accepted'), 5, 1)
-
-        self.layout.addWidget(QTextEdit('No problems found'), 8, 0, 8, 3)
-
-    def update(self, logfile):
-        for i in reversed(range(self.layout.count())):
-            self.layout.itemAt(i).widget().setParent(None)
-
-        self.__currentLog = logfile.text()
-        self.__loadInfo()
+# class LogFileFrame(GenericFrame):
+#     def __init__(self):
+#         super().__init__(QHBoxLayout(), 'Log Files')
+#         self.__logFiles = {"Readme.txt": "Readme.txt",
+#                            "20193019_101559.jpg": "20193019_101559.jpg",
+#                            "20190220_161043.log": "20190220_161043.log"}
+#         self.__buttons = QToolBar('Buttons')
+#         self.__list = QListWidget()
+#         self.__logFileInfo = LogFileInformationFrame()
+#
+#         self.__initFrame()
+#
+#     def __initFrame(self):
+#         self.setFrameShape(QFrame.StyledPanel)
+#         self.__initList()
+#         self.__initButtons()
+#
+#         self.layout.addWidget(self.__list)
+#         self.layout.addWidget(self.__logFileInfo)
+#         self.layout.addWidget(self.__buttons)
+#         self.setMinimumSize(600, 400)
+#
+#     def __initList(self):
+#         for f in self.__logFiles:
+#             self.__list.addItem(f)
+#
+#         self.__list.setCurrentItem(self.__list.itemAt(0, 0))
+#         self.__logFileInfo.update(self.__list.itemAt(0, 0))
+#         self.__list.itemClicked.connect(self.__logFileInfo.update)
+#         self.__list.setMaximumWidth(200)
+#
+#     def __initButtons(self):
+#         self.__buttons.setOrientation(Qt.Vertical)
+#         self.__buttons.setMovable(False)
+#         self.__buttons.setStyleSheet("""
+#                     QToolBar {
+#                         spacing: 6px;
+#                         padding: 3px;
+#                     }
+#                 """)
+#
+#         # Buttons after this are set to the right side
+#         spacer = QWidget()
+#         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+#         self.__buttons.addWidget(spacer)
+#
+#         # (TODO): Add triggers
+#         b1 = QPushButton('Accept File...')
+#         self.__buttons.addWidget(b1)
+#
+#         # (TODO): Add triggers
+#         b2 = QPushButton('Reject File...')
+#         self.__buttons.addWidget(b2)
+#
+#     def save_forms(self):
+#         print('saved')
+#
+#
+# class LogFileInformationFrame(GenericFrame):
+#     def __init__(self):
+#         super().__init__(QGridLayout(), 'Log File Information')
+#         self.__currentLog = None
+#         self.__initFrame()
+#
+#     def __initFrame(self):
+#         self.setFrameShape(QFrame.StyledPanel)
+#
+#     def __loadInfo(self):
+#         # (TODO): Add after action report for file and status
+#         self.layout.addWidget(QLabel('Name:'), 1, 0)
+#         self.layout.addWidget(QLabel('Cleansing Status:'), 2, 0)
+#         self.layout.addWidget(QLabel('Validation Status:'), 3, 0)
+#         self.layout.addWidget(QLabel('Ingestion Status:'), 4, 0)
+#         self.layout.addWidget(QLabel('Acknowledgement Status:'), 5, 0)
+#         self.layout.addWidget(QLabel('Enforcement Action Report'), 6, 1, Qt.AlignCenter)
+#
+#         spacer = QLabel()
+#         self.layout.addWidget(spacer, 6, 2)
+#
+#         self.layout.addWidget(QLabel(self.__currentLog), 1, 1, Qt.AlignLeft)
+#         self.layout.addWidget(QLabel('Cleansed'), 2, 1)
+#         self.layout.addWidget(QLabel('Validated'), 3, 1)
+#         self.layout.addWidget(QLabel('Ingested'), 4, 1)
+#         self.layout.addWidget(QLabel('Accepted'), 5, 1)
+#
+#         self.layout.addWidget(QTextEdit('No problems found'), 8, 0, 8, 3)
+#
+#     def update(self, logfile):
+#         for i in reversed(range(self.layout.count())):
+#             self.layout.itemAt(i).widget().setParent(None)
+#
+#         self.__currentLog = logfile.text()
+#         self.__loadInfo()
 
 ########################################################################################################################
 
 
 class VectorFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Vector Frame')
+    def __init__(self, parent=None):
+        super().__init__(QHBoxLayout(), 'Vector Frame', parent=parent)
         self.tabs = QTabWidget()
-        self.__selected = -1
+        self.vectors = None
 
-        # (TODO): Access vectors from vector table, hardcoded for now
-        self.vectors = ["DDoS", "Vector 2", "Reverse Shell"]
+        self.init_frame()
 
-        self.__initUI()
-
-    def __initUI(self):
+    def init_frame(self):
         self.setFrameShape(QFrame.StyledPanel)
+        self.populate_tabs()
+
         self.layout.addWidget(self.tabs)
 
-        for v in self.vectors:
-            self.__initTab(v, 0)
+    def populate_tabs(self):
+        self.tabs.clear()
+        self.vectors = get_vector_list()
 
-        self.tabs.addTab(QWidget(), '+')
-        self.tabs.tabBarClicked.connect(self.__setSelected)
-        self.tabs.currentChanged.connect(self.insertTab)
+        if self.vectors:
+            for vector in self.vectors:
+                print(vector)
+                self.initialize_tab(vector)
 
-    def __initTab(self, v, c):
+        # TODO: Program to open vector from vector db
+        # self.tabs.addTab(QWidget(), '+')
+
+        self.tabs.setTabsClosable(True)
+        self.tabs.tabCloseRequested.connect(lambda i: self.tabs.removeTab(i))
+
+    def initialize_tab(self, vector):
+        frame = GenericFrame(QHBoxLayout(), 'vector tab', self)
+
         splitter = QSplitter(Qt.Horizontal)
 
+        # TODO: Make generic table class, populate with vector nodes & significant log entries
         splitter.addWidget(NodeTableFrame())
-        splitter.addWidget(GraphFrame())
+        splitter.addWidget(GraphFrame(vector, frame))
+        splitter.setSizes([600, 600])
 
-        splitter.setStretchFactor(1, 1)
-        splitter.setSizes([900, 600])
-        t = GenericFrame(QHBoxLayout(), 'vector tab')
-        t.layout.addWidget(splitter)
+        frame.layout.addWidget(splitter)
+        self.tabs.addTab(frame, vector.get("Name"))
 
-        # (TODO): Refactor when vectors are pulled from event config
-        if c == 0:
-            self.tabs.addTab(t, v)
-        else:
-            self.tabs.insertTab(c, t, self.vectors[-1])
-
-    def __setSelected(self, s):
-        if s == self.tabs.count() - 1:
-            self.__selected = -1
-        else:
-            self.__selected = s
-
-    def insertTab(self, t):
-        if t == self.tabs.count() - 1:
-            # (TODO): Call to create new vector in DB
-
-            self.__initTab(self.vectors[-1], t)
-            self.tabs.setCurrentIndex(t)
-
-    # (TODO): Connect to delete vector & context menu
-    def deleteTab(self, t):
-        self.tabs.removeTab(t)
+    def delete_tab(self, vector):
+        for i in range(0, self.tabs.count()):
+            if vector.get("Name") == self.tabs.tabText(i):
+                self.tabs.removeTab(i)
 
 
 class NodeTableFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QHBoxLayout(), 'Node Table Frame')
+    def __init__(self, parent=None):
+        super().__init__(QHBoxLayout(), 'Node Table Frame', parent=parent)
         self.info1 = {"Node Visibility": "something0",
                       "Node ID": "something1",
                       "Node Name": "something2",
@@ -700,15 +723,15 @@ class NodeTableFrame(GenericFrame):
 
 
 class GraphFrame(GenericFrame):
-    def __init__(self):
-        super().__init__(QVBoxLayout(), 'Graph Frame')
+    def __init__(self, vector, parent=None):
+        super().__init__(QVBoxLayout(), 'Graph Frame', parent=parent)
+        self.vector = vector
+        self.manuel_vector = None
         self.graphInit()
-        #self.saveImage()
-        #print("In gui after saveImage")
 
     def graphInit(self):
-        self.vector = VectorFacade("name", "description")
-        self.layout.addWidget(self.vector.graph)
+        self.manuel_vector = VectorFacade(self.vector.get("Name"), self.vector.get("Description"))
+        self.layout.addWidget(self.manuel_vector.graph)
 
     def saveImage(self):
         e = QPixmap(self.vector.graph.grab(self.vector.graph.rect()))

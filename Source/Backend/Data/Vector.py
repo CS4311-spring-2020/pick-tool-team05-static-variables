@@ -19,28 +19,23 @@ class Vector(QObject):
                 "Graph ID": "",
                 "Significant Log Entries": []
             }
-
+            # self.create_graph()
             self.add()
 
     def add(self):
-        print("in the add function inside vector class before create graph")
         self.create_graph()
-        print("in the add function inside vector class after create graph")
         self.check_duplicate()
         add_object(self.data, "Vector")
         self.data = search_object("Name", self.data.get("Name"), "Vector")
 
     def update(self):
-        # g = search_object("_id", self.data.get("Graph ID"), "Graph")
-        # g.data["Name"] = self.data.get("Name")
-        # g.data["Description"] = self.data.get("Description")
-        # g.update()
         self.check_duplicate()
         update_object(self.data.get("_id"), self.data, "Vector")
 
     def check_duplicate(self):
         # Appends a number if vector with the same name exists
         s = search_object("Name", self.data.get("Name"), "Vector")
+
         while s is not None:
             if self.data.get("Name").split(' ')[-1].isdigit():
                 new = self.data.get("Name").rsplit(' ', 1)
