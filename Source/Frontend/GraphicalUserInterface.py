@@ -22,7 +22,6 @@ class MainWindow(QMainWindow):
                 proc.kill()
 
     def __init__(self):
-        print("TEST")
         super().__init__()
         self.layout = QHBoxLayout()
         self.tool_bar = self.addToolBar('Toolbar')
@@ -36,7 +35,7 @@ class MainWindow(QMainWindow):
         # Centers window to provide consistent launch of app
         self.statusBar().showMessage('Ready')
         self.setWindowTitle('PMR Insight Collective Knowledge')
-        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+        self.setWindowIcon(QIcon('../Source/Backend/Resources/Images/logo_small.png'))
 
         self.resize(1900, 1030)
 
@@ -176,14 +175,23 @@ class MainWindow(QMainWindow):
         self.vector_menu.layout.addWidget(v)
         self.vector_menu.show()
 
+    # TODO: Update data based on changes in database
+    def update_data(self):
+        print("Update")
+
 ########################################################################################################################
 
 
 class GenericWindow(QDialog):
+    closeSignal = pyqtSignal()
+
+    def closeEvent(self, QCloseEvent):
+        self.closeSignal.emit(QCloseEvent)
+
     def __init__(self, layout, parent=None):
         super().__init__(parent=parent)
         self.setWindowTitle('PMR Insight Collective Knowledge')
-        self.setWindowIcon(QIcon('Source/Backend/Resources/Images/logo_small.png'))
+        self.setWindowIcon(QIcon('../Source/Backend/Resources/Images/logo_small.png'))
 
         self.r = self.frameGeometry()
         self.p = QDesktopWidget().availableGeometry().center()
